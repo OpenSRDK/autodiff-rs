@@ -20,7 +20,7 @@ pub trait Float:
     + SubAssign
     + Mul<Output = Self>
     + MulAssign
-    + Div
+    + Div<Output = Self>
     + DivAssign
     + Neg<Output = Self>
     + Sum

@@ -1,7 +1,9 @@
 use crate::Float;
 
+pub mod functions;
 pub mod operators;
 
+pub use functions::*;
 pub use operators::*;
 
 pub struct Dual<T>
