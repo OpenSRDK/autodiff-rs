@@ -40,7 +40,7 @@ impl Expression {
                     if base.symbols().contains(s) {
                         if exponent.symbols().contains(s) {
                             panic!(
-                                "Symbols which are contained by the intersection of symbols of base and exponent cannot be differentiated."
+                                "Symbols which are contained by both of base and exponent cannot be differentiated."
                             );
                         }
 
