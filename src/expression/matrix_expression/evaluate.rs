@@ -1,11 +1,11 @@
-use crate::{MatrixExpression, Symbol, Value};
+use crate::{MatrixExpression, Value};
 use std::collections::HashMap;
 
 impl MatrixExpression {
-    pub fn evaluate(&self, values: &HashMap<Symbol, Value>) -> MatrixExpression {
+    pub fn evaluate(&self, values: &HashMap<&str, Value>) -> MatrixExpression {
         match self {
             MatrixExpression::Symbol(symbol) => {
-                let v = values.get(symbol);
+                let v = values.get(symbol.as_str());
 
                 match v {
                     Some(v) => MatrixExpression::Constant(v.as_matrix_ref().clone()),

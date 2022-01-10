@@ -1,11 +1,11 @@
-use crate::{Expression, Symbol, Value};
+use crate::{Expression, Value};
 use std::collections::HashMap;
 
 impl Expression {
-    pub fn evaluate(&self, values: &HashMap<Symbol, Value>) -> Expression {
+    pub fn evaluate(&self, values: &HashMap<&str, Value>) -> Expression {
         match self {
             Expression::Symbol(symbol) => {
-                let v = values.get(symbol);
+                let v = values.get(symbol.as_str());
 
                 match v {
                     Some(v) => Expression::Constant(v.as_scalar()),

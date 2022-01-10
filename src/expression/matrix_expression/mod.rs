@@ -1,17 +1,17 @@
-use crate::{Expression, Symbol};
+use crate::Expression;
 use opensrdk_linear_algebra::Matrix;
 
+pub mod evaluate;
 pub mod operations;
 pub mod operators;
 pub mod symbol;
-pub mod value;
 
+pub use evaluate::*;
 pub use symbol::*;
-pub use value::*;
 
 #[derive(Clone, Debug)]
 pub enum MatrixExpression {
-    Symbol(Symbol),
+    Symbol(String),
     Constant(Matrix),
     Add(Box<MatrixExpression>, Box<MatrixExpression>),
     Sub(Box<MatrixExpression>, Box<MatrixExpression>),

@@ -1,18 +1,14 @@
-use crate::{MatrixExpression, Symbol};
-use rand::prelude::*;
+use crate::MatrixExpression;
 use std::{collections::HashSet, iter::once};
 
-impl Symbol {
-    pub fn new_matrix() -> MatrixExpression {
-        let id = thread_rng().gen();
-        MatrixExpression::Symbol(Self::new(id))
-    }
-}
-
 impl MatrixExpression {
-    pub fn symbols(&self) -> HashSet<Symbol> {
+    pub fn new_symbol(name: String) -> Self {
+        MatrixExpression::Symbol(name)
+    }
+
+    pub fn symbols(&self) -> HashSet<String> {
         match self {
-            MatrixExpression::Symbol(symbol) => once(symbol.clone()).collect::<HashSet<Symbol>>(),
+            MatrixExpression::Symbol(symbol) => once(symbol.clone()).collect::<HashSet<String>>(),
             MatrixExpression::Constant(_) => HashSet::new(),
             MatrixExpression::Add(l, r) => l
                 .symbols()

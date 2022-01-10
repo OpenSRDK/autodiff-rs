@@ -1,18 +1,14 @@
-use crate::{Expression, Symbol};
-use rand::prelude::*;
+use crate::Expression;
 use std::{collections::HashSet, iter::once};
 
-impl Symbol {
-    pub fn new_scalar() -> Expression {
-        let id = thread_rng().gen();
-        Expression::Symbol(Self::new(id))
-    }
-}
-
 impl Expression {
-    pub fn symbols(&self) -> HashSet<Symbol> {
+    pub fn new_symbol(name: String) -> Self {
+        Expression::Symbol(name)
+    }
+
+    pub fn symbols(&self) -> HashSet<String> {
         match self {
-            Expression::Symbol(symbol) => once(symbol.clone()).collect::<HashSet<Symbol>>(),
+            Expression::Symbol(symbol) => once(symbol.clone()).collect::<HashSet<String>>(),
             Expression::Constant(_) => HashSet::new(),
             Expression::Add(l, r) => l
                 .symbols()
@@ -53,5 +49,18 @@ impl Expression {
             Expression::Tan(arg) => arg.symbols(),
             Expression::MatrixScalar(arg) => arg.symbols(),
         }
+    }
+
+    pub(crate) fn diff_symbol(symbols: &[&str], symbol: &String) -> Vec<Expression> {
+        symbols
+            .iter()
+            .map(|s| {
+                if s.eq(symbol) {
+                    Expression::Constant(1.0)
+                } else {
+                    Expression::Constant(0.0)
+                }
+            })
+            .collect()
     }
 }

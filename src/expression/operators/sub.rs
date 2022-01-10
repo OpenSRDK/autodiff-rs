@@ -21,3 +21,19 @@ impl Sub<Expression> for Expression {
         Self::Sub(self.into(), rhs.into())
     }
 }
+
+impl Sub<f64> for Expression {
+    type Output = Self;
+
+    fn sub(self, rhs: f64) -> Self::Output {
+        self - Expression::Constant(rhs)
+    }
+}
+
+impl Sub<Expression> for f64 {
+    type Output = Expression;
+
+    fn sub(self, rhs: Expression) -> Self::Output {
+        Expression::Constant(self) - rhs
+    }
+}

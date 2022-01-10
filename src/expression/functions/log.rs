@@ -1,13 +1,13 @@
 use crate::Expression;
 
 impl Expression {
-    pub fn log(self, antilogarith: Expression) -> Self {
-        if let Expression::Constant(v) = self {}
-
-        if self.symbols().intersection(&antilogarith.symbols()).count() > 0 {
-            panic!("Intersection of symbols of base and exponent must be empty set.");
+    pub fn log(self, antilogarithm: Expression) -> Self {
+        if let Expression::Constant(base) = self {
+            if let Expression::Constant(antilogarithm) = antilogarithm {
+                return Expression::Constant(antilogarithm.log(base));
+            }
         }
 
-        Expression::Log(self.into(), antilogarith.into())
+        Expression::Log(self.into(), antilogarithm.into())
     }
 }
