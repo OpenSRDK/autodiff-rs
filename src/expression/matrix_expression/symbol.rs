@@ -30,21 +30,11 @@ impl MatrixExpression {
                 .into_iter()
                 .chain(r.symbols().into_iter())
                 .collect(),
-            MatrixExpression::Neg(expression) => expression.symbols(),
-            MatrixExpression::Det(expression) => expression.symbols(),
-            MatrixExpression::T(expression) => expression.symbols(),
-            MatrixExpression::Inv(expression) => expression.symbols(),
-            MatrixExpression::Solve(l, r) => l
-                .symbols()
-                .into_iter()
-                .chain(r.symbols().into_iter())
-                .collect(),
-            MatrixExpression::Pow(base, exponential) => base
-                .symbols()
-                .into_iter()
-                .chain(exponential.symbols().into_iter())
-                .collect(),
-            MatrixExpression::MatrixExp(arg) => arg.symbols(),
+            MatrixExpression::Neg(v) => v.symbols(),
+            MatrixExpression::Pow(base, _) => base.symbols(),
+            MatrixExpression::T(v) => v.symbols(),
+            MatrixExpression::Det(v) => v.symbols(),
+            MatrixExpression::MatrixExp(v) => v.symbols(),
         }
     }
 }

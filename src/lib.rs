@@ -2,8 +2,9 @@
 extern crate blas_src;
 #[cfg(test)]
 extern crate lapack_src;
+extern crate num_rational;
+extern crate num_traits;
 pub extern crate opensrdk_linear_algebra;
-extern crate rand;
 extern crate rayon;
 extern crate thiserror;
 

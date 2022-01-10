@@ -1,4 +1,4 @@
-use crate::Expression;
+use crate::{Expression, TranscendentalExpression};
 
 impl Expression {
     pub fn cos(self) -> Self {
@@ -6,6 +6,6 @@ impl Expression {
             return Expression::Constant(v.cos());
         }
 
-        Expression::Cos(self.into())
+        TranscendentalExpression::Cos(self.into()).into()
     }
 }

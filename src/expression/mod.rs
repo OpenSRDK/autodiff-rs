@@ -1,19 +1,19 @@
-pub mod as_scalar;
+use num_rational::*;
+
 pub mod differential;
 pub mod evaluate;
-pub mod functions;
 pub mod matrix_expression;
 pub mod operators;
 pub mod symbol;
+pub mod transcendental_expression;
 
-pub use as_scalar::*;
 pub use differential::*;
 pub use evaluate::*;
-pub use functions::*;
 pub use matrix_expression::*;
 pub use symbol::*;
+pub use transcendental_expression::*;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Expression {
     Symbol(String),
     Constant(f64),
@@ -22,14 +22,8 @@ pub enum Expression {
     Mul(Box<Expression>, Box<Expression>),
     Div(Box<Expression>, Box<Expression>),
     Neg(Box<Expression>),
-    Abs(Box<Expression>),
-    Pow(Box<Expression>, Box<Expression>),
-    Exp(Box<Expression>),
-    Log(Box<Expression>, Box<Expression>),
-    Ln(Box<Expression>),
-    Sin(Box<Expression>),
-    Cos(Box<Expression>),
-    Tan(Box<Expression>),
+    Pow(Box<Expression>, Ratio<u32>),
+    Transcendental(Box<TranscendentalExpression>),
     MatrixScalar(Box<MatrixExpression>),
 }
 

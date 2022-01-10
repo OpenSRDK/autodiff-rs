@@ -1,7 +1,7 @@
-use crate::{Expression, MatrixExpression};
+use crate::MatrixExpression;
 
 impl MatrixExpression {
-    pub fn pow(self, exponent: Expression) -> MatrixExpression {
-        MatrixExpression::Pow(self.into(), exponent.into())
+    pub fn pow(self, exponent: i32) -> MatrixExpression {
+        MatrixExpression::Pow(self.into(), exponent)
     }
 }

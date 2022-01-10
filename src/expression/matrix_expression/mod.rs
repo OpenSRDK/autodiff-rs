@@ -1,15 +1,17 @@
 use crate::Expression;
 use opensrdk_linear_algebra::Matrix;
 
+pub mod as_scalar;
 pub mod evaluate;
 pub mod operations;
 pub mod operators;
 pub mod symbol;
 
+pub use as_scalar::*;
 pub use evaluate::*;
 pub use symbol::*;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum MatrixExpression {
     Symbol(String),
     Constant(Matrix),
@@ -18,10 +20,8 @@ pub enum MatrixExpression {
     Mul(Box<MatrixExpression>, Box<MatrixExpression>),
     MulScalar(Box<Expression>, Box<MatrixExpression>),
     Neg(Box<MatrixExpression>),
-    Det(Box<MatrixExpression>),
+    Pow(Box<MatrixExpression>, i32),
     T(Box<MatrixExpression>),
-    Inv(Box<MatrixExpression>),
-    Solve(Box<MatrixExpression>, Box<MatrixExpression>),
-    Pow(Box<MatrixExpression>, Box<Expression>),
+    Det(Box<MatrixExpression>),
     MatrixExp(Box<MatrixExpression>),
 }

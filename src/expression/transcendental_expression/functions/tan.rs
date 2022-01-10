@@ -1,4 +1,4 @@
-use crate::Expression;
+use crate::{Expression, TranscendentalExpression};
 
 impl Expression {
     pub fn tan(self) -> Self {
@@ -6,6 +6,6 @@ impl Expression {
             return Expression::Constant(v.tan());
         }
 
-        Expression::Tan(self.into())
+        TranscendentalExpression::Tan(self.into()).into()
     }
 }

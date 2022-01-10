@@ -1,4 +1,4 @@
-use crate::Expression;
+use crate::{Expression, TranscendentalExpression};
 
 impl Expression {
     pub fn sin(self) -> Self {
@@ -6,6 +6,6 @@ impl Expression {
             return Expression::Constant(v.sin());
         }
 
-        Expression::Sin(self.into())
+        TranscendentalExpression::Sin(self.into()).into()
     }
 }

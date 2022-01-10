@@ -17,13 +17,11 @@ impl MatrixExpression {
             MatrixExpression::Sub(l, r) => l.evaluate(values) - r.evaluate(values),
             MatrixExpression::Mul(l, r) => l.evaluate(values) * r.evaluate(values),
             MatrixExpression::MulScalar(l, r) => l.evaluate(values) * r.evaluate(values),
-            MatrixExpression::Neg(expression) => -expression.evaluate(values),
-            MatrixExpression::Det(expression) => expression.evaluate(values).det(),
-            MatrixExpression::T(expression) => expression.evaluate(values).t(),
-            MatrixExpression::Inv(expression) => expression.evaluate(values).inv(),
-            MatrixExpression::Solve(l, r) => l.evaluate(values).solve(r.evaluate(values)),
-            MatrixExpression::Pow(base, exponent) => todo!(),
-            MatrixExpression::MatrixExp(arg) => todo!(),
+            MatrixExpression::Neg(v) => -v.evaluate(values),
+            MatrixExpression::Pow(base, exponent) => base.evaluate(values).pow(*exponent),
+            MatrixExpression::T(v) => v.evaluate(values).t(),
+            MatrixExpression::Det(v) => v.evaluate(values).det(),
+            MatrixExpression::MatrixExp(v) => todo!(),
         }
     }
 }

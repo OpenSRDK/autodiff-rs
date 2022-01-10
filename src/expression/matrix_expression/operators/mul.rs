@@ -10,9 +10,8 @@ impl Mul<MatrixExpression> for MatrixExpression {
                 return MatrixExpression::Constant(vl * vr);
             }
         }
-        if let MatrixExpression::Inv(expression) = &self {
-            return expression.clone().solve(rhs);
-        }
+        // Merge as pow
+
         MatrixExpression::Mul(self.into(), rhs.into())
     }
 }

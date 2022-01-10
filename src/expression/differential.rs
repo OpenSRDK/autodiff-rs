@@ -1,4 +1,5 @@
 use crate::Expression;
+use num_traits::cast::ToPrimitive;
 
 impl Expression {
     pub fn differential(&self, symbols: &[&str]) -> Vec<Expression> {
@@ -22,66 +23,23 @@ impl Expression {
                 .differential(symbols)
                 .into_iter()
                 .zip(r.differential(symbols).into_iter())
-                .map(|(li, ri)| (li * r.as_ref().clone() - l.as_ref().clone() * ri) / r.as_ref().clone().pow(2.0.into()))
-                .collect(),
-            Expression::Neg(expression) => expression
-                .differential(symbols)
-                .into_iter()
-                .map(|e| -e)
-                .collect(),
-            Expression::Abs(arg) => arg
-                .differential(symbols)
-                .into_iter()
-                .map(|a| a.abs())
-                .collect(),
-            Expression::Pow(base, exponent) => symbols
-                .iter()
-                .map(|&s| {
-                    if base.symbols().contains(s) {
-                        if exponent.symbols().contains(s) {
-                            panic!(
-                                "Symbols which are contained by both of base and exponent cannot be differentiated."
-                            );
-                        }
-
-                        exponent.as_ref().clone()
-                            * base.as_ref().clone().pow(exponent.as_ref().clone() - 1.0)
-                            * base.differential(&[s])[0].clone()
-                    } else if exponent.symbols().contains(s) {
-                        base.as_ref().clone().pow(exponent.as_ref().clone())
-                            * exponent.as_ref().clone().ln()
-                    } else {
-                        0.0.into()
-                    }
+                .map(|(li, ri)| {
+                    (li * r.as_ref().clone() - l.as_ref().clone() * ri)
+                        / r.as_ref().clone().pow(2.into())
                 })
                 .collect(),
-            Expression::Exp(arg) => arg
+            Expression::Neg(v) => v.differential(symbols).into_iter().map(|e| -e).collect(),
+            Expression::Pow(base, exponent) => base
                 .differential(symbols)
                 .into_iter()
-                .map(|a| arg.clone().exp() * a)
+                .map(|b| {
+                    Expression::Constant(exponent.to_f64().unwrap_or_default())
+                        * base.as_ref().clone().pow(exponent - 1)
+                        * b
+                })
                 .collect(),
-            Expression::Log(_, _) => todo!(),
-            Expression::Ln(arg) => arg
-                .differential(symbols)
-                .into_iter()
-                .map(|a| a / arg.as_ref().clone())
-                .collect(),
-            Expression::Sin(arg) => arg
-                .differential(symbols)
-                .into_iter()
-                .map(|a| arg.clone().cos() * a)
-                .collect(),
-            Expression::Cos(arg) => arg
-                .differential(symbols)
-                .into_iter()
-                .map(|a| -arg.clone().sin() * a)
-                .collect(),
-            Expression::Tan(arg) => arg
-                .differential(symbols)
-                .into_iter()
-                .map(|a| a / (arg.clone().cos().pow(2.0.into())))
-                .collect(),
-            Expression::MatrixScalar(expression) => todo!(),
+            Expression::Transcendental(v) => v.differential(symbols),
+            Expression::MatrixScalar(v) => todo!(),
         }
     }
 }
@@ -95,7 +53,7 @@ mod tests {
     fn it_works() {
         let x = Expression::new_symbol("x".to_string());
 
-        let expression = x.clone().pow(2.0.into());
+        let expression = x.clone().pow(2.into());
         let diff = expression.differential(&["x"])[0].clone();
 
         println!("{:#?}", diff);
@@ -125,7 +83,7 @@ mod tests {
     fn it_works4() {
         let x = Expression::new_symbol("x".to_string());
 
-        let expression = x.clone().pow(2.0.into());
+        let expression = x.clone().pow(2.into());
         let diff = expression.differential(&["x"])[0].clone();
 
         println!(

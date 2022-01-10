@@ -1,4 +1,4 @@
-use crate::Expression;
+use crate::{Expression, TranscendentalExpression};
 
 impl Expression {
     pub fn log(self, antilogarithm: Expression) -> Self {
@@ -8,6 +8,6 @@ impl Expression {
             }
         }
 
-        Expression::Log(self.into(), antilogarithm.into())
+        TranscendentalExpression::Log(self.into(), antilogarithm.into()).into()
     }
 }

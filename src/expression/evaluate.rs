@@ -17,17 +17,9 @@ impl Expression {
             Expression::Sub(l, r) => l.evaluate(values) - r.evaluate(values),
             Expression::Mul(l, r) => l.evaluate(values) * r.evaluate(values),
             Expression::Div(l, r) => l.evaluate(values) / r.evaluate(values),
-            Expression::Neg(expression) => -expression.evaluate(values),
-            Expression::Abs(arg) => arg.evaluate(values).abs(),
-            Expression::Pow(base, exponent) => base.evaluate(values).pow(exponent.evaluate(values)),
-            Expression::Exp(arg) => arg.evaluate(values).exp(),
-            Expression::Log(base, antilogarithm) => {
-                base.evaluate(values).log(antilogarithm.evaluate(values))
-            }
-            Expression::Ln(arg) => arg.evaluate(values).ln(),
-            Expression::Sin(arg) => arg.evaluate(values).sin(),
-            Expression::Cos(arg) => arg.evaluate(values).cos(),
-            Expression::Tan(arg) => arg.evaluate(values).tan(),
+            Expression::Neg(v) => -v.evaluate(values),
+            Expression::Pow(base, exponent) => base.evaluate(values).pow(*exponent),
+            Expression::Transcendental(v) => v.evaluate(values),
             Expression::MatrixScalar(v) => v.evaluate(values).as_scalar(),
         }
     }

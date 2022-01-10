@@ -30,24 +30,10 @@ impl Expression {
                 .into_iter()
                 .chain(r.symbols().into_iter())
                 .collect(),
-            Expression::Neg(expression) => expression.symbols(),
-            Expression::Abs(arg) => arg.symbols(),
-            Expression::Pow(base, exponential) => base
-                .symbols()
-                .into_iter()
-                .chain(exponential.symbols().into_iter())
-                .collect(),
-            Expression::Exp(arg) => arg.symbols(),
-            Expression::Log(l, antilogarithm) => l
-                .symbols()
-                .into_iter()
-                .chain(antilogarithm.symbols().into_iter())
-                .collect(),
-            Expression::Ln(arg) => arg.symbols(),
-            Expression::Sin(arg) => arg.symbols(),
-            Expression::Cos(arg) => arg.symbols(),
-            Expression::Tan(arg) => arg.symbols(),
-            Expression::MatrixScalar(arg) => arg.symbols(),
+            Expression::Neg(v) => v.symbols(),
+            Expression::Pow(base, _) => base.symbols(),
+            Expression::Transcendental(v) => v.symbols(),
+            Expression::MatrixScalar(v) => v.symbols(),
         }
     }
 
