@@ -2,12 +2,14 @@ use crate::Expression;
 use opensrdk_linear_algebra::Matrix;
 
 pub mod as_scalar;
+pub mod differential;
 pub mod evaluate;
 pub mod operations;
 pub mod operators;
 pub mod symbol;
 
 pub use as_scalar::*;
+pub use differential::*;
 pub use evaluate::*;
 pub use symbol::*;
 
