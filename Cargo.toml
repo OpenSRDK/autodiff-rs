@@ -1,10 +1,10 @@
 [package]
-name = "opensrdk-autodiff"
+name = "opensrdk-symbolic-computation"
 version = "0.1.0"
 authors = ["Kimura Yu <33382781+KimuraYu45z@users.noreply.github.com>"]
 edition = "2018"
 description = "Standard automatic differential library for OpenSRDK toolchain."
-repository = "https://github.com/OpenSRDK/autodiff-rs"
+repository = "https://github.com/OpenSRDK/symbolic-computation-rs"
 license = "Apache-2.0"
 keywords = ["automatic-differential"]
 categories = ["mathematics", "science"]
