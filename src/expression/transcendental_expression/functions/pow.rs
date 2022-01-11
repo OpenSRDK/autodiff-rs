@@ -1,7 +1,7 @@
 use crate::{Expression, TranscendentalExpression};
 
 impl Expression {
-    pub fn pow_transcendental(self, exponent: Expression) -> Self {
+    pub fn pow(self, exponent: Expression) -> Self {
         if let Expression::Constant(exponent) = exponent {
             if exponent == 0.0 {
                 return Expression::Constant(1.0);

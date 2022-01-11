@@ -4,7 +4,7 @@ use num_traits::ToPrimitive;
 use crate::Expression;
 
 impl Expression {
-    pub fn pow(self, exponent: Ratio<u32>) -> Self {
+    pub fn powr(self, exponent: Ratio<u32>) -> Self {
         let exponent_float = exponent.to_f64().unwrap_or_default();
         if let Expression::Constant(base) = self {
             return Expression::Constant(base.powf(exponent_float));

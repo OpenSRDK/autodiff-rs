@@ -25,7 +25,7 @@ impl Expression {
                 .zip(r.differential(symbols).into_iter())
                 .map(|(li, ri)| {
                     (li * r.as_ref().clone() - l.as_ref().clone() * ri)
-                        / r.as_ref().clone().pow(2.into())
+                        / r.as_ref().clone().powr(2.into())
                 })
                 .collect(),
             Expression::Neg(v) => v.differential(symbols).into_iter().map(|e| -e).collect(),
@@ -34,7 +34,7 @@ impl Expression {
                 .into_iter()
                 .map(|b| {
                     Expression::Constant(exponent.to_f64().unwrap_or_default())
-                        * base.as_ref().clone().pow(exponent - 1)
+                        * base.as_ref().clone().powr(exponent - 1)
                         * b
                 })
                 .collect(),
@@ -53,7 +53,7 @@ mod tests {
     fn it_works() {
         let x = Expression::new_symbol("x".to_string());
 
-        let expression = x.clone().pow(2.into());
+        let expression = x.clone().powr(2.into());
         let diff = expression.differential(&["x"])[0].clone();
 
         println!("{:#?}", diff);
@@ -83,7 +83,7 @@ mod tests {
     fn it_works4() {
         let x = Expression::new_symbol("x".to_string());
 
-        let expression = x.clone().pow(2.into());
+        let expression = x.clone().powr(2.into());
         let diff = expression.differential(&["x"])[0].clone();
 
         println!(

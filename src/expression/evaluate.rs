@@ -18,7 +18,7 @@ impl Expression {
             Expression::Mul(l, r) => l.evaluate(values) * r.evaluate(values),
             Expression::Div(l, r) => l.evaluate(values) / r.evaluate(values),
             Expression::Neg(v) => -v.evaluate(values),
-            Expression::Pow(base, exponent) => base.evaluate(values).pow(*exponent),
+            Expression::Pow(base, exponent) => base.evaluate(values).powr(*exponent),
             Expression::Transcendental(v) => v.evaluate(values),
             Expression::MatrixScalar(v) => v.evaluate(values).as_scalar(),
         }
