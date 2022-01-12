@@ -13,6 +13,8 @@ impl MatrixExpression {
                 }
             }
             MatrixExpression::Constant(v) => MatrixExpression::Constant(v.clone()),
+            MatrixExpression::Zero => todo!(),
+            MatrixExpression::Unit => todo!(),
             MatrixExpression::Add(l, r) => l.evaluate(values) + r.evaluate(values),
             MatrixExpression::Sub(l, r) => l.evaluate(values) - r.evaluate(values),
             MatrixExpression::Mul(l, r) => l.evaluate(values) * r.evaluate(values),

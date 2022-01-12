@@ -1,7 +1,6 @@
-use num_rational::Ratio;
-use num_traits::ToPrimitive;
-
 use crate::Expression;
+use num_rational::Ratio;
+use num_traits::cast::ToPrimitive;
 
 impl Expression {
     pub fn powr(self, exponent: Ratio<u32>) -> Self {
@@ -18,5 +17,22 @@ impl Expression {
         }
 
         Expression::Pow(self.into(), exponent)
+    }
+}
+
+impl Expression {
+    pub(crate) fn diff_powr(
+        symbols: &[&str],
+        base: &Box<Expression>,
+        exponent: &Ratio<u32>,
+    ) -> Vec<Expression> {
+        base.differential(symbols)
+            .into_iter()
+            .map(|b| {
+                Expression::Constant(exponent.to_f64().unwrap_or_default())
+                    * base.as_ref().clone().powr(exponent - 1)
+                    * b
+            })
+            .collect()
     }
 }

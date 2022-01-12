@@ -14,3 +14,17 @@ impl Sub<MatrixExpression> for MatrixExpression {
         Self::Sub(self.into(), rhs.into())
     }
 }
+
+impl MatrixExpression {
+    pub(crate) fn diff_sub(
+        symbols: &[&str],
+        l: &Box<MatrixExpression>,
+        r: &Box<MatrixExpression>,
+    ) -> Vec<MatrixExpression> {
+        l.differential(symbols)
+            .into_iter()
+            .zip(r.differential(symbols).into_iter())
+            .map(|(li, ri)| li - ri)
+            .collect()
+    }
+}

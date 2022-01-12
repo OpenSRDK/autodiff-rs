@@ -15,3 +15,9 @@ impl Neg for MatrixExpression {
         MatrixExpression::Neg(self.into())
     }
 }
+
+impl MatrixExpression {
+    pub(crate) fn diff_neg(symbols: &[&str], v: &Box<MatrixExpression>) -> Vec<MatrixExpression> {
+        v.differential(symbols).into_iter().map(|e| -e).collect()
+    }
+}

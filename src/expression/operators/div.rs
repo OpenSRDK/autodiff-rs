@@ -33,3 +33,20 @@ impl Div<Expression> for f64 {
         Expression::Constant(self) / rhs
     }
 }
+
+impl Expression {
+    pub(crate) fn diff_div(
+        symbols: &[&str],
+        l: &Box<Expression>,
+        r: &Box<Expression>,
+    ) -> Vec<Expression> {
+        l.differential(symbols)
+            .into_iter()
+            .zip(r.differential(symbols).into_iter())
+            .map(|(li, ri)| {
+                (li * r.as_ref().clone() - l.as_ref().clone() * ri)
+                    / r.as_ref().clone().powr(2.into())
+            })
+            .collect()
+    }
+}

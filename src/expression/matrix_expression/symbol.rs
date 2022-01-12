@@ -10,6 +10,8 @@ impl MatrixExpression {
         match self {
             MatrixExpression::Symbol(symbol) => once(symbol.clone()).collect::<HashSet<String>>(),
             MatrixExpression::Constant(_) => HashSet::new(),
+            MatrixExpression::Zero => todo!(),
+            MatrixExpression::Unit => todo!(),
             MatrixExpression::Add(l, r) => l
                 .symbols()
                 .into_iter()
@@ -36,5 +38,18 @@ impl MatrixExpression {
             MatrixExpression::Det(v) => v.symbols(),
             MatrixExpression::MatrixExp(v) => v.symbols(),
         }
+    }
+
+    pub(crate) fn diff_symbol(symbols: &[&str], symbol: &String) -> Vec<MatrixExpression> {
+        symbols
+            .iter()
+            .map(|s| {
+                if s.eq(symbol) {
+                    MatrixExpression::Unit
+                } else {
+                    MatrixExpression::Zero
+                }
+            })
+            .collect()
     }
 }

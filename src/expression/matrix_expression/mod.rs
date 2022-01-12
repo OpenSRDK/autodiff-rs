@@ -17,6 +17,8 @@ pub use symbol::*;
 pub enum MatrixExpression {
     Symbol(String),
     Constant(Matrix),
+    Zero,
+    Unit,
     Add(Box<MatrixExpression>, Box<MatrixExpression>),
     Sub(Box<MatrixExpression>, Box<MatrixExpression>),
     Mul(Box<MatrixExpression>, Box<MatrixExpression>),

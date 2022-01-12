@@ -1,5 +1,4 @@
 use crate::Expression;
-use num_traits::cast::ToPrimitive;
 
 impl Expression {
     pub fn differential(&self, symbols: &[&str]) -> Vec<Expression> {
@@ -7,37 +6,11 @@ impl Expression {
             Expression::Symbol(symbol) => Expression::diff_symbol(symbols, symbol),
             Expression::Constant(_) => vec![Expression::Constant(0.0); symbols.len()],
             Expression::Add(l, r) => Expression::diff_add(symbols, l, r),
-            Expression::Sub(l, r) => l
-                .differential(symbols)
-                .into_iter()
-                .zip(r.differential(symbols).into_iter())
-                .map(|(li, ri)| li - ri)
-                .collect(),
-            Expression::Mul(l, r) => l
-                .differential(symbols)
-                .into_iter()
-                .zip(r.differential(symbols).into_iter())
-                .map(|(li, ri)| li * r.as_ref().clone() + l.as_ref().clone() * ri)
-                .collect(),
-            Expression::Div(l, r) => l
-                .differential(symbols)
-                .into_iter()
-                .zip(r.differential(symbols).into_iter())
-                .map(|(li, ri)| {
-                    (li * r.as_ref().clone() - l.as_ref().clone() * ri)
-                        / r.as_ref().clone().powr(2.into())
-                })
-                .collect(),
-            Expression::Neg(v) => v.differential(symbols).into_iter().map(|e| -e).collect(),
-            Expression::Pow(base, exponent) => base
-                .differential(symbols)
-                .into_iter()
-                .map(|b| {
-                    Expression::Constant(exponent.to_f64().unwrap_or_default())
-                        * base.as_ref().clone().powr(exponent - 1)
-                        * b
-                })
-                .collect(),
+            Expression::Sub(l, r) => Expression::diff_sub(symbols, l, r),
+            Expression::Mul(l, r) => Expression::diff_mul(symbols, l, r),
+            Expression::Div(l, r) => Expression::diff_div(symbols, l, r),
+            Expression::Neg(v) => Expression::diff_neg(symbols, v),
+            Expression::Pow(base, exponent) => Expression::diff_powr(symbols, base, exponent),
             Expression::Transcendental(v) => v.differential(symbols),
             Expression::MatrixScalar(v) => todo!(),
         }
