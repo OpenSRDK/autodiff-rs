@@ -12,7 +12,7 @@ impl Expression {
             Expression::Neg(v) => Expression::rust_code_neg(v),
             Expression::Pow(base, exponent) => Expression::rust_code_powr(base, exponent),
             Expression::Transcendental(v) => v.rust_code(),
-            Expression::MatrixScalar(v) => todo!(),
+            Expression::MatrixScalar(v) => v.rust_code(),
         }
     }
 }
@@ -20,15 +20,40 @@ impl Expression {
 #[cfg(test)]
 mod tests {
     use crate::*;
-    use std::iter::once;
 
     #[test]
     fn it_works() {
         let x = Expression::new_symbol("x".to_string());
 
         let expression = x.clone().powr(2.into());
-        let diff = expression.differential(&["x"])[0].clone();
 
-        println!("{:#?}", diff);
+        println!("{}", expression.rust_code());
+    }
+
+    #[test]
+    fn it_works2() {
+        let x = Expression::new_symbol("x".to_string());
+
+        let expression = (2.0 * x.clone()).exp();
+
+        println!("{}", expression.rust_code());
+    }
+
+    #[test]
+    fn it_works3() {
+        let x = Expression::new_symbol("x".to_string());
+
+        let expression = x.clone().sin() + x.clone().cos().exp();
+
+        println!("{}", expression.rust_code());
+    }
+
+    #[test]
+    fn it_works4() {
+        let x = Expression::new_symbol("x".to_string());
+
+        let expression = x.clone().powr(2.into());
+
+        println!("{}", expression.rust_code());
     }
 }

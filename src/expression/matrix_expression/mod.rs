@@ -6,11 +6,13 @@ pub mod differential;
 pub mod evaluate;
 pub mod operations;
 pub mod operators;
+pub mod rust_code;
 pub mod symbol;
 
 pub use as_scalar::*;
 pub use differential::*;
 pub use evaluate::*;
+pub use rust_code::*;
 pub use symbol::*;
 
 #[derive(Clone, Debug, PartialEq)]

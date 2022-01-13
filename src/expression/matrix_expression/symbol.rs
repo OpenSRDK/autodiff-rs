@@ -1,5 +1,8 @@
-use crate::MatrixExpression;
-use std::{collections::HashSet, iter::once};
+use crate::{MatrixExpression, Value};
+use std::{
+    collections::{HashMap, HashSet},
+    iter::once,
+};
 
 impl MatrixExpression {
     pub fn new_symbol(name: String) -> Self {
@@ -40,6 +43,18 @@ impl MatrixExpression {
         }
     }
 
+    pub(crate) fn evaluate_symbol(
+        values: &HashMap<&str, Value>,
+        symbol: &String,
+    ) -> MatrixExpression {
+        let v = values.get(symbol.as_str());
+
+        match v {
+            Some(v) => MatrixExpression::Constant(v.as_matrix_ref().clone()),
+            None => MatrixExpression::Symbol(symbol.clone()),
+        }
+    }
+
     pub(crate) fn diff_symbol(symbols: &[&str], symbol: &String) -> Vec<MatrixExpression> {
         symbols
             .iter()
@@ -51,5 +66,9 @@ impl MatrixExpression {
                 }
             })
             .collect()
+    }
+
+    pub(crate) fn rust_code_symbol(symbol: &String) -> String {
+        format!("{}.clone()", symbol)
     }
 }

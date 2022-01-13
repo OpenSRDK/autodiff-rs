@@ -4,14 +4,7 @@ use std::collections::HashMap;
 impl MatrixExpression {
     pub fn evaluate(&self, values: &HashMap<&str, Value>) -> MatrixExpression {
         match self {
-            MatrixExpression::Symbol(symbol) => {
-                let v = values.get(symbol.as_str());
-
-                match v {
-                    Some(v) => MatrixExpression::Constant(v.as_matrix_ref().clone()),
-                    None => MatrixExpression::Symbol(symbol.clone()),
-                }
-            }
+            MatrixExpression::Symbol(symbol) => MatrixExpression::evaluate_symbol(values, symbol),
             MatrixExpression::Constant(v) => MatrixExpression::Constant(v.clone()),
             MatrixExpression::Zero => todo!(),
             MatrixExpression::Unit => todo!(),
