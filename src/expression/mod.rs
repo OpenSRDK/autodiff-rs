@@ -4,12 +4,14 @@ pub mod differential;
 pub mod evaluate;
 pub mod matrix_expression;
 pub mod operators;
+pub mod rust_code;
 pub mod symbol;
 pub mod transcendental_expression;
 
 pub use differential::*;
 pub use evaluate::*;
 pub use matrix_expression::*;
+pub use rust_code::*;
 pub use symbol::*;
 pub use transcendental_expression::*;
 

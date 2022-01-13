@@ -79,4 +79,8 @@ impl Expression {
             .map(|(li, ri)| li * r.as_ref().clone() + l.as_ref().clone() * ri)
             .collect()
     }
+
+    pub(crate) fn rust_code_mul(l: &Box<Expression>, r: &Box<Expression>) -> String {
+        format!("({} * {})", l.rust_code(), r.rust_code())
+    }
 }

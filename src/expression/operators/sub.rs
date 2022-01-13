@@ -50,4 +50,8 @@ impl Expression {
             .map(|(li, ri)| li - ri)
             .collect()
     }
+
+    pub(crate) fn rust_code_sub(l: &Box<Expression>, r: &Box<Expression>) -> String {
+        format!("({} - {})", l.rust_code(), r.rust_code())
+    }
 }

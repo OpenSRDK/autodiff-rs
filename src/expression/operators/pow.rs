@@ -35,4 +35,10 @@ impl Expression {
             })
             .collect()
     }
+
+    pub(crate) fn rust_code_powr(base: &Box<Expression>, exponent: &Ratio<u32>) -> String {
+        let exponent_float = exponent.to_f64().unwrap_or_default();
+
+        format!("{}.powf({})", base.as_ref().rust_code(), exponent_float)
+    }
 }

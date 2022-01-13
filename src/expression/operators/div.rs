@@ -49,4 +49,8 @@ impl Expression {
             })
             .collect()
     }
+
+    pub(crate) fn rust_code_div(l: &Box<Expression>, r: &Box<Expression>) -> String {
+        format!("({} / {})", l.rust_code(), r.rust_code())
+    }
 }
