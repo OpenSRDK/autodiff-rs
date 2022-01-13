@@ -4,10 +4,12 @@ pub mod differential;
 pub mod evaluate;
 pub mod functions;
 pub mod into;
+pub mod rust_code;
 pub mod symbol;
 
 pub use differential::*;
 pub use evaluate::*;
+pub use rust_code::*;
 pub use symbol::*;
 
 #[derive(Clone, Debug, PartialEq)]

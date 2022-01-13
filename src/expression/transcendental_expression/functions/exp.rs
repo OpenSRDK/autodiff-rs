@@ -9,3 +9,9 @@ impl Expression {
         TranscendentalExpression::Exp(self.into()).into()
     }
 }
+
+impl TranscendentalExpression {
+    pub(crate) fn rust_code_exp(arg: &Box<Expression>) -> String {
+        format!("{}.exp()", arg.rust_code())
+    }
+}

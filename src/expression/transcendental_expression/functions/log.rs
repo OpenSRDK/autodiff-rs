@@ -11,3 +11,9 @@ impl Expression {
         TranscendentalExpression::Log(self.into(), antilogarithm.into()).into()
     }
 }
+
+impl TranscendentalExpression {
+    pub(crate) fn rust_code_log(base: &Box<Expression>, antilogarithm: &Box<Expression>) -> String {
+        format!("{}.log({})", antilogarithm.rust_code(), base.rust_code())
+    }
+}

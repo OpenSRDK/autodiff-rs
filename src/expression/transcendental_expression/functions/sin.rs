@@ -9,3 +9,9 @@ impl Expression {
         TranscendentalExpression::Sin(self.into()).into()
     }
 }
+
+impl TranscendentalExpression {
+    pub(crate) fn rust_code_sin(arg: &Box<Expression>) -> String {
+        format!("{}.sin()", arg.rust_code())
+    }
+}

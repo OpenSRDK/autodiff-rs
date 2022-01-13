@@ -9,3 +9,9 @@ impl Expression {
         TranscendentalExpression::Cos(self.into()).into()
     }
 }
+
+impl TranscendentalExpression {
+    pub(crate) fn rust_code_cos(arg: &Box<Expression>) -> String {
+        format!("{}.cos()", arg.rust_code())
+    }
+}

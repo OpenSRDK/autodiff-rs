@@ -9,3 +9,9 @@ impl Expression {
         TranscendentalExpression::Abs(self.into()).into()
     }
 }
+
+impl TranscendentalExpression {
+    pub(crate) fn rust_code_abs(arg: &Box<Expression>) -> String {
+        format!("{}.abs()", arg.rust_code())
+    }
+}
