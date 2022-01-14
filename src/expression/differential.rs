@@ -69,4 +69,18 @@ mod tests {
             diff.evaluate(&once(("x", Value::Scalar(3.0))).collect())
         );
     }
+
+    #[test]
+    fn it_works5() {
+        let x = Expression::new_symbol("x".to_string());
+        let mu = Expression::new_symbol("mu".to_string());
+        let sigma = Expression::new_symbol("sigma".to_string());
+        let expression = -(x - mu).powr(2.into()) / (2.0 * sigma.powr(2.into()));
+        let diff_x = expression.differential(&["x"])[0].clone();
+        let diff_mu = expression.differential(&["mu"])[0].clone();
+        let diff_sigma = expression.differential(&["sigma"])[0].clone();
+        println!("{:#?}", diff_x.rust_code());
+        println!("{:#?}", diff_mu.rust_code());
+        println!("{:#?}", diff_sigma.rust_code());
+    }
 }
