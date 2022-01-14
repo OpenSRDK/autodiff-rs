@@ -21,6 +21,10 @@ impl Expression {
 
 impl TranscendentalExpression {
     pub(crate) fn rust_code_pow(base: &Box<Expression>, exponent: &Box<Expression>) -> String {
-        format!("{}.pow({})", base.rust_code(), exponent.rust_code())
+        format!(
+            "{}.pow({})",
+            base._rust_code(true),
+            exponent._rust_code(false)
+        )
     }
 }

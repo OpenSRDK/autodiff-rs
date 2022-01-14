@@ -50,7 +50,15 @@ impl Expression {
             .collect()
     }
 
-    pub(crate) fn rust_code_div(l: &Box<Expression>, r: &Box<Expression>) -> String {
-        format!("({} / {})", l.rust_code(), r.rust_code())
+    pub(crate) fn rust_code_div(
+        l: &Box<Expression>,
+        r: &Box<Expression>,
+        parentheses: bool,
+    ) -> String {
+        if parentheses {
+            format!("({} / {})", l._rust_code(true), r._rust_code(true))
+        } else {
+            format!("{} / {}", l._rust_code(true), r._rust_code(true))
+        }
     }
 }

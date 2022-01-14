@@ -31,6 +31,10 @@ impl Expression {
 
 impl TranscendentalExpression {
     pub(crate) fn rust_code_log(base: &Box<Expression>, antilogarithm: &Box<Expression>) -> String {
-        format!("{}.log({})", antilogarithm.rust_code(), base.rust_code())
+        format!(
+            "{}.log({})",
+            antilogarithm._rust_code(true),
+            base._rust_code(false)
+        )
     }
 }

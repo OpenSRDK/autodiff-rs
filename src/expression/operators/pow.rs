@@ -39,7 +39,7 @@ impl Expression {
     pub(crate) fn rust_code_powr(base: &Box<Expression>, exponent: &Ratio<u32>) -> String {
         format!(
             "{}.powr(Ratio::<u32>::new({}, {}))",
-            base.as_ref().rust_code(),
+            base.as_ref()._rust_code(true),
             exponent.numer(),
             exponent.denom()
         )

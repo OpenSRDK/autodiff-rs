@@ -12,6 +12,6 @@ impl Expression {
 
 impl TranscendentalExpression {
     pub(crate) fn rust_code_abs(arg: &Box<Expression>) -> String {
-        format!("{}.abs()", arg.rust_code())
+        format!("{}.abs()", arg._rust_code(true))
     }
 }

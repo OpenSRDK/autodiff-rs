@@ -39,7 +39,6 @@ impl MatrixExpression {
             MatrixExpression::Pow(base, _) => base.symbols(),
             MatrixExpression::T(v) => v.symbols(),
             MatrixExpression::Det(v) => v.symbols(),
-            MatrixExpression::MatrixExp(v) => v.symbols(),
         }
     }
 

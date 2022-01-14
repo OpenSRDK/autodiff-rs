@@ -12,6 +12,6 @@ impl Expression {
 
 impl TranscendentalExpression {
     pub(crate) fn rust_code_sin(arg: &Box<Expression>) -> String {
-        format!("{}.sin()", arg.rust_code())
+        format!("{}.sin()", arg._rust_code(true))
     }
 }

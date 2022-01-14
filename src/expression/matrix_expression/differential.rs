@@ -17,7 +17,6 @@ impl MatrixExpression {
             }
             MatrixExpression::T(v) => MatrixExpression::diff_t(symbols, v),
             MatrixExpression::Det(_) => todo!(),
-            MatrixExpression::MatrixExp(_) => todo!(),
         }
     }
 }

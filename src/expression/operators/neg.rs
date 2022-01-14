@@ -22,6 +22,6 @@ impl Expression {
     }
 
     pub(crate) fn rust_code_neg(v: &Box<Expression>) -> String {
-        format!("-{}", v.rust_code())
+        format!("-{}", v._rust_code(true))
     }
 }

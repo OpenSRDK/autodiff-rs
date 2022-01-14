@@ -16,7 +16,6 @@ impl MatrixExpression {
             MatrixExpression::Pow(base, exponent) => base.evaluate(values).pow(*exponent),
             MatrixExpression::T(v) => v.evaluate(values).t(),
             MatrixExpression::Det(v) => v.evaluate(values).det(),
-            MatrixExpression::MatrixExp(v) => todo!(),
         }
     }
 }

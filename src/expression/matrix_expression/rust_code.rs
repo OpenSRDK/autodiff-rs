@@ -1,7 +1,7 @@
 use crate::MatrixExpression;
 
 impl MatrixExpression {
-    pub fn rust_code(&self) -> String {
+    pub(crate) fn _rust_code(&self, parentheses: bool) -> String {
         match self {
             MatrixExpression::Symbol(symbol) => MatrixExpression::rust_code_symbol(symbol),
             MatrixExpression::Constant(v) => todo!(),
@@ -15,7 +15,10 @@ impl MatrixExpression {
             MatrixExpression::Pow(base, exponent) => todo!(),
             MatrixExpression::T(v) => todo!(),
             MatrixExpression::Det(v) => todo!(),
-            MatrixExpression::MatrixExp(v) => todo!(),
         }
+    }
+
+    pub fn rust_code(&self) -> String {
+        Self::_rust_code(&self, false)
     }
 }

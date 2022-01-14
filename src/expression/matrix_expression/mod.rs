@@ -29,5 +29,4 @@ pub enum MatrixExpression {
     Pow(Box<MatrixExpression>, i32),
     T(Box<MatrixExpression>),
     Det(Box<MatrixExpression>),
-    MatrixExp(Box<MatrixExpression>),
 }

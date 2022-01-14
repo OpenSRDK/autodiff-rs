@@ -30,6 +30,6 @@ impl Expression {
 
 impl TranscendentalExpression {
     pub(crate) fn rust_code_ln(arg: &Box<Expression>) -> String {
-        format!("{}.ln()", arg.rust_code())
+        format!("{}.ln()", arg._rust_code(true))
     }
 }
