@@ -4,7 +4,7 @@ impl Expression {
     pub(crate) fn _rust_code(&self, parentheses: bool) -> String {
         match self {
             Expression::Symbol(symbol) => Expression::rust_code_symbol(symbol),
-            Expression::Constant(v) => v.to_string(),
+            Expression::Constant(v) => Self::f64_to_string_with_precision(*v),
             Expression::Add(l, r) => Expression::rust_code_add(l, r, parentheses),
             Expression::Sub(l, r) => Expression::rust_code_sub(l, r, parentheses),
             Expression::Mul(l, r) => Expression::rust_code_mul(l, r, parentheses),
@@ -18,6 +18,15 @@ impl Expression {
 
     pub fn rust_code(&self) -> String {
         Self::_rust_code(&self, false)
+    }
+
+    pub fn f64_to_string_with_precision(v: f64) -> String {
+        let v_str = v.to_string();
+        if v_str.contains('.') {
+            v_str
+        } else {
+            v_str + ".0"
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 use crate::TranscendentalExpression;
+use std::string::ToString;
 
 impl TranscendentalExpression {
     pub fn rust_code(&self) -> String {
