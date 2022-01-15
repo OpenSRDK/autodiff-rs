@@ -37,10 +37,16 @@ impl Expression {
     }
 
     pub(crate) fn rust_code_powr(base: &Box<Expression>, exponent: &Ratio<u32>) -> String {
+        let exponent = exponent.to_f64().unwrap_or_default().to_string();
         format!(
-            "{}.powf({})",
+            "{}.{}({})",
             base.as_ref()._rust_code(true),
-            Expression::f64_to_string_with_precision(exponent.to_f64().unwrap_or_default())
+            if exponent.contains('.') {
+                "powf"
+            } else {
+                "powi"
+            },
+            exponent
         )
     }
 }
