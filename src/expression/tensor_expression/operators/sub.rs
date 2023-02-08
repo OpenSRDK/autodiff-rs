@@ -1,12 +1,12 @@
-use crate::MatrixExpression;
+use crate::TensorExpression;
 use std::ops::Sub;
 
-impl Sub<MatrixExpression> for MatrixExpression {
+impl Sub<TensorExpression> for TensorExpression {
     type Output = Self;
 
-    fn sub(self, rhs: MatrixExpression) -> Self::Output {
-        if let MatrixExpression::Constant(vl) = &self {
-            if let MatrixExpression::Constant(vr) = rhs {
+    fn sub(self, rhs: TensorExpression) -> Self::Output {
+        if let TensorExpression::Constant(vl) = &self {
+            if let TensorExpression::Constant(vr) = rhs {
                 return Self::Constant(vl - vr);
             }
         }
@@ -15,12 +15,12 @@ impl Sub<MatrixExpression> for MatrixExpression {
     }
 }
 
-impl MatrixExpression {
+impl TensorExpression {
     pub(crate) fn diff_sub(
         symbols: &[&str],
-        l: &Box<MatrixExpression>,
-        r: &Box<MatrixExpression>,
-    ) -> Vec<MatrixExpression> {
+        l: &Box<TensorExpression>,
+        r: &Box<TensorExpression>,
+    ) -> Vec<TensorExpression> {
         l.differential(symbols)
             .into_iter()
             .zip(r.differential(symbols).into_iter())

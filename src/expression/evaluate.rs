@@ -1,4 +1,4 @@
-use crate::{Expression, Value};
+use crate::{Expression, TensorExpression, Value};
 use std::collections::HashMap;
 
 impl Expression {
@@ -20,7 +20,10 @@ impl Expression {
             Expression::Neg(v) => -v.evaluate(values),
             Expression::Pow(base, exponent) => base.evaluate(values).powr(*exponent),
             Expression::Transcendental(v) => v.evaluate(values),
-            Expression::MatrixScalar(v) => v.evaluate(values).as_scalar(),
+            Expression::Tensor(v, index) => match v.evaluate(values) {
+                TensorExpression::Constant(v) => Expression::Constant(v[&[0, 0]]),
+                _ => Expression::Tensor(v.clone(), index.clone()),
+            },
         }
     }
 }

@@ -12,7 +12,7 @@ impl Expression {
             Expression::Neg(v) => Expression::diff_neg(symbols, v),
             Expression::Pow(base, exponent) => Expression::diff_powr(symbols, base, exponent),
             Expression::Transcendental(v) => v.differential(symbols),
-            Expression::MatrixScalar(v) => todo!(),
+            Expression::Tensor(v, index) => todo!(),
         }
     }
 }

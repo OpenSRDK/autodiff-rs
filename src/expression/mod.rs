@@ -1,18 +1,20 @@
+use std::collections::HashMap;
+
 use num_rational::*;
 
 pub mod differential;
 pub mod evaluate;
-pub mod matrix_expression;
 pub mod operators;
 pub mod rust_code;
 pub mod symbol;
+pub mod tensor_expression;
 pub mod transcendental_expression;
 
 pub use differential::*;
 pub use evaluate::*;
-pub use matrix_expression::*;
 pub use rust_code::*;
 pub use symbol::*;
+pub use tensor_expression::*;
 pub use transcendental_expression::*;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -26,7 +28,7 @@ pub enum Expression {
     Neg(Box<Expression>),
     Pow(Box<Expression>, Ratio<u32>),
     Transcendental(Box<TranscendentalExpression>),
-    MatrixScalar(Box<MatrixExpression>),
+    Tensor(Box<TensorExpression>, Vec<usize>),
 }
 
 impl From<f64> for Expression {
