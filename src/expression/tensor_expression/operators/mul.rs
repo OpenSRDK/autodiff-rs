@@ -1,20 +1,33 @@
 use crate::{Expression, TensorExpression};
 use std::ops::Mul;
 
+fn mul_scalar(lhs: Expression, rhs: TensorExpression, swap: bool) -> TensorExpression {
+    if let Expression::Constant(vl) = lhs {
+        if let TensorExpression::Constant(vr) = rhs {
+            return TensorExpression::Constant(vl * vr);
+        }
+        if vl == 0.0 {
+            return TensorExpression::Zero;
+        }
+        if vl == 1.0 {
+            return rhs;
+        }
+    }
+    if let TensorExpression::Zero = rhs {
+        return TensorExpression::Zero;
+    }
+
+    if swap {
+        return TensorExpression::MulScalarRhs(rhs.into(), lhs.into());
+    }
+    TensorExpression::MulScalarLhs(lhs.into(), rhs.into())
+}
+
 impl Mul<TensorExpression> for Expression {
     type Output = TensorExpression;
 
     fn mul(self, rhs: TensorExpression) -> Self::Output {
-        if let Expression::Constant(vl) = self {
-            if let TensorExpression::Constant(vr) = rhs {
-                return TensorExpression::Constant(vl * vr);
-            }
-            if vl == 1.0 {
-                return rhs;
-            }
-        }
-
-        TensorExpression::MulScalarLhs(self.into(), rhs.into())
+        mul_scalar(self, rhs, false)
     }
 }
 
@@ -22,14 +35,7 @@ impl Mul<Expression> for TensorExpression {
     type Output = Self;
 
     fn mul(self, rhs: Expression) -> Self::Output {
-        if let TensorExpression::Constant(vl) = &self {
-            if let Expression::Constant(vr) = rhs {
-                return TensorExpression::Constant(vl.clone() * vr);
-            }
-            // TODO
-        }
-
-        TensorExpression::MulScalarRhs(self.into(), rhs.into())
+        mul_scalar(rhs, self, true)
     }
 }
 

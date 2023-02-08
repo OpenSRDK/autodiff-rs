@@ -15,10 +15,13 @@ use crate::Expression;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum TensorExpression {
-    Symbol(String),
+    Symbol(String, usize),
     Constant(SparseTensor<f64>),
     Zero,
-    Unit,
+    KroneckerDeltas {
+        levels: usize,
+        level_pairs: Vec<(usize, usize)>,
+    },
     Add(Box<TensorExpression>, Box<TensorExpression>),
     Sub(Box<TensorExpression>, Box<TensorExpression>),
     MulScalarLhs(Box<Expression>, Box<TensorExpression>),
