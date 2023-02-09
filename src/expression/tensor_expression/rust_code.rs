@@ -6,15 +6,12 @@ impl TensorExpression {
             TensorExpression::Symbol(symbol, _) => TensorExpression::rust_code_symbol(symbol),
             TensorExpression::Constant(v) => todo!(),
             TensorExpression::Zero => todo!(),
-            TensorExpression::KroneckerDeltas {
-                levels,
-                level_pairs,
-            } => todo!(),
             TensorExpression::Add(l, r) => todo!(),
             TensorExpression::Sub(l, r) => todo!(),
             TensorExpression::MulScalarLhs(l, r) => todo!(),
             TensorExpression::MulScalarRhs(l, r) => todo!(),
             TensorExpression::Neg(v) => todo!(),
+            TensorExpression::KroneckerDeltas(level_pairs) => todo!(),
             TensorExpression::InnerProd {
                 lhs,
                 rhs,

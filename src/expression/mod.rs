@@ -1,7 +1,3 @@
-use std::collections::HashMap;
-
-use num_rational::*;
-
 pub mod differential;
 pub mod evaluate;
 pub mod operators;
@@ -16,6 +12,8 @@ pub use rust_code::*;
 pub use symbol::*;
 pub use tensor_expression::*;
 pub use transcendental_expression::*;
+
+use num_rational::*;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Expression {

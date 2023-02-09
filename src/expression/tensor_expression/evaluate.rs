@@ -8,16 +8,15 @@ impl TensorExpression {
                 TensorExpression::evaluate_symbol(values, symbol, *levels)
             }
             TensorExpression::Constant(v) => TensorExpression::Constant(v.clone()),
-            TensorExpression::Zero => todo!(),
-            TensorExpression::KroneckerDeltas {
-                levels,
-                level_pairs,
-            } => todo!(),
+            TensorExpression::Zero => TensorExpression::Zero,
             TensorExpression::Add(l, r) => l.evaluate(values) + r.evaluate(values),
             TensorExpression::Sub(l, r) => l.evaluate(values) - r.evaluate(values),
             TensorExpression::MulScalarLhs(l, r) => l.evaluate(values) * r.evaluate(values),
             TensorExpression::MulScalarRhs(l, r) => l.evaluate(values) * r.evaluate(values),
             TensorExpression::Neg(v) => -v.evaluate(values),
+            TensorExpression::KroneckerDeltas(level_pairs) => {
+                TensorExpression::KroneckerDeltas(level_pairs.clone())
+            }
             TensorExpression::InnerProd {
                 lhs,
                 rhs,

@@ -9,12 +9,7 @@ impl TensorExpression {
             TensorExpression::Constant(_) | TensorExpression::Zero => {
                 vec![TensorExpression::Zero; symbols.len()]
             }
-            TensorExpression::KroneckerDeltas {
-                levels,
-                level_pairs,
-            } => {
-                vec![TensorExpression::Zero; symbols.len()]
-            }
+
             TensorExpression::Add(l, r) => TensorExpression::diff_add(symbols, l, r),
             TensorExpression::Sub(l, r) => TensorExpression::diff_sub(symbols, l, r),
             TensorExpression::MulScalarLhs(l, r) => {
@@ -24,6 +19,9 @@ impl TensorExpression {
                 TensorExpression::diff_mul_scalar_rhs(symbols, l, r)
             }
             TensorExpression::Neg(v) => TensorExpression::diff_neg(symbols, v),
+            TensorExpression::KroneckerDeltas(_) => {
+                vec![TensorExpression::Zero; symbols.len()]
+            }
             TensorExpression::InnerProd {
                 lhs,
                 rhs,

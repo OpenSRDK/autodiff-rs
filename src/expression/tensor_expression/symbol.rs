@@ -15,10 +15,6 @@ impl TensorExpression {
                 once(symbol.clone()).collect::<HashSet<String>>()
             }
             TensorExpression::Constant(_) | TensorExpression::Zero => HashSet::new(),
-            TensorExpression::KroneckerDeltas {
-                levels,
-                level_pairs,
-            } => HashSet::new(),
             TensorExpression::Add(l, r) => l
                 .symbols()
                 .into_iter()
@@ -40,6 +36,7 @@ impl TensorExpression {
                 .chain(r.symbols().into_iter())
                 .collect(),
             TensorExpression::Neg(v) => v.symbols(),
+            TensorExpression::KroneckerDeltas(level_pairs) => HashSet::new(),
             TensorExpression::InnerProd {
                 lhs,
                 rhs,
@@ -75,10 +72,9 @@ impl TensorExpression {
             .iter()
             .map(|s| {
                 if s.eq(symbol) {
-                    TensorExpression::KroneckerDeltas {
-                        levels: levels * 2,
-                        level_pairs: (0..levels).map(|level| (level, level + levels)).collect(),
-                    }
+                    TensorExpression::KroneckerDeltas(
+                        (0..levels).map(|level| (level, level + levels)).collect(),
+                    )
                 } else {
                     TensorExpression::Zero
                 }

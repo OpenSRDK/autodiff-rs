@@ -9,33 +9,25 @@ impl TensorExpression {
             if let TensorExpression::Constant(vr) = &rhs {
                 return TensorExpression::Constant(vl.inner_prod(vr, level_pairs));
             }
+            if let TensorExpression::KroneckerDeltas(level_pairs_r) = &rhs {
+                return TensorExpression::Constant(vl.mul_kronecker_deltas(level_pairs_r));
+            }
             if vl.total_size() == 1 {
                 return TensorExpression::MulScalarLhs(
                     Expression::Constant(vl[&vec![0; vl.levels()]]).into(),
                     rhs.into(),
                 );
             }
-            if let TensorExpression::KroneckerDeltas {
-                levels: r_levels,
-                level_pairs: r_level_pairs,
-            } = &rhs
-            {
-                todo!()
-            }
         }
         if let TensorExpression::Constant(vr) = &rhs {
-            if vr.total_size() == 0 {
+            if let TensorExpression::KroneckerDeltas(level_pairs_l) = &self {
+                return TensorExpression::Constant(vr.mul_kronecker_deltas(level_pairs_l));
+            }
+            if vr.total_size() == 1 {
                 return TensorExpression::MulScalarRhs(
                     self.into(),
                     Expression::Constant(vr[&vec![0; vr.levels()]]).into(),
                 );
-            }
-            if let TensorExpression::KroneckerDeltas {
-                levels: l_levels,
-                level_pairs: l_level_pairs,
-            } = &self
-            {
-                todo!()
             }
         }
         // Merge Zero
@@ -46,20 +38,15 @@ impl TensorExpression {
             return TensorExpression::Zero;
         }
         // Merge KroneckerDeltas
-        if let TensorExpression::KroneckerDeltas {
-            levels: l_levels,
-            level_pairs: l_level_pairs,
-        } = &self
-        {
-            if let TensorExpression::KroneckerDeltas {
-                levels: r_levels,
-                level_pairs: r_level_pairs,
-            } = &rhs
-            {
-                return TensorExpression::KroneckerDeltas {
-                    levels: l_levels + r_levels,
-                    level_pairs: [l_level_pairs.to_owned(), r_level_pairs.to_owned()].concat(),
-                };
+        if let TensorExpression::KroneckerDeltas(level_pairs_l) = &self {
+            if let TensorExpression::KroneckerDeltas(level_pairs_r) = &rhs {
+                return TensorExpression::KroneckerDeltas(
+                    level_pairs_l
+                        .iter()
+                        .chain(level_pairs_r.iter())
+                        .cloned()
+                        .collect(),
+                );
             }
         }
 
@@ -82,7 +69,8 @@ impl TensorExpression {
             .iter()
             .zip(r.differential(symbols).iter())
             .map(|(dl, dr)| {
-                dl.inner_prod(r.clone(), level_pairs) + l.clone().inner_prod(dr, level_pairs)
+                dl.clone().inner_prod(*r.clone(), level_pairs)
+                    + l.clone().inner_prod(dr.clone(), level_pairs)
             })
             .collect()
     }
