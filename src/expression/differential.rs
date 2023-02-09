@@ -12,7 +12,12 @@ impl Expression {
             Expression::Neg(v) => Expression::diff_neg(symbols, v),
             Expression::Pow(base, exponent) => Expression::diff_powr(symbols, base, exponent),
             Expression::Transcendental(v) => v.differential(symbols),
-            Expression::Tensor(v, index) => todo!(),
+            Expression::TensorElement(v, index) => v
+                .differential(symbols)
+                .into_iter()
+                .map(|expression| Expression::_DiffResultTensor(expression.into()))
+                .collect(),
+            Expression::_DiffResultTensor(_) => unreachable!(),
         }
     }
 }

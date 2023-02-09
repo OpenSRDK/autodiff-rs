@@ -26,7 +26,8 @@ pub enum Expression {
     Neg(Box<Expression>),
     Pow(Box<Expression>, Ratio<u32>),
     Transcendental(Box<TranscendentalExpression>),
-    Tensor(Box<TensorExpression>, Vec<usize>),
+    TensorElement(Box<TensorExpression>, Vec<usize>),
+    _DiffResultTensor(Box<TensorExpression>),
 }
 
 impl From<f64> for Expression {

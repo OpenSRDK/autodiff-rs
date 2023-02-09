@@ -79,4 +79,28 @@ impl TensorExpression {
             .map(|(li, ri)| li * r.as_ref().clone() + l.as_ref().clone() * ri)
             .collect()
     }
+
+    pub(crate) fn rust_code_mul_scalar_lhs(
+        l: &Box<Expression>,
+        r: &Box<TensorExpression>,
+        parentheses: bool,
+    ) -> String {
+        if parentheses {
+            format!("({} * {})", l._rust_code(true), r._rust_code(true))
+        } else {
+            format!("{} * {}", l._rust_code(true), r._rust_code(true))
+        }
+    }
+
+    pub(crate) fn rust_code_mul_scalar_rhs(
+        l: &Box<TensorExpression>,
+        r: &Box<Expression>,
+        parentheses: bool,
+    ) -> String {
+        if parentheses {
+            format!("({} * {})", l._rust_code(true), r._rust_code(true))
+        } else {
+            format!("{} * {}", l._rust_code(true), r._rust_code(true))
+        }
+    }
 }

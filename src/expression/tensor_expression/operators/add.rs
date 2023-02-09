@@ -10,6 +10,13 @@ impl Add<TensorExpression> for TensorExpression {
                 return Self::Constant(vl + vr);
             }
         }
+        // Merge Zero
+        if let TensorExpression::Zero = &self {
+            return rhs;
+        }
+        if let TensorExpression::Zero = &rhs {
+            return self;
+        }
 
         TensorExpression::Add(self.into(), rhs.into())
     }
@@ -26,5 +33,17 @@ impl TensorExpression {
             .zip(r.differential(symbols).into_iter())
             .map(|(li, ri)| li + ri)
             .collect()
+    }
+
+    pub(crate) fn rust_code_add(
+        l: &Box<TensorExpression>,
+        r: &Box<TensorExpression>,
+        parentheses: bool,
+    ) -> String {
+        if parentheses {
+            format!("({} + {})", l._rust_code(true), r._rust_code(true))
+        } else {
+            format!("{} + {}", l._rust_code(true), r._rust_code(true))
+        }
     }
 }

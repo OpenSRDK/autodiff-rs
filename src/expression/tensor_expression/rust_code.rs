@@ -5,13 +5,19 @@ impl TensorExpression {
         match self {
             TensorExpression::Symbol(symbol, _) => TensorExpression::rust_code_symbol(symbol),
             TensorExpression::Constant(v) => todo!(),
-            TensorExpression::Zero => todo!(),
-            TensorExpression::Add(l, r) => todo!(),
-            TensorExpression::Sub(l, r) => todo!(),
-            TensorExpression::MulScalarLhs(l, r) => todo!(),
-            TensorExpression::MulScalarRhs(l, r) => todo!(),
-            TensorExpression::Neg(v) => todo!(),
-            TensorExpression::KroneckerDeltas(level_pairs) => todo!(),
+            TensorExpression::Zero => "0.0".to_owned(),
+            TensorExpression::Add(l, r) => TensorExpression::rust_code_add(l, r, parentheses),
+            TensorExpression::Sub(l, r) => TensorExpression::rust_code_sub(l, r, parentheses),
+            TensorExpression::MulScalarLhs(l, r) => {
+                TensorExpression::rust_code_mul_scalar_lhs(l, r, parentheses)
+            }
+            TensorExpression::MulScalarRhs(l, r) => {
+                TensorExpression::rust_code_mul_scalar_rhs(l, r, parentheses)
+            }
+            TensorExpression::Neg(v) => TensorExpression::rust_code_neg(v),
+            TensorExpression::KroneckerDeltas(level_pairs) => {
+                TensorExpression::rust_code_kronecker_deltas(level_pairs, parentheses)
+            }
             TensorExpression::InnerProd {
                 lhs,
                 rhs,

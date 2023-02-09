@@ -12,7 +12,8 @@ impl Expression {
             Expression::Neg(v) => Expression::rust_code_neg(v),
             Expression::Pow(base, exponent) => Expression::rust_code_powr(base, exponent),
             Expression::Transcendental(v) => v.rust_code(),
-            Expression::Tensor(v, _) => v._rust_code(parentheses),
+            Expression::TensorElement(v, _) => v._rust_code(parentheses),
+            Expression::_DiffResultTensor(v) => v._rust_code(parentheses),
         }
     }
 

@@ -20,10 +20,13 @@ impl Expression {
             Expression::Neg(v) => -v.evaluate(values),
             Expression::Pow(base, exponent) => base.evaluate(values).powr(*exponent),
             Expression::Transcendental(v) => v.evaluate(values),
-            Expression::Tensor(v, index) => match v.evaluate(values) {
-                TensorExpression::Constant(v) => Expression::Constant(v[&[0, 0]]),
-                _ => Expression::Tensor(v.clone(), index.clone()),
+            Expression::TensorElement(v, index) => match v.evaluate(values) {
+                TensorExpression::Constant(v) => Expression::Constant(v[&index]),
+                _ => Expression::TensorElement(v.clone(), index.clone()),
             },
+            Expression::_DiffResultTensor(v) => {
+                Expression::_DiffResultTensor(v.evaluate(values).into())
+            }
         }
     }
 }

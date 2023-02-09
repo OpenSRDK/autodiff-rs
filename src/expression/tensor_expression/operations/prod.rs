@@ -81,20 +81,20 @@ impl TensorExpression {
         level_pairs: &[(usize, usize)],
         parentheses: bool,
     ) -> String {
+        let inner = format!(
+            "{}.inner_prod({}, &[{}])",
+            lhs._rust_code(true),
+            rhs._rust_code(true),
+            level_pairs
+                .iter()
+                .map(|level_pair| format!("({}, {})", level_pair.0, level_pair.1))
+                .collect::<Vec<_>>()
+                .join(", ")
+        );
         if parentheses {
-            format!(
-                "({}.inner_prod({}, &{:#?}))",
-                lhs._rust_code(true),
-                rhs._rust_code(true),
-                level_pairs
-            )
+            format!("({} )", inner)
         } else {
-            format!(
-                "{}.inner_prod({}, &{:#?})",
-                lhs._rust_code(true),
-                rhs._rust_code(true),
-                level_pairs
-            )
+            inner
         }
     }
 }

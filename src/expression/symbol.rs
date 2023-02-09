@@ -33,7 +33,8 @@ impl Expression {
             Expression::Neg(v) => v.symbols(),
             Expression::Pow(base, _) => base.symbols(),
             Expression::Transcendental(v) => v.symbols(),
-            Expression::Tensor(v, _) => v.symbols(),
+            Expression::TensorElement(v, _) => v.symbols(),
+            Expression::_DiffResultTensor(v) => v.symbols(),
         }
     }
 
