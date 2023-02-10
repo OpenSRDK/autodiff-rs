@@ -4,12 +4,16 @@ pub mod operations;
 pub mod operators;
 pub mod rust_code;
 pub mod symbol;
+pub mod tex_code;
+
+use std::collections::HashMap;
 
 pub use differential::*;
 pub use evaluate::*;
 use opensrdk_linear_algebra::tensor::sparse::SparseTensor;
 pub use rust_code::*;
 pub use symbol::*;
+pub use tex_code::*;
 
 use crate::Expression;
 
@@ -23,11 +27,15 @@ pub enum TensorExpression {
     MulScalarLhs(Box<Expression>, Box<TensorExpression>),
     MulScalarRhs(Box<TensorExpression>, Box<Expression>),
     Neg(Box<TensorExpression>),
-    KroneckerDeltas(Vec<(usize, usize)>),
+    KroneckerDeltas(Vec<[usize; 2]>),
     InnerProd {
-        lhs: Box<TensorExpression>,
-        rhs: Box<TensorExpression>,
-        level_pairs: Vec<(usize, usize)>,
+        v: Vec<TensorExpression>,
+        rank_combinations: Vec<HashMap<usize, String>>,
     },
-    Det(Box<TensorExpression>),
+}
+
+impl TensorExpression {
+    pub fn elem(self, indices: Vec<usize>) -> Expression {
+        Expression::TensorElement(self.into(), indices)
+    }
 }

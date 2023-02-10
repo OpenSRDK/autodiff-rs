@@ -15,15 +15,13 @@ impl TensorExpression {
                 TensorExpression::rust_code_mul_scalar_rhs(l, r, parentheses)
             }
             TensorExpression::Neg(v) => TensorExpression::rust_code_neg(v),
-            TensorExpression::KroneckerDeltas(level_pairs) => {
-                TensorExpression::rust_code_kronecker_deltas(level_pairs, parentheses)
+            TensorExpression::KroneckerDeltas(rank_pairs) => {
+                TensorExpression::rust_code_kronecker_deltas(rank_pairs, parentheses)
             }
             TensorExpression::InnerProd {
-                lhs,
-                rhs,
-                level_pairs,
-            } => TensorExpression::rust_code_inner_prod(lhs, rhs, level_pairs, parentheses),
-            TensorExpression::Det(v) => todo!(),
+                v,
+                rank_combinations,
+            } => TensorExpression::rust_code_inner_prod(v, rank_combinations, parentheses),
         }
     }
 

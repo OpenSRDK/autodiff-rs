@@ -3,8 +3,8 @@ use crate::TensorExpression;
 impl TensorExpression {
     pub fn differential(&self, symbols: &[&str]) -> Vec<TensorExpression> {
         match self {
-            TensorExpression::Symbol(symbol, levels) => {
-                TensorExpression::diff_symbol(symbols, symbol, *levels)
+            TensorExpression::Symbol(symbol, rank) => {
+                TensorExpression::diff_symbol(symbols, symbol, *rank)
             }
             TensorExpression::Constant(_) | TensorExpression::Zero => {
                 vec![TensorExpression::Zero; symbols.len()]
@@ -23,11 +23,9 @@ impl TensorExpression {
                 vec![TensorExpression::Zero; symbols.len()]
             }
             TensorExpression::InnerProd {
-                lhs,
-                rhs,
-                level_pairs,
-            } => TensorExpression::diff_inner_prod(symbols, lhs, rhs, level_pairs),
-            TensorExpression::Det(_) => todo!(),
+                v,
+                rank_combinations,
+            } => TensorExpression::diff_inner_prod(symbols, v, rank_combinations),
         }
     }
 }

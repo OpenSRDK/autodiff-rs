@@ -4,6 +4,7 @@ pub mod operators;
 pub mod rust_code;
 pub mod symbol;
 pub mod tensor_expression;
+pub mod tex_code;
 pub mod transcendental_expression;
 
 pub use differential::*;
@@ -11,6 +12,7 @@ pub use evaluate::*;
 pub use rust_code::*;
 pub use symbol::*;
 pub use tensor_expression::*;
+pub use tex_code::*;
 pub use transcendental_expression::*;
 
 use num_rational::*;

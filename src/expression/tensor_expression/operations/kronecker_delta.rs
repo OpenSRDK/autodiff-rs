@@ -2,12 +2,12 @@ use crate::TensorExpression;
 
 impl TensorExpression {
     pub(crate) fn rust_code_kronecker_deltas(
-        level_pairs: &[(usize, usize)],
+        rank_pairs: &[[usize; 2]],
         parentheses: bool,
     ) -> String {
-        let inner = level_pairs
+        let inner = rank_pairs
             .iter()
-            .map(|level_pair| format!("KroneckerDelta({}, {})", level_pair.0, level_pair.1))
+            .map(|rank_pair| format!("KroneckerDelta({}, {})", rank_pair[0], rank_pair[1]))
             .collect::<Vec<_>>()
             .join(" * ");
         if parentheses {

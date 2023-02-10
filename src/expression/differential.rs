@@ -17,7 +17,11 @@ impl Expression {
                 .into_iter()
                 .map(|expression| Expression::_DiffResultTensor(expression.into()))
                 .collect(),
-            Expression::_DiffResultTensor(_) => unreachable!(),
+            Expression::_DiffResultTensor(v) => v
+                .differential(symbols)
+                .into_iter()
+                .map(|expression| Expression::_DiffResultTensor(expression.into()))
+                .collect(),
         }
     }
 }
