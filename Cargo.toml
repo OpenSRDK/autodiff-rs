@@ -6,7 +6,7 @@ edition = "2018"
 description = "Standard automatic differential library for OpenSRDK toolchain."
 repository = "https://github.com/OpenSRDK/symbolic-computation-rs"
 license = "Apache-2.0"
-keywords = ["automatic-differential"]
+keywords = ["differential", "tensor"]
 categories = ["mathematics", "science"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
