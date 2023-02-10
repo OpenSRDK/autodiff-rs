@@ -16,7 +16,7 @@ num-rational = "0.4"
 num-traits = "0.2"
 thiserror = "1.0.28"
 rayon = "1.5.1"
-opensrdk-linear-algebra = { git = "https://github.com/OpenSRDK/linear-algebra-rs", branch = "tensor"}
+opensrdk-linear-algebra = "0.8.6"
 
 [dev-dependencies]
 blas-src = { version = "0.8", features = ["intel-mkl"] } 

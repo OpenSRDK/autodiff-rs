@@ -1,14 +1,14 @@
-use crate::{TensorExpression, Value};
+use crate::{Size, TensorExpression, Value};
 use std::{
     collections::{HashMap, HashSet},
     iter::once,
 };
 
-impl TensorExpression {
-    pub fn new_symbol(name: String, rank: usize) -> Self {
-        TensorExpression::Symbol(name, rank)
-    }
+pub fn new_symbol_tensor(name: String, sizes: Vec<Size>) -> TensorExpression {
+    TensorExpression::Symbol(name, sizes)
+}
 
+impl TensorExpression {
     pub fn symbols(&self) -> HashSet<String> {
         match self {
             TensorExpression::Symbol(symbol, _) => {
@@ -38,30 +38,31 @@ impl TensorExpression {
             TensorExpression::Neg(v) => v.symbols(),
             TensorExpression::KroneckerDeltas(rank_pairs) => HashSet::new(),
             TensorExpression::InnerProd {
-                v,
+                terms,
                 rank_combinations,
-            } => v.iter().map(|v| v.symbols()).flatten().collect(),
+            } => terms.iter().map(|v| v.symbols()).flatten().collect(),
         }
     }
 
-    pub(crate) fn evaluate_symbol(
+    pub(crate) fn assign_symbol(
         values: &HashMap<&str, Value>,
         symbol: &String,
-        rank: usize,
+        sizes: &Vec<Size>,
     ) -> TensorExpression {
         let v = values.get(symbol.as_str());
 
         match v {
             Some(v) => TensorExpression::Constant(v.as_tensor_ref().clone()),
-            None => TensorExpression::Symbol(symbol.clone(), rank),
+            None => TensorExpression::Symbol(symbol.clone(), sizes.clone()),
         }
     }
 
     pub(crate) fn diff_symbol(
         symbols: &[&str],
         symbol: &String,
-        rank: usize,
+        sizes: &Vec<Size>,
     ) -> Vec<TensorExpression> {
+        let rank = sizes.len();
         symbols
             .iter()
             .map(|s| {

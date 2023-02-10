@@ -1,6 +1,8 @@
 use std::iter::{empty, once};
 
-use opensrdk_symbolic_computation::{Expression, TensorExpression, TranscendentalExpression};
+use opensrdk_symbolic_computation::{
+    new_symbol_tensor, Expression, Size, TensorExpression, TranscendentalExpression,
+};
 
 extern crate blas_src;
 extern crate lapack_src;
@@ -14,19 +16,16 @@ extern crate thiserror;
 fn test_main() {
     let tex = true;
 
-    let x = TensorExpression::new_symbol("x".to_owned(), 1);
-    let mu = TensorExpression::new_symbol(r"\mu".to_owned(), 1);
-    let lsigma = TensorExpression::new_symbol("lsigma".to_owned(), 2);
-    let precision = TensorExpression::new_symbol(r"\Lambda".to_owned(), 2);
+    let x = new_symbol_tensor("x".to_owned(), vec![Size::Many]);
+    let mu = new_symbol_tensor(r"\mu".to_owned(), vec![Size::Many]);
+    let lsigma = new_symbol_tensor("lsigma".to_owned(), vec![Size::Many; 2]);
+    let precision = new_symbol_tensor(r"\Lambda".to_owned(), vec![Size::Many; 2]);
 
     let pdf_expression = (-0.5
-        * Expression::TensorElement(
-            (x.clone() - mu.clone())
-                .inner_prod(precision, &[[0, 0]], once((0, 0)).collect())
-                .inner_prod((x.clone() - mu.clone()), &[[1, 0]], once((1, 1)).collect())
-                .into(),
-            vec![0, 0],
-        ))
+        * ((x.clone() - mu.clone())
+            .inner_prod(precision, &[[0, 0]])
+            .inner_prod((x.clone() - mu.clone()), &[[1, 0]]))
+        .as_scalar())
     .exp();
 
     let diff = pdf_expression.differential(&["x", r"\mu", r"\Lambda"]);

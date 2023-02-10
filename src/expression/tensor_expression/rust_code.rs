@@ -19,9 +19,9 @@ impl TensorExpression {
                 TensorExpression::rust_code_kronecker_deltas(rank_pairs, parentheses)
             }
             TensorExpression::InnerProd {
-                v,
+                terms,
                 rank_combinations,
-            } => TensorExpression::rust_code_inner_prod(v, rank_combinations, parentheses),
+            } => TensorExpression::rust_code_inner_prod(terms, rank_combinations, parentheses),
         }
     }
 

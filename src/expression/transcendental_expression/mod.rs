@@ -1,15 +1,15 @@
 use crate::Expression;
 
+pub mod assign;
 pub mod differential;
-pub mod evaluate;
 pub mod functions;
 pub mod into;
 pub mod rust_code;
 pub mod symbol;
 pub mod tex_code;
 
+pub use assign::*;
 pub use differential::*;
-pub use evaluate::*;
 pub use rust_code::*;
 pub use symbol::*;
 pub use tex_code::*;

@@ -16,16 +16,8 @@ impl Expression {
             Expression::Transcendental(v) => {
                 format!("{}", v.tex_code())
             }
-            Expression::TensorElement(v, indices) => format!(
-                "{}_{{{}}}",
-                v.tex_code(),
-                indices
-                    .iter()
-                    .map(|i| (i + 1).to_string())
-                    .collect::<Vec<_>>()
-                    .join(", ")
-            ),
-            Expression::_DiffResultTensor(v) => format!("{}", v.tex_code()),
+            Expression::DegeneratedTensor(v) => v.tex_code(),
+            Expression::DiffResultTensor(v) => format!("{}", v.tex_code()),
         }
     }
 }
