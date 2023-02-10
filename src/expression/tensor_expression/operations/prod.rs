@@ -2,7 +2,7 @@ use crate::{Expression, Size, TensorExpression};
 use opensrdk_linear_algebra::{
     generate_rank_combinations, sparse::operations::kronecker_delta::KroneckerDelta, Tensor,
 };
-use std::{collections::HashMap, hash::Hash, iter::once};
+use std::{collections::HashMap, iter::once};
 
 type TermIndex = usize;
 type RankIndex = usize; // TODO
@@ -205,12 +205,14 @@ impl TensorExpression {
         terms: &Vec<TensorExpression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
     ) -> String {
-        let mut identifier = HashMap::<String, usize>::new();
+        let mut ids = Vec::<String>::new();
+        let mut id_index = HashMap::<String, usize>::new();
 
         for i in 0..terms.len() {
             for (_, id) in rank_combinations[i].iter() {
-                if !identifier.contains_key(id) {
-                    identifier.insert(id.clone(), identifier.len());
+                if !id_index.contains_key(id) {
+                    ids.push(id.clone());
+                    id_index.insert(id.clone(), ids.len() - 1);
                 }
             }
         }
@@ -218,20 +220,22 @@ impl TensorExpression {
         let mut result = String::new();
         result.push_str(&format!(
             r"\sum_{{{}}}",
-            identifier
-                .iter()
-                .map(|(_, l)| format!("{}", next_char('i', *l)))
+            ids.iter()
+                .enumerate()
+                .map(|(k, _)| format!("{}", next_char('i', k)))
                 .collect::<Vec<_>>()
                 .join(", ")
         ));
 
         for i in 0..terms.len() {
+            let mut sorted = rank_combinations[i].iter().collect::<Vec<_>>();
+            sorted.sort_by(|a, b| a.0.cmp(b.0));
             result.push_str(&format!(
                 "{}_{{{}}}",
                 terms[i].tex_code(),
-                rank_combinations[i]
-                    .iter()
-                    .map(|(j, id)| format!("[{}] = {}", j, next_char('i', identifier[id])))
+                sorted
+                    .into_iter()
+                    .map(|(j, id)| format!("[{}] = {}", j, next_char('i', id_index[id])))
                     .collect::<Vec<_>>()
                     .join(", ")
             ));
