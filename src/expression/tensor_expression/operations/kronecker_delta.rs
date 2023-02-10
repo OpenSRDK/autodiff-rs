@@ -22,7 +22,7 @@ impl TensorExpression {
     pub(crate) fn tex_code_kronecker_deltas(rank_pairs: &[[RankIndex; 2]]) -> String {
         let inner = rank_pairs
             .iter()
-            .map(|rank_pair| format!(r"\delta_{{[{}], [{}]}}", rank_pair[0], rank_pair[1]))
+            .map(|rank_pair| format!(r"{{\delta_{{[{}], [{}]}}}}", rank_pair[0], rank_pair[1]))
             .collect::<Vec<_>>()
             .join(" ");
         inner

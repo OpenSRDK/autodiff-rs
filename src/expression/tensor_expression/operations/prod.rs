@@ -61,9 +61,9 @@ where
         // Merge KroneckerDeltas
         let deltas = terms
             .iter()
-            .filter_map(|(t, _)| {
+            .filter_map(|(t, r)| {
                 if let TensorExpression::KroneckerDeltas(rank_pairs) = t {
-                    Some(rank_pairs)
+                    Some((rank_pairs, r))
                 } else {
                     None
                 }
@@ -74,15 +74,33 @@ where
             .filter(|(t, _)| !matches!(t, TensorExpression::KroneckerDeltas(_)))
             .collect::<Vec<_>>();
 
-        let flatten_deltas = deltas.into_iter().flatten().cloned().collect::<Vec<_>>();
-        let merged_deltas = TensorExpression::KroneckerDeltas(flatten_deltas);
+        let flatten_deltas = deltas
+            .iter()
+            .map(|&(t, _)| t)
+            .flatten()
+            .cloned()
+            .collect::<Vec<_>>();
+        let flatten_deltas_combination = deltas
+            .iter()
+            .flat_map(|(_, r)| r.iter())
+            .map(|(&rank, id)| (rank, id.to_owned()))
+            .collect::<HashMap<_, _>>();
 
-        let new_rank_combinations = once(HashMap::new())
-            .chain(not_deltas.iter().map(|&(_, r)| r.clone()))
+        let mut new_terms = not_deltas
+            .iter()
+            .map(|(t, _)| t.clone())
             .collect::<Vec<_>>();
-        let new_terms = once(merged_deltas)
-            .chain(not_deltas.iter().map(|(t, _)| t.clone()))
+        let mut new_rank_combinations = not_deltas
+            .iter()
+            .map(|&(_, r)| r.clone())
             .collect::<Vec<_>>();
+
+        if flatten_deltas.len() > 0 {
+            let merged_deltas = TensorExpression::KroneckerDeltas(flatten_deltas);
+
+            new_terms.insert(0, merged_deltas);
+            new_rank_combinations.insert(0, flatten_deltas_combination);
+        }
 
         TensorExpression::InnerProd {
             terms: new_terms,
