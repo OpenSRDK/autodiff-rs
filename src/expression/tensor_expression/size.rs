@@ -1,9 +1,6 @@
 use crate::{Size, TensorExpression};
 use opensrdk_linear_algebra::Tensor;
 
-type TermIndex = usize;
-type RankIndex = usize; // TODO
-
 impl TensorExpression {
     pub fn is_same_size(&self, other: &TensorExpression) -> bool {
         let sl = self.sizes();
@@ -30,12 +27,12 @@ impl TensorExpression {
                 })
                 .collect(),
             TensorExpression::Zero => vec![],
-            TensorExpression::Add(l, r) => l.sizes(),
-            TensorExpression::Sub(l, r) => l.sizes(),
-            TensorExpression::MulScalarLhs(l, r) => r.sizes(),
-            TensorExpression::MulScalarRhs(l, r) => l.sizes(),
+            TensorExpression::Add(l, _) => l.sizes(),
+            TensorExpression::Sub(l, _) => l.sizes(),
+            TensorExpression::MulScalarLhs(_, r) => r.sizes(),
+            TensorExpression::MulScalarRhs(l, _) => l.sizes(),
             TensorExpression::Neg(v) => v.sizes(),
-            TensorExpression::KroneckerDeltas(rank_pairs) => vec![],
+            TensorExpression::KroneckerDeltas(_) => vec![],
             TensorExpression::InnerProd {
                 terms,
                 rank_combinations,

@@ -36,10 +36,10 @@ impl TensorExpression {
                 .chain(r.symbols().into_iter())
                 .collect(),
             TensorExpression::Neg(v) => v.symbols(),
-            TensorExpression::KroneckerDeltas(rank_pairs) => HashSet::new(),
+            TensorExpression::KroneckerDeltas(_) => HashSet::new(),
             TensorExpression::InnerProd {
                 terms,
-                rank_combinations,
+                rank_combinations: _,
             } => terms.iter().map(|v| v.symbols()).flatten().collect(),
         }
     }

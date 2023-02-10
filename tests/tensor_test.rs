@@ -1,8 +1,4 @@
-use std::iter::{empty, once};
-
-use opensrdk_symbolic_computation::{
-    new_symbol_tensor, Expression, Size, TensorExpression, TranscendentalExpression,
-};
+use opensrdk_symbolic_computation::{new_symbol_tensor, Size};
 
 extern crate blas_src;
 extern crate lapack_src;
@@ -18,13 +14,13 @@ fn test_main() {
 
     let x = new_symbol_tensor("x".to_owned(), vec![Size::Many]);
     let mu = new_symbol_tensor(r"\mu".to_owned(), vec![Size::Many]);
-    let lsigma = new_symbol_tensor("lsigma".to_owned(), vec![Size::Many; 2]);
+    let _lsigma = new_symbol_tensor("lsigma".to_owned(), vec![Size::Many; 2]);
     let precision = new_symbol_tensor(r"\Lambda".to_owned(), vec![Size::Many; 2]);
 
     let pdf_expression = (-0.5
         * ((x.clone() - mu.clone())
             .inner_prod(precision, &[[0, 0]])
-            .inner_prod((x.clone() - mu.clone()), &[[1, 0]]))
+            .inner_prod(x.clone() - mu.clone(), &[[1, 0]]))
         .as_scalar())
     .exp();
 

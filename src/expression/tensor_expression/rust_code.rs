@@ -4,7 +4,7 @@ impl TensorExpression {
     pub(crate) fn _rust_code(&self, parentheses: bool) -> String {
         match self {
             TensorExpression::Symbol(symbol, _) => TensorExpression::rust_code_symbol(symbol),
-            TensorExpression::Constant(v) => todo!(),
+            TensorExpression::Constant(_) => todo!(),
             TensorExpression::Zero => "0.0".to_owned(),
             TensorExpression::Add(l, r) => TensorExpression::rust_code_add(l, r, parentheses),
             TensorExpression::Sub(l, r) => TensorExpression::rust_code_sub(l, r, parentheses),
