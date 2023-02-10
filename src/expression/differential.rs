@@ -12,7 +12,16 @@ impl Expression {
             Expression::Neg(v) => Expression::diff_neg(symbols, v),
             Expression::Pow(base, exponent) => Expression::diff_powr(symbols, base, exponent),
             Expression::Transcendental(v) => v.differential(symbols),
-            Expression::MatrixScalar(v) => todo!(),
+            Expression::DegeneratedTensor(v) => v
+                .differential(symbols)
+                .into_iter()
+                .map(|expression| Expression::DiffResultTensor(expression.into()))
+                .collect(),
+            Expression::DiffResultTensor(v) => v
+                .differential(symbols)
+                .into_iter()
+                .map(|expression| Expression::DiffResultTensor(expression.into()))
+                .collect(),
         }
     }
 }
@@ -24,7 +33,7 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let x = Expression::new_symbol("x".to_string());
+        let x = new_symbol("x".to_string());
 
         let expression = x.clone().powr(2.into());
         let diff = expression.differential(&["x"])[0].clone();
@@ -34,7 +43,7 @@ mod tests {
 
     #[test]
     fn it_works2() {
-        let x = Expression::new_symbol("x".to_string());
+        let x = new_symbol("x".to_string());
 
         let expression = (2.0 * x.clone()).exp();
         let diff = expression.differential(&["x"])[0].clone();
@@ -44,7 +53,7 @@ mod tests {
 
     #[test]
     fn it_works3() {
-        let x = Expression::new_symbol("x".to_string());
+        let x = new_symbol("x".to_string());
 
         let expression = x.clone().sin() + x.clone().cos().exp();
         let diff = expression.differential(&["x"])[0].clone();
@@ -54,27 +63,27 @@ mod tests {
 
     #[test]
     fn it_works4() {
-        let x = Expression::new_symbol("x".to_string());
+        let x = new_symbol("x".to_string());
 
         let expression = x.clone().powr(2.into());
         let diff = expression.differential(&["x"])[0].clone();
 
         println!(
             "{:#?}",
-            expression.evaluate(&once(("x", Value::Scalar(3.0))).collect())
+            expression.assign(&once(("x", Value::Scalar(3.0))).collect())
         );
 
         println!(
             "{:#?}",
-            diff.evaluate(&once(("x", Value::Scalar(3.0))).collect())
+            diff.assign(&once(("x", Value::Scalar(3.0))).collect())
         );
     }
 
     #[test]
     fn it_works5() {
-        let x = Expression::new_symbol("x".to_string());
-        let mu = Expression::new_symbol("mu".to_string());
-        let sigma = Expression::new_symbol("sigma".to_string());
+        let x = new_symbol("x".to_string());
+        let mu = new_symbol("mu".to_string());
+        let sigma = new_symbol("sigma".to_string());
         let expression = -(x - mu).powr(2.into()) / (2.0 * sigma.powr(2.into()));
         let diff_x = expression.differential(&["x"])[0].clone();
         let diff_mu = expression.differential(&["mu"])[0].clone();

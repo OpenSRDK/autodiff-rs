@@ -1,19 +1,21 @@
-use num_rational::*;
-
+pub mod assign;
 pub mod differential;
-pub mod evaluate;
-pub mod matrix_expression;
 pub mod operators;
 pub mod rust_code;
 pub mod symbol;
+pub mod tensor_expression;
+pub mod tex_code;
 pub mod transcendental_expression;
 
+pub use assign::*;
 pub use differential::*;
-pub use evaluate::*;
-pub use matrix_expression::*;
 pub use rust_code::*;
 pub use symbol::*;
+pub use tensor_expression::*;
+pub use tex_code::*;
 pub use transcendental_expression::*;
+
+use num_rational::*;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Expression {
@@ -26,7 +28,8 @@ pub enum Expression {
     Neg(Box<Expression>),
     Pow(Box<Expression>, Ratio<u32>),
     Transcendental(Box<TranscendentalExpression>),
-    MatrixScalar(Box<MatrixExpression>),
+    DegeneratedTensor(Box<TensorExpression>),
+    DiffResultTensor(Box<TensorExpression>),
 }
 
 impl From<f64> for Expression {

@@ -1,11 +1,11 @@
 use crate::Expression;
 use std::{collections::HashSet, iter::once};
 
-impl Expression {
-    pub fn new_symbol(name: String) -> Self {
-        Expression::Symbol(name)
-    }
+pub fn new_symbol(name: String) -> Expression {
+    Expression::Symbol(name)
+}
 
+impl Expression {
     pub fn symbols(&self) -> HashSet<String> {
         match self {
             Expression::Symbol(symbol) => once(symbol.clone()).collect::<HashSet<String>>(),
@@ -33,7 +33,8 @@ impl Expression {
             Expression::Neg(v) => v.symbols(),
             Expression::Pow(base, _) => base.symbols(),
             Expression::Transcendental(v) => v.symbols(),
-            Expression::MatrixScalar(v) => v.symbols(),
+            Expression::DegeneratedTensor(v) => v.symbols(),
+            Expression::DiffResultTensor(v) => v.symbols(),
         }
     }
 
