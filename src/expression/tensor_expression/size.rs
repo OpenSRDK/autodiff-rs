@@ -1,5 +1,11 @@
-use crate::{Size, TensorExpression};
+use crate::TensorExpression;
 use opensrdk_linear_algebra::Tensor;
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum Size {
+    One,
+    Many,
+}
 
 impl TensorExpression {
     pub fn is_same_size(&self, other: &TensorExpression) -> bool {

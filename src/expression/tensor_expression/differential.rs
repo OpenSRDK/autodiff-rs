@@ -25,7 +25,7 @@ impl TensorExpression {
             TensorExpression::InnerProd {
                 terms,
                 rank_combinations,
-            } => TensorExpression::diff_inner_prod(symbols, terms, rank_combinations),
+            } => TensorExpression::diff_inner_prod(terms, rank_combinations, symbols),
             TensorExpression::Matrix(m) => m.differential(symbols),
         }
     }

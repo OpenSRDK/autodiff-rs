@@ -6,7 +6,7 @@ impl MatrixExpression {
         let id = generate_rank_combination_id();
         let tensor = vec![self.into()]
             .into_iter()
-            .inner_prod(&[vec![(0, id), (1, id)].into_iter().collect()]);
+            .inner_prod(&[vec![(0, id.clone()), (1, id)].into_iter().collect()]);
 
         tensor.as_scalar()
     }

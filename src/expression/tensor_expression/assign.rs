@@ -12,7 +12,7 @@ impl TensorExpression {
                     None => TensorExpression::Symbol(symbol.clone(), sizes.clone()),
                 }
             }
-            TensorExpression::Constant(v) => self,
+            TensorExpression::Constant(_) => self,
             TensorExpression::Zero => TensorExpression::Zero,
             TensorExpression::Add(l, r) => l.assign(values) + r.assign(values),
             TensorExpression::Sub(l, r) => l.assign(values) - r.assign(values),
@@ -26,7 +26,7 @@ impl TensorExpression {
                 terms: v,
                 rank_combinations,
             } => TensorExpression::InnerProd {
-                terms: v.iter().map(|v| v.assign(values)).collect(),
+                terms: v.into_iter().map(|v| v.assign(values)).collect(),
                 rank_combinations: rank_combinations.clone(),
             },
             TensorExpression::Matrix(m) => m.assign(values).into(),

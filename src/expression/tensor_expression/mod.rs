@@ -16,15 +16,9 @@ pub use size::*;
 pub use symbol::*;
 pub use tex_code::*;
 
-use crate::{Expression, MatrixExpression};
+use crate::Expression;
 use opensrdk_linear_algebra::tensor::sparse::SparseTensor;
 use std::collections::HashMap;
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum Size {
-    One,
-    Many,
-}
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum TensorExpression {

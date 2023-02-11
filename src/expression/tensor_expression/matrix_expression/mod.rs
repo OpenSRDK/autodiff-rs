@@ -21,8 +21,9 @@ use opensrdk_linear_algebra::Matrix;
 pub enum MatrixExpression {
     Mat(Box<TensorExpression>),
     Constant(Matrix),
-    Inv(Box<TensorExpression>),
-    Det(Box<TensorExpression>),
+    T(Box<MatrixExpression>),
+    Inv(Box<MatrixExpression>),
+    Det(Box<MatrixExpression>),
 }
 
 impl Into<TensorExpression> for MatrixExpression {

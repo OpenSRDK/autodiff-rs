@@ -23,7 +23,7 @@ impl Expression {
             Expression::Transcendental(v) => v.assign(values),
             Expression::DegeneratedTensor(v) => match v.assign(values) {
                 TensorExpression::Constant(v) => Expression::Constant(v[&vec![0; v.rank()]]),
-                _ => Expression::DegeneratedTensor(v.clone()),
+                others => Expression::DegeneratedTensor(others.into()),
             },
             Expression::DiffResultTensor(v) => {
                 Expression::DiffResultTensor(v.assign(values).into())

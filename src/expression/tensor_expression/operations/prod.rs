@@ -161,9 +161,9 @@ impl TensorExpression {
 
 impl TensorExpression {
     pub(crate) fn diff_inner_prod(
-        symbols: &[&str],
         v: &Vec<TensorExpression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
+        symbols: &[&str],
     ) -> Vec<TensorExpression> {
         let mut result = v[0]
             .differential(symbols)

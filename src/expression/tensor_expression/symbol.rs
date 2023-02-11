@@ -1,8 +1,5 @@
-use crate::{Size, TensorExpression, Value};
-use std::{
-    collections::{HashMap, HashSet},
-    iter::once,
-};
+use crate::{Size, TensorExpression};
+use std::{collections::HashSet, iter::once};
 
 pub fn new_symbol_tensor(name: String, sizes: Vec<Size>) -> TensorExpression {
     TensorExpression::Symbol(name, sizes)
