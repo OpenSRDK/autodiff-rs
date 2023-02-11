@@ -1,6 +1,5 @@
 use crate::TensorExpression;
-
-type RankIndex = usize; // TODO
+use opensrdk_linear_algebra::RankIndex;
 
 impl TensorExpression {
     pub(crate) fn rust_code_kronecker_deltas(

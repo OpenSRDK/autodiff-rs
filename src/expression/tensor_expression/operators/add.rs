@@ -24,9 +24,9 @@ impl Add<TensorExpression> for TensorExpression {
 
 impl TensorExpression {
     pub(crate) fn diff_add(
-        symbols: &[&str],
         l: &Box<TensorExpression>,
         r: &Box<TensorExpression>,
+        symbols: &[&str],
     ) -> Vec<TensorExpression> {
         l.differential(symbols)
             .into_iter()

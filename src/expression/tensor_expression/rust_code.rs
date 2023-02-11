@@ -22,6 +22,7 @@ impl TensorExpression {
                 terms,
                 rank_combinations,
             } => TensorExpression::rust_code_inner_prod(terms, rank_combinations, parentheses),
+            TensorExpression::Matrix(m) => m.rust_code(),
         }
     }
 

@@ -2,12 +2,17 @@ use crate::{TensorExpression, Value};
 use std::collections::HashMap;
 
 impl TensorExpression {
-    pub fn assign(&self, values: &HashMap<&str, Value>) -> TensorExpression {
+    pub fn assign(self, values: &HashMap<&str, Value>) -> TensorExpression {
         match self {
             TensorExpression::Symbol(symbol, sizes) => {
-                TensorExpression::assign_symbol(values, symbol, sizes)
+                let v = values.get(symbol.as_str());
+
+                match v {
+                    Some(v) => TensorExpression::Constant(v.as_tensor_ref().clone()),
+                    None => TensorExpression::Symbol(symbol.clone(), sizes.clone()),
+                }
             }
-            TensorExpression::Constant(v) => TensorExpression::Constant(v.clone()),
+            TensorExpression::Constant(v) => self,
             TensorExpression::Zero => TensorExpression::Zero,
             TensorExpression::Add(l, r) => l.assign(values) + r.assign(values),
             TensorExpression::Sub(l, r) => l.assign(values) - r.assign(values),
@@ -24,6 +29,7 @@ impl TensorExpression {
                 terms: v.iter().map(|v| v.assign(values)).collect(),
                 rank_combinations: rank_combinations.clone(),
             },
+            TensorExpression::Matrix(m) => m.assign(values).into(),
         }
     }
 }

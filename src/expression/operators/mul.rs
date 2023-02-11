@@ -69,9 +69,9 @@ impl Mul<f64> for Expression {
 
 impl Expression {
     pub(crate) fn diff_mul(
-        symbols: &[&str],
         l: &Box<Expression>,
         r: &Box<Expression>,
+        symbols: &[&str],
     ) -> Vec<Expression> {
         l.differential(symbols)
             .into_iter()

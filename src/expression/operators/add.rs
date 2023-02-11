@@ -41,9 +41,9 @@ impl Add<Expression> for f64 {
 
 impl Expression {
     pub(crate) fn diff_add(
-        symbols: &[&str],
         l: &Box<Expression>,
         r: &Box<Expression>,
+        symbols: &[&str],
     ) -> Vec<Expression> {
         l.differential(symbols)
             .into_iter()

@@ -37,6 +37,11 @@ impl TensorExpression {
                 terms,
                 rank_combinations,
             } => TensorExpression::size_inner_prod(terms, rank_combinations),
+            TensorExpression::Matrix(m) => m.sizes(),
         }
+    }
+
+    pub fn not_1dimension_ranks(&self) -> usize {
+        self.sizes().iter().filter(|&d| *d != Size::One).count()
     }
 }

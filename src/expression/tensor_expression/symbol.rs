@@ -41,26 +41,14 @@ impl TensorExpression {
                 terms,
                 rank_combinations: _,
             } => terms.iter().map(|v| v.symbols()).flatten().collect(),
-        }
-    }
-
-    pub(crate) fn assign_symbol(
-        values: &HashMap<&str, Value>,
-        symbol: &String,
-        sizes: &Vec<Size>,
-    ) -> TensorExpression {
-        let v = values.get(symbol.as_str());
-
-        match v {
-            Some(v) => TensorExpression::Constant(v.as_tensor_ref().clone()),
-            None => TensorExpression::Symbol(symbol.clone(), sizes.clone()),
+            TensorExpression::Matrix(m) => m.symbols(),
         }
     }
 
     pub(crate) fn diff_symbol(
-        symbols: &[&str],
         symbol: &String,
         sizes: &Vec<Size>,
+        symbols: &[&str],
     ) -> Vec<TensorExpression> {
         let rank = sizes.len();
         symbols

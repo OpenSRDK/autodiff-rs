@@ -22,9 +22,9 @@ impl Expression {
 
 impl Expression {
     pub(crate) fn diff_powr(
-        symbols: &[&str],
         base: &Box<Expression>,
         exponent: &Ratio<u32>,
+        symbols: &[&str],
     ) -> Vec<Expression> {
         base.differential(symbols)
             .into_iter()

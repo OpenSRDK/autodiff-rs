@@ -57,9 +57,9 @@ impl Mul<f64> for TensorExpression {
 
 impl TensorExpression {
     pub(crate) fn diff_mul_scalar_lhs(
-        symbols: &[&str],
         l: &Box<Expression>,
         r: &Box<TensorExpression>,
+        symbols: &[&str],
     ) -> Vec<TensorExpression> {
         l.differential(symbols)
             .into_iter()

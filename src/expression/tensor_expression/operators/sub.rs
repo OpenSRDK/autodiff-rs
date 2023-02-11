@@ -24,9 +24,9 @@ impl Sub<TensorExpression> for TensorExpression {
 
 impl TensorExpression {
     pub(crate) fn diff_sub(
-        symbols: &[&str],
         l: &Box<TensorExpression>,
         r: &Box<TensorExpression>,
+        symbols: &[&str],
     ) -> Vec<TensorExpression> {
         l.differential(symbols)
             .into_iter()

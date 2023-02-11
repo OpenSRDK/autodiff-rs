@@ -17,7 +17,7 @@ impl Neg for Expression {
 }
 
 impl Expression {
-    pub(crate) fn diff_neg(symbols: &[&str], v: &Box<Expression>) -> Vec<Expression> {
+    pub(crate) fn diff_neg(v: &Box<Expression>, symbols: &[&str]) -> Vec<Expression> {
         v.differential(symbols).into_iter().map(|e| -e).collect()
     }
 

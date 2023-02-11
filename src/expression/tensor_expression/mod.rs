@@ -1,5 +1,6 @@
 pub mod assign;
 pub mod differential;
+pub mod matrix_expression;
 pub mod operations;
 pub mod operators;
 pub mod rust_code;
@@ -7,17 +8,17 @@ pub mod size;
 pub mod symbol;
 pub mod tex_code;
 
-use std::collections::HashMap;
-
 pub use assign::*;
 pub use differential::*;
-use opensrdk_linear_algebra::tensor::sparse::SparseTensor;
+pub use matrix_expression::*;
 pub use rust_code::*;
 pub use size::*;
 pub use symbol::*;
 pub use tex_code::*;
 
-use crate::Expression;
+use crate::{Expression, MatrixExpression};
+use opensrdk_linear_algebra::tensor::sparse::SparseTensor;
+use std::collections::HashMap;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Size {
@@ -40,6 +41,7 @@ pub enum TensorExpression {
         terms: Vec<TensorExpression>,
         rank_combinations: Vec<HashMap<usize, String>>,
     },
+    Matrix(Box<MatrixExpression>),
 }
 
 impl TensorExpression {

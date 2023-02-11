@@ -3,7 +3,7 @@ use opensrdk_linear_algebra::Tensor;
 use std::collections::HashMap;
 
 impl Expression {
-    pub fn assign(&self, values: &HashMap<&str, Value>) -> Expression {
+    pub fn assign(self, values: &HashMap<&str, Value>) -> Expression {
         match self {
             Expression::Symbol(symbol) => {
                 let v = values.get(symbol.as_str());
@@ -13,13 +13,13 @@ impl Expression {
                     None => Expression::Symbol(symbol.clone()),
                 }
             }
-            Expression::Constant(v) => Expression::Constant(*v),
+            Expression::Constant(v) => self,
             Expression::Add(l, r) => l.assign(values) + r.assign(values),
             Expression::Sub(l, r) => l.assign(values) - r.assign(values),
             Expression::Mul(l, r) => l.assign(values) * r.assign(values),
             Expression::Div(l, r) => l.assign(values) / r.assign(values),
             Expression::Neg(v) => -v.assign(values),
-            Expression::Pow(base, exponent) => base.assign(values).powr(*exponent),
+            Expression::Pow(base, exponent) => base.assign(values).powr(exponent),
             Expression::Transcendental(v) => v.assign(values),
             Expression::DegeneratedTensor(v) => match v.assign(values) {
                 TensorExpression::Constant(v) => Expression::Constant(v[&vec![0; v.rank()]]),

@@ -20,7 +20,7 @@ impl Neg for TensorExpression {
 }
 
 impl TensorExpression {
-    pub(crate) fn diff_neg(symbols: &[&str], v: &Box<TensorExpression>) -> Vec<TensorExpression> {
+    pub(crate) fn diff_neg(v: &Box<TensorExpression>, symbols: &[&str]) -> Vec<TensorExpression> {
         v.differential(symbols).into_iter().map(|e| -e).collect()
     }
 

@@ -1,11 +1,11 @@
 use crate::{Expression, Size, TensorExpression};
 use opensrdk_linear_algebra::{
-    generate_rank_combinations, sparse::operations::kronecker_delta::KroneckerDelta, Tensor,
+    generate_rank_combinations, sparse::operations::kronecker_delta::KroneckerDelta, RankIndex,
+    Tensor,
 };
 use std::{collections::HashMap, iter::once};
 
 type TermIndex = usize;
-type RankIndex = usize; // TODO
 
 fn next_char(c: char, count: usize) -> char {
     std::char::from_u32(c as u32 + count as u32).unwrap_or(c)

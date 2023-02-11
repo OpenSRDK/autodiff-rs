@@ -18,6 +18,7 @@ impl TensorExpression {
                 terms,
                 rank_combinations,
             } => TensorExpression::tex_code_inner_prod(terms, rank_combinations),
+            TensorExpression::Matrix(m) => m.tex_code(),
         }
     }
 }

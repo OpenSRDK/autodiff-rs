@@ -5,12 +5,12 @@ impl Expression {
         match self {
             Expression::Symbol(symbol) => Expression::diff_symbol(symbols, symbol),
             Expression::Constant(_) => vec![Expression::Constant(0.0); symbols.len()],
-            Expression::Add(l, r) => Expression::diff_add(symbols, l, r),
-            Expression::Sub(l, r) => Expression::diff_sub(symbols, l, r),
-            Expression::Mul(l, r) => Expression::diff_mul(symbols, l, r),
-            Expression::Div(l, r) => Expression::diff_div(symbols, l, r),
-            Expression::Neg(v) => Expression::diff_neg(symbols, v),
-            Expression::Pow(base, exponent) => Expression::diff_powr(symbols, base, exponent),
+            Expression::Add(l, r) => Expression::diff_add(l, r, symbols),
+            Expression::Sub(l, r) => Expression::diff_sub(l, r, symbols),
+            Expression::Mul(l, r) => Expression::diff_mul(l, r, symbols),
+            Expression::Div(l, r) => Expression::diff_div(l, r, symbols),
+            Expression::Neg(v) => Expression::diff_neg(v, symbols),
+            Expression::Pow(base, exponent) => Expression::diff_powr(base, exponent, symbols),
             Expression::Transcendental(v) => v.differential(symbols),
             Expression::DegeneratedTensor(v) => v
                 .differential(symbols)
