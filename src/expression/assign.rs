@@ -13,7 +13,7 @@ impl Expression {
                     None => Expression::Symbol(symbol.clone()),
                 }
             }
-            Expression::Constant(v) => self,
+            Expression::Constant(_) => self,
             Expression::Add(l, r) => l.assign(values) + r.assign(values),
             Expression::Sub(l, r) => l.assign(values) - r.assign(values),
             Expression::Mul(l, r) => l.assign(values) * r.assign(values),
