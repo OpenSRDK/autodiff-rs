@@ -1,4 +1,6 @@
-use crate::{MatrixExpression, TensorExpression};
+use std::collections::HashMap;
+
+use crate::{BracketsLevel, MatrixExpression, TensorExpression};
 
 impl MatrixExpression {
     pub fn t(self) -> MatrixExpression {
@@ -19,5 +21,12 @@ impl MatrixExpression {
             .inner_prod(TensorExpression::KroneckerDeltas(vec![[0, 1]]), &[[0, 1]]);
 
         tensor.differential(symbols)
+    }
+
+    pub(crate) fn tex_code_t(v: &MatrixExpression, symbols: &HashMap<&str, &str>) -> String {
+        format!(
+            r"{}^\top",
+            v._tex_code(symbols, BracketsLevel::ForOperation)
+        )
     }
 }

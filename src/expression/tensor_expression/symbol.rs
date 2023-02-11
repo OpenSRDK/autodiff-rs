@@ -59,8 +59,4 @@ impl TensorExpression {
             })
             .collect()
     }
-
-    pub(crate) fn rust_code_symbol(symbol: &String) -> String {
-        format!("{}.clone()", symbol)
-    }
 }

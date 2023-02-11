@@ -1,4 +1,4 @@
-use crate::{Expression, Size, TensorExpression};
+use crate::{BracketsLevel, Expression, Size, TensorExpression};
 use opensrdk_linear_algebra::{
     generate_rank_combinations, sparse::operations::kronecker_delta::KroneckerDelta, RankIndex,
     Tensor,
@@ -35,8 +35,9 @@ where
                     );
 
                     for (&rank, id) in rank_combination.iter() {
-                        let term_index = not_1dimension_ranks[&rank];
-                        rank_combinations[term_index].insert(rank, id.to_owned());
+                        if let Some(&term_index) = not_1dimension_ranks.get(&rank) {
+                            rank_combinations[term_index].insert(rank, id.to_owned());
+                        }
                     }
 
                     return t
@@ -193,17 +194,10 @@ impl TensorExpression {
         result
     }
 
-    pub(crate) fn rust_code_inner_prod(
-        terms: &Vec<TensorExpression>,
-        rank_combinations: &Vec<HashMap<RankIndex, String>>,
-        parentheses: bool,
-    ) -> String {
-        todo!()
-    }
-
     pub(crate) fn tex_code_inner_prod(
         terms: &Vec<TensorExpression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
+        symbols: &HashMap<&str, &str>,
     ) -> String {
         let mut ids = Vec::<String>::new();
         let mut id_index = HashMap::<String, usize>::new();
@@ -232,7 +226,7 @@ impl TensorExpression {
             sorted.sort_by(|a, b| a.0.cmp(b.0));
             result.push_str(&format!(
                 "{}_{{{}}}",
-                terms[i].tex_code(),
+                terms[i]._tex_code(symbols, BracketsLevel::ForMul),
                 sorted
                     .into_iter()
                     .map(|(j, id)| format!("[{}] = {}", j, next_char('i', id_index[id])))

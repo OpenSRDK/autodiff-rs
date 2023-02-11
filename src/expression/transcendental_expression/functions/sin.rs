@@ -1,4 +1,6 @@
-use crate::{Expression, TranscendentalExpression};
+use std::collections::HashMap;
+
+use crate::{BracketsLevel, Expression, TranscendentalExpression};
 
 impl Expression {
     pub fn sin(self) -> Self {
@@ -11,7 +13,7 @@ impl Expression {
 }
 
 impl TranscendentalExpression {
-    pub(crate) fn rust_code_sin(arg: &Box<Expression>) -> String {
-        format!("{}.sin()", arg._rust_code(true))
+    pub(crate) fn tex_code_sin(arg: &Box<Expression>, symbols: &HashMap<&str, &str>) -> String {
+        format!(r"\sin({})", arg._tex_code(symbols, BracketsLevel::None))
     }
 }

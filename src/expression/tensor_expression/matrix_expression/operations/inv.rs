@@ -1,4 +1,6 @@
-use crate::{MatrixExpression, TensorExpression};
+use std::collections::HashMap;
+
+use crate::{BracketsLevel, MatrixExpression, TensorExpression};
 
 impl MatrixExpression {
     pub fn inv(self) -> MatrixExpression {
@@ -19,11 +21,18 @@ impl MatrixExpression {
         v.differential(symbols)
             .into_iter()
             .map(|d_v_d_symbol| {
-                let v_inv: TensorExpression = v.clone().inv().into();
+                let v_inv = v.clone().inv().as_tensor();
                 let d_v_inv_d_v = -v_inv.clone().inner_prod(v_inv, &[[1, 0]]);
 
                 d_v_inv_d_v.inner_prod(d_v_d_symbol, &[[0, 0], [1, 1]])
             })
             .collect()
+    }
+
+    pub(crate) fn tex_code_inv(v: &MatrixExpression, symbols: &HashMap<&str, &str>) -> String {
+        format!(
+            r"{{{}^{{-1}}}}",
+            v._tex_code(symbols, BracketsLevel::ForOperation)
+        )
     }
 }

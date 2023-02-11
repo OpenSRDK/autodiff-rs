@@ -10,7 +10,7 @@ impl Expression {
             Expression::Mul(l, r) => Expression::diff_mul(l, r, symbols),
             Expression::Div(l, r) => Expression::diff_div(l, r, symbols),
             Expression::Neg(v) => Expression::diff_neg(v, symbols),
-            Expression::Pow(base, exponent) => Expression::diff_powr(base, exponent, symbols),
+            Expression::Pow(base, exponent) => Expression::diff_pow(base, exponent, symbols),
             Expression::Transcendental(v) => v.differential(symbols),
             Expression::DegeneratedTensor(v) => v
                 .differential(symbols)
@@ -88,8 +88,13 @@ mod tests {
         let diff_x = expression.differential(&["x"])[0].clone();
         let diff_mu = expression.differential(&["mu"])[0].clone();
         let diff_sigma = expression.differential(&["sigma"])[0].clone();
-        println!("{:#?}", diff_x.rust_code());
-        println!("{:#?}", diff_mu.rust_code());
-        println!("{:#?}", diff_sigma.rust_code());
+
+        let tex_symbols = vec![("x", "x"), ("mu", r"\mu"), ("sigma", r"\Sigma")]
+            .into_iter()
+            .collect();
+
+        println!("{:#?}", diff_x.tex_code(&tex_symbols));
+        println!("{:#?}", diff_mu.tex_code(&tex_symbols));
+        println!("{:#?}", diff_sigma.tex_code(&tex_symbols));
     }
 }

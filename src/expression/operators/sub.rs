@@ -1,5 +1,5 @@
-use crate::Expression;
-use std::ops::Sub;
+use crate::{BracketsLevel, Expression};
+use std::{collections::HashMap, ops::Sub};
 
 impl Sub<Expression> for Expression {
     type Output = Self;
@@ -51,15 +51,23 @@ impl Expression {
             .collect()
     }
 
-    pub(crate) fn rust_code_sub(
+    pub(crate) fn tex_code_sub(
         l: &Box<Expression>,
         r: &Box<Expression>,
-        parentheses: bool,
+        symbols: &HashMap<&str, &str>,
+        brackets_level: BracketsLevel,
     ) -> String {
-        if parentheses {
-            format!("({} - {})", l._rust_code(true), r._rust_code(true))
-        } else {
-            format!("{} - {}", l._rust_code(true), r._rust_code(true))
+        let inner = format!(
+            "{{{} - {}}}",
+            l._tex_code(symbols, BracketsLevel::None),
+            r._tex_code(symbols, BracketsLevel::None)
+        );
+
+        match brackets_level {
+            BracketsLevel::None => inner,
+            BracketsLevel::ForMul | BracketsLevel::ForDiv | BracketsLevel::ForOperation => {
+                format!(r"\left({}\right)", inner)
+            }
         }
     }
 }

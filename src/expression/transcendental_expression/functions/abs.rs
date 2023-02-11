@@ -1,4 +1,6 @@
-use crate::{Expression, TranscendentalExpression};
+use std::collections::HashMap;
+
+use crate::{BracketsLevel, Expression, TranscendentalExpression};
 
 impl Expression {
     pub fn abs(self) -> Self {
@@ -11,7 +13,10 @@ impl Expression {
 }
 
 impl TranscendentalExpression {
-    pub(crate) fn rust_code_abs(arg: &Box<Expression>) -> String {
-        format!("{}.abs()", arg._rust_code(true))
+    pub(crate) fn tex_code_abs(arg: &Box<Expression>, symbols: &HashMap<&str, &str>) -> String {
+        format!(
+            r"\left|{}\right|",
+            arg._tex_code(symbols, BracketsLevel::None)
+        )
     }
 }

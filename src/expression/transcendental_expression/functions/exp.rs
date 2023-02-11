@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::{Expression, TranscendentalExpression};
 
 impl Expression {
@@ -11,7 +13,10 @@ impl Expression {
 }
 
 impl TranscendentalExpression {
-    pub(crate) fn rust_code_exp(arg: &Box<Expression>) -> String {
-        format!("{}.exp()", arg._rust_code(true))
+    pub(crate) fn tex_code_exp(arg: &Box<Expression>, symbols: &HashMap<&str, &str>) -> String {
+        format!(
+            r"\exp{{{}}}",
+            arg._tex_code(symbols, crate::BracketsLevel::ForOperation)
+        )
     }
 }

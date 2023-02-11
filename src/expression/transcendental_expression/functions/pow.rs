@@ -1,4 +1,6 @@
-use crate::{Expression, TranscendentalExpression};
+use std::collections::HashMap;
+
+use crate::{BracketsLevel, Expression, TranscendentalExpression};
 
 impl Expression {
     pub fn pow(self, exponent: Expression) -> Self {
@@ -20,11 +22,15 @@ impl Expression {
 }
 
 impl TranscendentalExpression {
-    pub(crate) fn rust_code_pow(base: &Box<Expression>, exponent: &Box<Expression>) -> String {
+    pub(crate) fn tex_code_pow(
+        base: &Box<Expression>,
+        exponent: &Box<Expression>,
+        symbols: &HashMap<&str, &str>,
+    ) -> String {
         format!(
-            "{}.pow({})",
-            base._rust_code(true),
-            exponent._rust_code(false)
+            "{}^{}",
+            base._tex_code(symbols, BracketsLevel::ForOperation),
+            exponent._tex_code(symbols, BracketsLevel::ForOperation)
         )
     }
 }

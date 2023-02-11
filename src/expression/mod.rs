@@ -1,7 +1,6 @@
 pub mod assign;
 pub mod differential;
 pub mod operators;
-pub mod rust_code;
 pub mod symbol;
 pub mod tensor_expression;
 pub mod tex_code;
@@ -9,15 +8,14 @@ pub mod transcendental_expression;
 
 pub use assign::*;
 pub use differential::*;
-pub use rust_code::*;
 pub use symbol::*;
 pub use tensor_expression::*;
 pub use tex_code::*;
 pub use transcendental_expression::*;
 
-use num_rational::*;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum Expression {
     Symbol(String),
     Constant(f64),
@@ -26,7 +24,7 @@ pub enum Expression {
     Mul(Box<Expression>, Box<Expression>),
     Div(Box<Expression>, Box<Expression>),
     Neg(Box<Expression>),
-    Pow(Box<Expression>, Ratio<u32>),
+    Pow(Box<Expression>, f64),
     Transcendental(Box<TranscendentalExpression>),
     DegeneratedTensor(Box<TensorExpression>),
     DiffResultTensor(Box<TensorExpression>),

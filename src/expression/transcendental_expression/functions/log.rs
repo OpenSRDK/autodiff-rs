@@ -1,5 +1,6 @@
-use crate::{Expression, TranscendentalExpression};
-use num_traits::ToPrimitive;
+use std::collections::HashMap;
+
+use crate::{BracketsLevel, Expression, TranscendentalExpression};
 
 impl Expression {
     pub fn log(self, antilogarithm: Expression) -> Self {
@@ -13,8 +14,7 @@ impl Expression {
                 + r.as_ref().clone().log(antilogarithm);
         }
         if let Expression::Pow(base, exponent) = &self {
-            return exponent.to_f64().unwrap_or_default()
-                * base.as_ref().clone().log(antilogarithm);
+            return *exponent * base.as_ref().clone().log(antilogarithm);
         }
         if let Expression::Transcendental(v) = &self {
             match v.as_ref() {
@@ -30,11 +30,15 @@ impl Expression {
 }
 
 impl TranscendentalExpression {
-    pub(crate) fn rust_code_log(base: &Box<Expression>, antilogarithm: &Box<Expression>) -> String {
+    pub(crate) fn tex_code_log(
+        base: &Box<Expression>,
+        antilogarithm: &Box<Expression>,
+        symbols: &HashMap<&str, &str>,
+    ) -> String {
         format!(
-            "{}.log({})",
-            antilogarithm._rust_code(true),
-            base._rust_code(false)
+            "\\log_{{{}}}{{{}}}",
+            base._tex_code(symbols, BracketsLevel::ForOperation),
+            antilogarithm._tex_code(symbols, BracketsLevel::ForOperation)
         )
     }
 }

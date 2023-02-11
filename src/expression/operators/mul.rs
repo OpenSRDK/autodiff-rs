@@ -1,5 +1,5 @@
-use crate::Expression;
-use std::ops::Mul;
+use crate::{BracketsLevel, Expression};
+use std::{collections::HashMap, ops::Mul};
 
 impl Mul<Expression> for Expression {
     type Output = Self;
@@ -33,7 +33,7 @@ impl Mul<Expression> for Expression {
                 }
             }
             if vl.as_ref().eq(&rhs) {
-                return Expression::Pow(vl.clone(), el + 1);
+                return Expression::Pow(vl.clone(), el + 1.0);
             }
         }
         if let Expression::Pow(vr, er) = &rhs {
@@ -43,7 +43,7 @@ impl Mul<Expression> for Expression {
                 }
             }
             if vr.as_ref().eq(&self) {
-                return Expression::Pow(vr.clone(), er + 1);
+                return Expression::Pow(vr.clone(), er + 1.0);
             }
         }
 
@@ -80,15 +80,23 @@ impl Expression {
             .collect()
     }
 
-    pub(crate) fn rust_code_mul(
+    pub(crate) fn tex_code_mul(
         l: &Box<Expression>,
         r: &Box<Expression>,
-        parentheses: bool,
+        symbols: &HashMap<&str, &str>,
+        brackets_level: BracketsLevel,
     ) -> String {
-        if parentheses {
-            format!("({} * {})", l._rust_code(true), r._rust_code(true))
-        } else {
-            format!("{} * {}", l._rust_code(true), r._rust_code(true))
+        let inner = format!(
+            r"{{{} \times {}}}",
+            l._tex_code(symbols, BracketsLevel::ForMul),
+            r._tex_code(symbols, BracketsLevel::ForMul)
+        );
+
+        match brackets_level {
+            BracketsLevel::None | BracketsLevel::ForMul => inner,
+            BracketsLevel::ForDiv | BracketsLevel::ForOperation => {
+                format!(r"\left({}\right)", inner)
+            }
         }
     }
 }

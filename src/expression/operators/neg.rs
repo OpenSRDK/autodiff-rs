@@ -1,5 +1,5 @@
-use crate::Expression;
-use std::ops::Neg;
+use crate::{BracketsLevel, Expression};
+use std::{collections::HashMap, ops::Neg};
 
 impl Neg for Expression {
     type Output = Self;
@@ -21,7 +21,7 @@ impl Expression {
         v.differential(symbols).into_iter().map(|e| -e).collect()
     }
 
-    pub(crate) fn rust_code_neg(v: &Box<Expression>) -> String {
-        format!("-{}", v._rust_code(true))
+    pub(crate) fn tex_code_neg(v: &Box<Expression>, symbols: &HashMap<&str, &str>) -> String {
+        format!("{{-{}}}", v._tex_code(symbols, BracketsLevel::ForOperation))
     }
 }

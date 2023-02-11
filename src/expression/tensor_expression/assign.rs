@@ -29,7 +29,7 @@ impl TensorExpression {
                 terms: v.into_iter().map(|v| v.assign(values)).collect(),
                 rank_combinations: rank_combinations.clone(),
             },
-            TensorExpression::Matrix(m) => m.assign(values).into(),
+            TensorExpression::Matrix(m) => m.assign(values).as_tensor(),
         }
     }
 }

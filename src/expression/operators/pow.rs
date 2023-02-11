@@ -1,18 +1,16 @@
-use crate::Expression;
-use num_rational::Ratio;
-use num_traits::cast::ToPrimitive;
+use crate::{BracketsLevel, Expression};
+use std::collections::HashMap;
 
 impl Expression {
-    pub fn powr(self, exponent: Ratio<u32>) -> Self {
-        let exponent_float = exponent.to_f64().unwrap_or_default();
+    pub fn powr(self, exponent: f64) -> Self {
         if let Expression::Constant(base) = self {
-            return Expression::Constant(base.powf(exponent_float));
+            return Expression::Constant(base.powf(exponent));
         }
 
-        if exponent_float == 0.0 {
+        if exponent == 0.0 {
             return Expression::Constant(1.0);
         }
-        if exponent_float == 1.0 {
+        if exponent == 1.0 {
             return self;
         }
 
@@ -21,32 +19,28 @@ impl Expression {
 }
 
 impl Expression {
-    pub(crate) fn diff_powr(
+    pub(crate) fn diff_pow(
         base: &Box<Expression>,
-        exponent: &Ratio<u32>,
+        exponent: &f64,
         symbols: &[&str],
     ) -> Vec<Expression> {
         base.differential(symbols)
             .into_iter()
             .map(|b| {
-                Expression::Constant(exponent.to_f64().unwrap_or_default())
-                    * base.as_ref().clone().powr(exponent - 1)
-                    * b
+                Expression::Constant(*exponent) * base.as_ref().clone().powr(exponent - 1.0) * b
             })
             .collect()
     }
 
-    pub(crate) fn rust_code_powr(base: &Box<Expression>, exponent: &Ratio<u32>) -> String {
-        let exponent = exponent.to_f64().unwrap_or_default().to_string();
+    pub(crate) fn tex_code_pow(
+        base: &Box<Expression>,
+        exponent: &f64,
+        symbols: &HashMap<&str, &str>,
+    ) -> String {
         format!(
-            "{}.{}({})",
-            base.as_ref()._rust_code(true),
-            if exponent.contains('.') {
-                "powf"
-            } else {
-                "powi"
-            },
-            exponent
+            "{{{}^{}}}",
+            base._tex_code(symbols, BracketsLevel::ForOperation),
+            exponent.to_string()
         )
     }
 }

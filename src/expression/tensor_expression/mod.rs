@@ -3,7 +3,6 @@ pub mod differential;
 pub mod matrix_expression;
 pub mod operations;
 pub mod operators;
-pub mod rust_code;
 pub mod size;
 pub mod symbol;
 pub mod tex_code;
@@ -11,7 +10,7 @@ pub mod tex_code;
 pub use assign::*;
 pub use differential::*;
 pub use matrix_expression::*;
-pub use rust_code::*;
+use serde::{Deserialize, Serialize};
 pub use size::*;
 pub use symbol::*;
 pub use tex_code::*;
@@ -20,7 +19,7 @@ use crate::Expression;
 use opensrdk_linear_algebra::tensor::sparse::SparseTensor;
 use std::collections::HashMap;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum TensorExpression {
     Symbol(String, Vec<Size>),
     Constant(SparseTensor<f64>),

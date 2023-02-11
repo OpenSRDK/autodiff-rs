@@ -12,11 +12,10 @@ categories = ["mathematics", "science"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-num-rational = "0.4"
-num-traits = "0.2"
 thiserror = "1.0.28"
 rayon = "1.5.1"
-opensrdk-linear-algebra = "0.8.6"
+opensrdk-linear-algebra = "0.8.7"
+serde = { version = "1", features = ["derive"] }
 
 [dev-dependencies]
 blas-src = { version = "0.8", features = ["intel-mkl"] } 

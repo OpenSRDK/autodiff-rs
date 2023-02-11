@@ -1,5 +1,5 @@
-use crate::{Expression, TensorExpression};
-use std::ops::Mul;
+use crate::{BracketsLevel, Expression, TensorExpression};
+use std::{collections::HashMap, ops::Mul};
 
 fn mul_scalar(lhs: Expression, rhs: TensorExpression, swap: bool) -> TensorExpression {
     if let Expression::Constant(vl) = lhs {
@@ -80,27 +80,43 @@ impl TensorExpression {
             .collect()
     }
 
-    pub(crate) fn rust_code_mul_scalar_lhs(
+    pub(crate) fn tex_code_mul_scalar_lhs(
         l: &Box<Expression>,
         r: &Box<TensorExpression>,
-        parentheses: bool,
+        symbols: &HashMap<&str, &str>,
+        brackets_level: BracketsLevel,
     ) -> String {
-        if parentheses {
-            format!("({} * {})", l._rust_code(true), r._rust_code(true))
-        } else {
-            format!("{} * {}", l._rust_code(true), r._rust_code(true))
+        let inner = format!(
+            r"{{{} \times {}}}",
+            l._tex_code(symbols, BracketsLevel::ForMul),
+            r._tex_code(symbols, BracketsLevel::ForMul)
+        );
+
+        match brackets_level {
+            BracketsLevel::None | BracketsLevel::ForMul => inner,
+            BracketsLevel::ForDiv | BracketsLevel::ForOperation => {
+                format!(r"\left({}\right)", inner)
+            }
         }
     }
 
-    pub(crate) fn rust_code_mul_scalar_rhs(
+    pub(crate) fn tex_code_mul_scalar_rhs(
         l: &Box<TensorExpression>,
         r: &Box<Expression>,
-        parentheses: bool,
+        symbols: &HashMap<&str, &str>,
+        brackets_level: BracketsLevel,
     ) -> String {
-        if parentheses {
-            format!("({} * {})", l._rust_code(true), r._rust_code(true))
-        } else {
-            format!("{} * {}", l._rust_code(true), r._rust_code(true))
+        let inner = format!(
+            r"{{{} \times {}}}",
+            l._tex_code(symbols, BracketsLevel::ForMul),
+            r._tex_code(symbols, BracketsLevel::ForMul)
+        );
+
+        match brackets_level {
+            BracketsLevel::None | BracketsLevel::ForMul => inner,
+            BracketsLevel::ForDiv | BracketsLevel::ForOperation => {
+                format!(r"\left({}\right)", inner)
+            }
         }
     }
 }

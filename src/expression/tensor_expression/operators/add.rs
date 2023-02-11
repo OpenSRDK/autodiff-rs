@@ -1,5 +1,5 @@
-use crate::TensorExpression;
-use std::ops::Add;
+use crate::{BracketsLevel, TensorExpression};
+use std::{collections::HashMap, ops::Add};
 
 impl Add<TensorExpression> for TensorExpression {
     type Output = Self;
@@ -35,15 +35,23 @@ impl TensorExpression {
             .collect()
     }
 
-    pub(crate) fn rust_code_add(
+    pub(crate) fn tex_code_add(
         l: &Box<TensorExpression>,
         r: &Box<TensorExpression>,
-        parentheses: bool,
+        symbols: &HashMap<&str, &str>,
+        brackets_level: BracketsLevel,
     ) -> String {
-        if parentheses {
-            format!("({} + {})", l._rust_code(true), r._rust_code(true))
-        } else {
-            format!("{} + {}", l._rust_code(true), r._rust_code(true))
+        let inner = format!(
+            "{{{} + {}}}",
+            l._tex_code(symbols, BracketsLevel::None),
+            r._tex_code(symbols, BracketsLevel::None)
+        );
+
+        match brackets_level {
+            BracketsLevel::None => inner,
+            BracketsLevel::ForMul | BracketsLevel::ForDiv | BracketsLevel::ForOperation => {
+                format!(r"\left({}\right)", inner)
+            }
         }
     }
 }

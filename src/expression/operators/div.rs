@@ -1,5 +1,5 @@
-use crate::Expression;
-use std::ops::Div;
+use crate::{BracketsLevel, Expression};
+use std::{collections::HashMap, ops::Div};
 
 impl Div<Expression> for Expression {
     type Output = Self;
@@ -50,15 +50,23 @@ impl Expression {
             .collect()
     }
 
-    pub(crate) fn rust_code_div(
+    pub(crate) fn tex_code_div(
         l: &Box<Expression>,
         r: &Box<Expression>,
-        parentheses: bool,
+        symbols: &HashMap<&str, &str>,
+        brackets_level: BracketsLevel,
     ) -> String {
-        if parentheses {
-            format!("({} / {})", l._rust_code(true), r._rust_code(true))
-        } else {
-            format!("{} / {}", l._rust_code(true), r._rust_code(true))
+        let inner = format!(
+            "{{{} / {}}}",
+            l._tex_code(symbols, BracketsLevel::ForDiv),
+            r._tex_code(symbols, BracketsLevel::ForDiv)
+        );
+
+        match brackets_level {
+            BracketsLevel::None | BracketsLevel::ForMul => inner,
+            BracketsLevel::ForDiv | BracketsLevel::ForOperation => {
+                format!(r"\left({}\right)", inner)
+            }
         }
     }
 }

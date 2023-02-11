@@ -1,7 +1,8 @@
 use crate::TensorExpression;
 use opensrdk_linear_algebra::Tensor;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub enum Size {
     One,
     Many,

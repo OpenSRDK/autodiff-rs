@@ -1,5 +1,5 @@
-use crate::TensorExpression;
-use std::ops::Neg;
+use crate::{BracketsLevel, TensorExpression};
+use std::{collections::HashMap, ops::Neg};
 
 impl Neg for TensorExpression {
     type Output = Self;
@@ -24,7 +24,7 @@ impl TensorExpression {
         v.differential(symbols).into_iter().map(|e| -e).collect()
     }
 
-    pub(crate) fn rust_code_neg(v: &Box<TensorExpression>) -> String {
-        format!("-{}", v._rust_code(true))
+    pub(crate) fn tex_code_neg(v: &Box<TensorExpression>, symbols: &HashMap<&str, &str>) -> String {
+        format!("{{-{}}}", v._tex_code(symbols, BracketsLevel::ForOperation))
     }
 }

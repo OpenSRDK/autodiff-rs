@@ -4,17 +4,16 @@ pub mod assign;
 pub mod differential;
 pub mod functions;
 pub mod into;
-pub mod rust_code;
 pub mod symbol;
 pub mod tex_code;
 
 pub use assign::*;
 pub use differential::*;
-pub use rust_code::*;
+use serde::{Deserialize, Serialize};
 pub use symbol::*;
 pub use tex_code::*;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum TranscendentalExpression {
     Abs(Box<Expression>),
     Pow(Box<Expression>, Box<Expression>),
