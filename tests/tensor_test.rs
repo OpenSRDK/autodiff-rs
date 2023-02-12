@@ -1,4 +1,4 @@
-use opensrdk_symbolic_computation::{new_symbol_tensor, Size};
+use opensrdk_symbolic_computation::{new_variable_tensor, Size};
 
 extern crate blas_src;
 extern crate lapack_src;
@@ -12,10 +12,10 @@ mod probability;
 
 #[test]
 fn test_main() {
-    let x = new_symbol_tensor("x".to_owned(), vec![Size::Many]);
-    let mu = new_symbol_tensor("mu".to_owned(), vec![Size::Many]);
-    let _lsigma = new_symbol_tensor("lsigma".to_owned(), vec![Size::Many; 2]);
-    let precision = new_symbol_tensor("lambda".to_owned(), vec![Size::Many; 2]);
+    let x = new_variable_tensor("x".to_owned(), vec![Size::Many]);
+    let mu = new_variable_tensor("mu".to_owned(), vec![Size::Many]);
+    let _lsigma = new_variable_tensor("lsigma".to_owned(), vec![Size::Many; 2]);
+    let precision = new_variable_tensor("lambda".to_owned(), vec![Size::Many; 2]);
 
     let pdf_expression = (-0.5
         * ((x.clone() - mu.clone())
@@ -38,10 +38,10 @@ fn test_main() {
 
 #[test]
 fn test_main2() {
-    let x = new_symbol_tensor("x".to_owned(), vec![Size::Many, Size::One]);
-    let mu = new_symbol_tensor("mu".to_owned(), vec![Size::Many, Size::One]);
-    let _lsigma = new_symbol_tensor("lsigma".to_owned(), vec![Size::Many; 2]);
-    let precision = new_symbol_tensor("lambda".to_owned(), vec![Size::Many; 2]);
+    let x = new_variable_tensor("x".to_owned(), vec![Size::Many, Size::One]);
+    let mu = new_variable_tensor("mu".to_owned(), vec![Size::Many, Size::One]);
+    let _lsigma = new_variable_tensor("lsigma".to_owned(), vec![Size::Many; 2]);
+    let precision = new_variable_tensor("lambda".to_owned(), vec![Size::Many; 2]);
 
     let pdf_expression = (-0.5
         * ((x.clone() - mu.clone())

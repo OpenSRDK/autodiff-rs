@@ -11,8 +11,11 @@ pub trait ContinuousDistribution: Clone + Debug + Serialize {
     fn condition_ids(&self) -> HashSet<&str> {
         self.conditions()
             .iter()
-            .map(|v| v.symbols())
+            .map(|v| v.variable_ids())
             .flatten()
+            .collect::<HashSet<_>>()
+            .difference(&self.value_ids())
+            .cloned()
             .collect()
     }
 
