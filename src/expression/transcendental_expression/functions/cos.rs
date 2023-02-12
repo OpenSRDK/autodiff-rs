@@ -14,6 +14,9 @@ impl Expression {
 
 impl TranscendentalExpression {
     pub(crate) fn tex_code_cos(arg: &Box<Expression>, symbols: &HashMap<&str, &str>) -> String {
-        format!(r"\cos({})", arg._tex_code(symbols, BracketsLevel::None))
+        format!(
+            r"\cos\left({}\right)",
+            arg._tex_code(symbols, BracketsLevel::None)
+        )
     }
 }

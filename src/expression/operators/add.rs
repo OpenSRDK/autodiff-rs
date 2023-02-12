@@ -1,4 +1,4 @@
-use crate::{BracketsLevel, Expression};
+use crate::{BracketsLevel, ConstantValue, Expression};
 use std::{collections::HashMap, ops::Add};
 
 impl Add<Expression> for Expression {
@@ -7,14 +7,14 @@ impl Add<Expression> for Expression {
     fn add(self, rhs: Expression) -> Self::Output {
         if let Expression::Constant(vl) = self {
             if let Expression::Constant(vr) = rhs {
-                return Expression::Constant(vl + vr);
+                return (vl + vr).into();
             }
-            if vl == 0.0 {
+            if vl == ConstantValue::Scalar(0.0) {
                 return rhs;
             }
         }
         if let Expression::Constant(vr) = rhs {
-            if vr == 0.0 {
+            if vr == ConstantValue::Scalar(0.0) {
                 return self;
             }
         }
@@ -27,7 +27,7 @@ impl Add<f64> for Expression {
     type Output = Self;
 
     fn add(self, rhs: f64) -> Self::Output {
-        self + Expression::Constant(rhs)
+        self + Expression::Constant(ConstantValue::Scalar(rhs))
     }
 }
 
@@ -35,7 +35,7 @@ impl Add<Expression> for f64 {
     type Output = Expression;
 
     fn add(self, rhs: Expression) -> Self::Output {
-        Expression::Constant(self) + rhs
+        Expression::Constant(ConstantValue::Scalar(self)) + rhs
     }
 }
 

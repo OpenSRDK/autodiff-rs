@@ -1,4 +1,4 @@
-use crate::{BracketsLevel, Expression};
+use crate::{BracketsLevel, ConstantValue, Expression};
 use std::{collections::HashMap, ops::Mul};
 
 impl Mul<Expression> for Expression {
@@ -8,24 +8,24 @@ impl Mul<Expression> for Expression {
         // Merge constant
         if let Expression::Constant(vl) = self {
             if let Expression::Constant(vr) = rhs {
-                return Expression::Constant(vl * vr);
+                return (vl * vr).into();
             }
-            if vl == 0.0 {
-                return Expression::Constant(0.0);
+            if vl == ConstantValue::Scalar(0.0) {
+                return 0.0.into();
             }
-            if vl == 1.0 {
+            if vl == ConstantValue::Scalar(1.0) {
                 return rhs;
             }
         }
         if let Expression::Constant(vr) = rhs {
-            if vr == 0.0 {
-                return Expression::Constant(0.0);
+            if vr == ConstantValue::Scalar(0.0) {
+                return 0.0.into();
             }
-            if vr == 1.0 {
+            if vr == ConstantValue::Scalar(1.0) {
                 return self;
             }
         }
-        // Merge as pow
+        // Merge pow
         if let Expression::Pow(vl, el) = &self {
             if let Expression::Pow(vr, er) = &rhs {
                 if vl.as_ref().eq(vr) {
@@ -55,7 +55,7 @@ impl Mul<Expression> for f64 {
     type Output = Expression;
 
     fn mul(self, rhs: Expression) -> Self::Output {
-        Expression::Constant(self) * rhs
+        Expression::Constant(ConstantValue::Scalar(self)) * rhs
     }
 }
 
@@ -63,7 +63,7 @@ impl Mul<f64> for Expression {
     type Output = Self;
 
     fn mul(self, rhs: f64) -> Self::Output {
-        self * Expression::Constant(rhs)
+        self * Expression::Constant(ConstantValue::Scalar(rhs))
     }
 }
 

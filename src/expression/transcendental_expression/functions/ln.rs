@@ -10,9 +10,6 @@ impl Expression {
         if let Expression::Mul(l, r) = &self {
             return l.as_ref().clone().ln() + r.as_ref().clone().ln();
         }
-        if let Expression::Pow(base, exponent) = &self {
-            return *exponent * base.as_ref().clone().ln();
-        }
         if let Expression::Transcendental(v) = &self {
             match v.as_ref() {
                 TranscendentalExpression::Pow(base, exponent) => {

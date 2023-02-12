@@ -13,9 +13,6 @@ impl Expression {
             return l.as_ref().clone().log(antilogarithm.clone())
                 + r.as_ref().clone().log(antilogarithm);
         }
-        if let Expression::Pow(base, exponent) = &self {
-            return *exponent * base.as_ref().clone().log(antilogarithm);
-        }
         if let Expression::Transcendental(v) = &self {
             match v.as_ref() {
                 TranscendentalExpression::Pow(base, exponent) => {

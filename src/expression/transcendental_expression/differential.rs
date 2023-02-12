@@ -42,7 +42,7 @@ impl TranscendentalExpression {
             TranscendentalExpression::Tan(arg) => arg
                 .differential(symbols)
                 .into_iter()
-                .map(|a| a / (arg.clone().cos().powr(2.into())))
+                .map(|a| a / (arg.clone().cos().pow(2.0.into())))
                 .collect(),
         }
     }

@@ -17,7 +17,7 @@ pub trait InnerProd {
 
 impl<I> InnerProd for I
 where
-    I: Iterator<Item = TensorExpression>,
+    I: Iterator<Item = Expression>,
 {
     fn inner_prod(self, rank_combinations: &[HashMap<RankIndex, String>]) -> TensorExpression {
         // Flatten InnerProd
@@ -49,15 +49,6 @@ where
                 vec![(t, rank_combination.clone())]
             })
             .collect::<Vec<_>>();
-
-        // Merge Zero
-        if terms
-            .iter()
-            .find(|&(t, _)| TensorExpression::Zero.eq(t))
-            .is_some()
-        {
-            return TensorExpression::Zero;
-        }
 
         // Merge KroneckerDeltas
         let deltas = terms
@@ -110,8 +101,14 @@ where
     }
 }
 
+impl Expression {
+    pub fn inner_prod(self, rhs: TensorExpression, rank_pairs: &[[RankIndex; 2]]) -> Expression {
+        self.into_tensor().inner_prod(rhs, rank_pairs)
+    }
+}
+
 impl TensorExpression {
-    pub fn inner_prod(self, rhs: TensorExpression, rank_pairs: &[[RankIndex; 2]]) -> Self {
+    pub fn inner_prod(self, rhs: TensorExpression, rank_pairs: &[[RankIndex; 2]]) -> Expression {
         // Merge constant
         if let TensorExpression::Constant(vl) = &self {
             if let TensorExpression::Constant(vr) = &rhs {
@@ -162,10 +159,10 @@ impl TensorExpression {
 
 impl TensorExpression {
     pub(crate) fn diff_inner_prod(
-        v: &Vec<TensorExpression>,
+        v: &Vec<Expression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
         symbols: &[&str],
-    ) -> Vec<TensorExpression> {
+    ) -> Vec<Expression> {
         let mut result = v[0]
             .differential(symbols)
             .into_iter()
@@ -195,7 +192,7 @@ impl TensorExpression {
     }
 
     pub(crate) fn tex_code_inner_prod(
-        terms: &Vec<TensorExpression>,
+        terms: &Vec<Expression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
         symbols: &HashMap<&str, &str>,
     ) -> String {
@@ -239,7 +236,7 @@ impl TensorExpression {
     }
 
     pub(crate) fn size_inner_prod(
-        terms: &Vec<TensorExpression>,
+        terms: &Vec<Expression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
     ) -> Vec<Size> {
         let max_rank = terms.iter().map(|vi| vi.sizes().len()).max().unwrap();

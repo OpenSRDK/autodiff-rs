@@ -16,17 +16,18 @@ impl Expression {
         brackets_level: BracketsLevel,
     ) -> String {
         match self {
-            Expression::Symbol(symbol) => format!("{{{}}}", symbols[symbol.as_str()]),
-            Expression::Constant(value) => format!("{}", value),
+            Expression::Symbol(symbol, _) => format!("{{{}}}", symbols[symbol.as_str()]),
+            Expression::Constant(_) => r"\text{const.}".to_owned(),
             Expression::Add(l, r) => Expression::tex_code_add(l, r, symbols, brackets_level),
             Expression::Sub(l, r) => Expression::tex_code_sub(l, r, symbols, brackets_level),
             Expression::Mul(l, r) => Expression::tex_code_mul(l, r, symbols, brackets_level),
             Expression::Div(l, r) => Expression::tex_code_div(l, r, symbols, brackets_level),
             Expression::Neg(v) => Expression::tex_code_neg(v, symbols),
-            Expression::Pow(base, exponent) => Expression::tex_code_pow(base, exponent, symbols),
             Expression::Transcendental(v) => v._tex_code(symbols, brackets_level),
-            Expression::DegeneratedTensor(v) => v._tex_code(symbols, brackets_level),
-            Expression::DiffResultTensor(v) => v._tex_code(symbols, brackets_level),
+            Expression::Matrix(v) => v._tex_code(symbols, brackets_level),
+            Expression::Tensor(v) => v._tex_code(symbols, brackets_level),
+            Expression::Index(v, index) => todo!(),
+            Expression::IndexedTensor(v) => todo!(),
         }
     }
 

@@ -14,6 +14,9 @@ impl Expression {
 
 impl TranscendentalExpression {
     pub(crate) fn tex_code_sin(arg: &Box<Expression>, symbols: &HashMap<&str, &str>) -> String {
-        format!(r"\sin({})", arg._tex_code(symbols, BracketsLevel::None))
+        format!(
+            r"\sin\right({}\left)",
+            arg._tex_code(symbols, BracketsLevel::None)
+        )
     }
 }

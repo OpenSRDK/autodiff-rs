@@ -6,7 +6,7 @@ impl Neg for Expression {
 
     fn neg(self) -> Self::Output {
         if let Expression::Constant(v) = self {
-            return Expression::Constant(-v);
+            return (-v).into();
         }
         if let Expression::Neg(v) = self {
             return *v;

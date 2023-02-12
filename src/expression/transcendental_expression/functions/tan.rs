@@ -14,6 +14,9 @@ impl Expression {
 
 impl TranscendentalExpression {
     pub(crate) fn tex_code_tan(arg: &Box<Expression>, symbols: &HashMap<&str, &str>) -> String {
-        format!(r"\tan({})", arg._tex_code(symbols, BracketsLevel::None))
+        format!(
+            r"\tan\right({}\left)",
+            arg._tex_code(symbols, BracketsLevel::None)
+        )
     }
 }

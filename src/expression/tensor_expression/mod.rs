@@ -1,47 +1,45 @@
 pub mod assign;
 pub mod differential;
-pub mod matrix_expression;
 pub mod operations;
-pub mod operators;
-pub mod size;
 pub mod symbol;
 pub mod tex_code;
 
 pub use assign::*;
 pub use differential::*;
-pub use matrix_expression::*;
 use serde::{Deserialize, Serialize};
-pub use size::*;
 pub use symbol::*;
 pub use tex_code::*;
 
 use crate::Expression;
-use opensrdk_linear_algebra::tensor::sparse::SparseTensor;
 use std::collections::HashMap;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum TensorExpression {
-    Symbol(String, Vec<Size>),
-    Constant(SparseTensor<f64>),
-    Zero,
-    Add(Box<TensorExpression>, Box<TensorExpression>),
-    Sub(Box<TensorExpression>, Box<TensorExpression>),
-    MulScalarLhs(Box<Expression>, Box<TensorExpression>),
-    MulScalarRhs(Box<TensorExpression>, Box<Expression>),
-    Neg(Box<TensorExpression>),
     KroneckerDeltas(Vec<[usize; 2]>),
     InnerProd {
-        terms: Vec<TensorExpression>,
+        terms: Vec<Expression>,
         rank_combinations: Vec<HashMap<usize, String>>,
     },
-    Matrix(Box<MatrixExpression>),
 }
 
-impl TensorExpression {
-    pub fn as_scalar(self) -> Expression {
-        if self.sizes().iter().find(|&s| *s != Size::One).is_some() {
-            panic!("TensorExpression::as_scalar: not a scalar");
+impl Expression {
+    pub fn tensor(self) -> Option<TensorExpression> {
+        match self {
+            Expression::Tensor(t) => Some(*t),
+            _ => None,
         }
-        Expression::DegeneratedTensor(self.into())
+    }
+
+    pub fn into_tensor(self) -> TensorExpression {
+        match self {
+            Expression::Tensor(t) => *t,
+            _ => panic!("The expression is not a tensor expression."),
+        }
+    }
+}
+
+impl From<TensorExpression> for Expression {
+    fn from(t: TensorExpression) -> Self {
+        Expression::Tensor(t.into())
     }
 }

@@ -1,14 +1,14 @@
-use crate::Expression;
+use crate::{Expression, Size, TensorExpression};
 use std::{collections::HashSet, iter::once};
 
 pub fn new_symbol(name: String) -> Expression {
-    Expression::Symbol(name)
+    Expression::Symbol(name, vec![])
 }
 
 impl Expression {
     pub fn symbols(&self) -> HashSet<String> {
         match self {
-            Expression::Symbol(symbol) => once(symbol.clone()).collect::<HashSet<String>>(),
+            Expression::Symbol(symbol, _) => once(symbol.clone()).collect::<HashSet<String>>(),
             Expression::Constant(_) => HashSet::new(),
             Expression::Add(l, r) => l
                 .symbols()
@@ -31,21 +31,28 @@ impl Expression {
                 .chain(r.symbols().into_iter())
                 .collect(),
             Expression::Neg(v) => v.symbols(),
-            Expression::Pow(base, _) => base.symbols(),
             Expression::Transcendental(v) => v.symbols(),
-            Expression::DegeneratedTensor(v) => v.symbols(),
-            Expression::DiffResultTensor(v) => v.symbols(),
+            Expression::Tensor(v) => v.symbols(),
+            Expression::Matrix(v) => v.symbols(),
+            Expression::Index(v, index) => todo!(),
+            Expression::IndexedTensor(v) => todo!(),
         }
     }
 
-    pub(crate) fn diff_symbol(symbols: &[&str], symbol: &String) -> Vec<Expression> {
+    pub(crate) fn diff_symbol(
+        symbol: &String,
+        sizes: &Vec<Size>,
+        symbols: &[&str],
+    ) -> Vec<Expression> {
+        let rank = sizes.len();
         symbols
             .iter()
             .map(|s| {
                 if s.eq(symbol) {
-                    Expression::Constant(1.0)
+                    TensorExpression::KroneckerDeltas((0..rank).map(|r| [r, r + rank]).collect())
+                        .into()
                 } else {
-                    Expression::Constant(0.0)
+                    0.0.into()
                 }
             })
             .collect()
