@@ -6,6 +6,8 @@ impl Add<Expression> for Expression {
 
     fn add(self, rhs: Expression) -> Self::Output {
         if !self.is_same_size(&rhs) {
+            println!("{:#?}", self);
+            println!("{:#?}", rhs);
             panic!("Cannot add expressions of different sizes");
         }
         if let Expression::Constant(vl) = &self {

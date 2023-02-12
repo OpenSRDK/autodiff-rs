@@ -1,6 +1,4 @@
-use std::{collections::HashMap, f64::consts::PI};
-
-use opensrdk_symbolic_computation::{new_symbol_tensor, Expression, Size};
+use opensrdk_symbolic_computation::{new_symbol_tensor, Size};
 
 extern crate blas_src;
 extern crate lapack_src;

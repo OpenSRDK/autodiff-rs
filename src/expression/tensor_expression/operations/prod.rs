@@ -52,6 +52,10 @@ where
             })
             .collect::<Vec<_>>();
 
+        if terms.iter().find(|&t| &t.0 == &0.0.into()).is_some() {
+            return 0.0.into();
+        }
+
         // Merge KroneckerDeltas
         let deltas = terms
             .iter()
