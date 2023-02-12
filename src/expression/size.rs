@@ -11,7 +11,7 @@ pub enum Size {
 impl Expression {
     pub fn sizes(&self) -> Vec<Size> {
         match self {
-            Expression::Symbol(_, sizes) => sizes.clone(),
+            Expression::Variable(_, sizes) => sizes.clone(),
             Expression::Constant(v) => match v {
                 ConstantValue::Scalar(v) => vec![],
                 ConstantValue::Matrix(v) => vec![
@@ -30,10 +30,9 @@ impl Expression {
             Expression::Div(l, r) => l.sizes(),
             Expression::Neg(v) => v.sizes(),
             Expression::Transcendental(v) => v.sizes(),
-            Expression::Matrix(v) => v.sizes(),
             Expression::Tensor(v) => v.sizes(),
-            Expression::Index(v, index) => todo!(),
             Expression::IndexedTensor(v) => todo!(),
+            Expression::Matrix(v) => v.sizes(),
         }
     }
 

@@ -3,20 +3,20 @@ pub mod differential;
 pub mod matrix_expression;
 pub mod operators;
 pub mod size;
-pub mod symbol;
 pub mod tensor_expression;
 pub mod tex_code;
 pub mod transcendental_expression;
+pub mod variable;
 
 pub use assign::*;
 pub use differential::*;
 pub use matrix_expression::*;
 use opensrdk_linear_algebra::{sparse::SparseTensor, Matrix};
 pub use size::*;
-pub use symbol::*;
 pub use tensor_expression::*;
 pub use tex_code::*;
 pub use transcendental_expression::*;
+pub use variable::*;
 
 use crate::ConstantValue;
 use serde::{Deserialize, Serialize};
@@ -24,7 +24,7 @@ use std::collections::HashMap;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum Expression {
-    Symbol(String, Vec<Size>),
+    Variable(String, Vec<Size>),
     Constant(ConstantValue),
     Add(Box<Expression>, Box<Expression>),
     Sub(Box<Expression>, Box<Expression>),
@@ -33,9 +33,8 @@ pub enum Expression {
     Neg(Box<Expression>),
     Transcendental(Box<TranscendentalExpression>),
     Tensor(Box<TensorExpression>),
-    Matrix(Box<MatrixExpression>),
-    Index(Box<Expression>, Vec<usize>),
     IndexedTensor(HashMap<Vec<usize>, Expression>),
+    Matrix(Box<MatrixExpression>),
 }
 
 impl From<f64> for Expression {

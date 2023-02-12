@@ -2,16 +2,16 @@ pub mod assign;
 pub mod differential;
 pub mod operations;
 pub mod size;
-pub mod symbol;
 pub mod tex_code;
+pub mod variable;
 
 pub use assign::*;
 pub use differential::*;
 pub use operations::*;
 use serde::{Deserialize, Serialize};
 pub use size::*;
-pub use symbol::*;
 pub use tex_code::*;
+pub use variable::*;
 
 use crate::Expression;
 

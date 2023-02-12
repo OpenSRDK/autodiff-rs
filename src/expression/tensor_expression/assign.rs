@@ -3,7 +3,7 @@ use crate::{ConstantValue, Expression, TensorExpression};
 use std::collections::HashMap;
 
 impl TensorExpression {
-    pub fn assign(self, values: &HashMap<&str, ConstantValue>) -> Expression {
+    pub fn assign(self, variables: &HashMap<&str, ConstantValue>) -> Expression {
         match self {
             TensorExpression::KroneckerDeltas(_) => self.into(),
             TensorExpression::InnerProd {
@@ -11,7 +11,7 @@ impl TensorExpression {
                 rank_combinations,
             } => v
                 .into_iter()
-                .map(|v| v.assign(values))
+                .map(|v| v.assign(variables))
                 .inner_prod(&rank_combinations),
         }
     }

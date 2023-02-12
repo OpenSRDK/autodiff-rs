@@ -12,22 +12,21 @@ pub enum BracketsLevel {
 impl Expression {
     pub(crate) fn _tex_code(
         &self,
-        symbols: &HashMap<&str, &str>,
+        variables: &HashMap<&str, &str>,
         brackets_level: BracketsLevel,
     ) -> String {
         match self {
-            Expression::Symbol(symbol, _) => format!("{{{}}}", symbols[symbol.as_str()]),
+            Expression::Variable(id, _) => format!("{{{}}}", variables[id.as_str()]),
             Expression::Constant(_) => r"\text{const.}".to_owned(),
-            Expression::Add(l, r) => Expression::tex_code_add(l, r, symbols, brackets_level),
-            Expression::Sub(l, r) => Expression::tex_code_sub(l, r, symbols, brackets_level),
-            Expression::Mul(l, r) => Expression::tex_code_mul(l, r, symbols, brackets_level),
-            Expression::Div(l, r) => Expression::tex_code_div(l, r, symbols, brackets_level),
-            Expression::Neg(v) => Expression::tex_code_neg(v, symbols),
-            Expression::Transcendental(v) => v._tex_code(symbols, brackets_level),
-            Expression::Matrix(v) => v._tex_code(symbols, brackets_level),
-            Expression::Tensor(v) => v._tex_code(symbols, brackets_level),
-            Expression::Index(v, index) => todo!(),
+            Expression::Add(l, r) => Expression::tex_code_add(l, r, variables, brackets_level),
+            Expression::Sub(l, r) => Expression::tex_code_sub(l, r, variables, brackets_level),
+            Expression::Mul(l, r) => Expression::tex_code_mul(l, r, variables, brackets_level),
+            Expression::Div(l, r) => Expression::tex_code_div(l, r, variables, brackets_level),
+            Expression::Neg(v) => Expression::tex_code_neg(v, variables),
+            Expression::Transcendental(v) => v._tex_code(variables, brackets_level),
+            Expression::Tensor(v) => v._tex_code(variables, brackets_level),
             Expression::IndexedTensor(v) => todo!(),
+            Expression::Matrix(v) => v._tex_code(variables, brackets_level),
         }
     }
 

@@ -2,20 +2,20 @@ use crate::{ConstantValue, Expression, TranscendentalExpression};
 use std::collections::HashMap;
 
 impl TranscendentalExpression {
-    pub fn assign(self, values: &HashMap<&str, ConstantValue>) -> Expression {
+    pub fn assign(self, variables: &HashMap<&str, ConstantValue>) -> Expression {
         match self {
-            TranscendentalExpression::Abs(arg) => arg.assign(values).abs(),
+            TranscendentalExpression::Abs(arg) => arg.assign(variables).abs(),
             TranscendentalExpression::Pow(base, exponent) => {
-                base.assign(values).pow(exponent.assign(values))
+                base.assign(variables).pow(exponent.assign(variables))
             }
-            TranscendentalExpression::Exp(arg) => arg.assign(values).exp(),
+            TranscendentalExpression::Exp(arg) => arg.assign(variables).exp(),
             TranscendentalExpression::Log(base, antilogarithm) => {
-                base.assign(values).log(antilogarithm.assign(values))
+                base.assign(variables).log(antilogarithm.assign(variables))
             }
-            TranscendentalExpression::Ln(arg) => arg.assign(values).ln(),
-            TranscendentalExpression::Sin(arg) => arg.assign(values).sin(),
-            TranscendentalExpression::Cos(arg) => arg.assign(values).cos(),
-            TranscendentalExpression::Tan(arg) => arg.assign(values).tan(),
+            TranscendentalExpression::Ln(arg) => arg.assign(variables).ln(),
+            TranscendentalExpression::Sin(arg) => arg.assign(variables).sin(),
+            TranscendentalExpression::Cos(arg) => arg.assign(variables).cos(),
+            TranscendentalExpression::Tan(arg) => arg.assign(variables).tan(),
         }
     }
 }

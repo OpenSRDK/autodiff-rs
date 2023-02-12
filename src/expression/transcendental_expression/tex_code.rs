@@ -4,33 +4,33 @@ use std::collections::HashMap;
 impl TranscendentalExpression {
     pub(crate) fn _tex_code(
         &self,
-        symbols: &HashMap<&str, &str>,
+        variables: &HashMap<&str, &str>,
         _brackets_level: BracketsLevel,
     ) -> String {
         match self {
             TranscendentalExpression::Abs(arg) => {
-                TranscendentalExpression::tex_code_abs(arg, symbols)
+                TranscendentalExpression::tex_code_abs(arg, variables)
             }
             TranscendentalExpression::Pow(base, exponent) => {
-                TranscendentalExpression::tex_code_pow(base, exponent, symbols)
+                TranscendentalExpression::tex_code_pow(base, exponent, variables)
             }
             TranscendentalExpression::Exp(arg) => {
-                TranscendentalExpression::tex_code_exp(arg, symbols)
+                TranscendentalExpression::tex_code_exp(arg, variables)
             }
             TranscendentalExpression::Log(base, antilogarithm) => {
-                TranscendentalExpression::tex_code_log(base, antilogarithm, symbols)
+                TranscendentalExpression::tex_code_log(base, antilogarithm, variables)
             }
             TranscendentalExpression::Ln(arg) => {
-                TranscendentalExpression::tex_code_ln(arg, symbols)
+                TranscendentalExpression::tex_code_ln(arg, variables)
             }
             TranscendentalExpression::Sin(arg) => {
-                TranscendentalExpression::tex_code_sin(arg, symbols)
+                TranscendentalExpression::tex_code_sin(arg, variables)
             }
             TranscendentalExpression::Cos(arg) => {
-                TranscendentalExpression::tex_code_cos(arg, symbols)
+                TranscendentalExpression::tex_code_cos(arg, variables)
             }
             TranscendentalExpression::Tan(arg) => {
-                TranscendentalExpression::tex_code_tan(arg, symbols)
+                TranscendentalExpression::tex_code_tan(arg, variables)
             }
         }
     }

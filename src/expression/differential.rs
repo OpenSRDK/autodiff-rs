@@ -1,20 +1,19 @@
 use crate::Expression;
 
 impl Expression {
-    pub fn differential(&self, symbols: &[&str]) -> Vec<Expression> {
+    pub fn differential(&self, variable_ids: &[&str]) -> Vec<Expression> {
         match self {
-            Expression::Symbol(name, sizes) => Expression::diff_symbol(name, sizes, symbols),
-            Expression::Constant(_) => vec![0.0.into(); symbols.len()],
-            Expression::Add(l, r) => Expression::diff_add(l, r, symbols),
-            Expression::Sub(l, r) => Expression::diff_sub(l, r, symbols),
-            Expression::Mul(l, r) => Expression::diff_mul(l, r, symbols),
-            Expression::Div(l, r) => Expression::diff_div(l, r, symbols),
-            Expression::Neg(v) => Expression::diff_neg(v, symbols),
-            Expression::Transcendental(v) => v.differential(symbols),
-            Expression::Matrix(v) => v.differential(symbols),
-            Expression::Tensor(v) => v.differential(symbols),
-            Expression::Index(v, index) => todo!(),
+            Expression::Variable(id, sizes) => Expression::diff_variable(id, sizes, variable_ids),
+            Expression::Constant(_) => vec![0.0.into(); variable_ids.len()],
+            Expression::Add(l, r) => Expression::diff_add(l, r, variable_ids),
+            Expression::Sub(l, r) => Expression::diff_sub(l, r, variable_ids),
+            Expression::Mul(l, r) => Expression::diff_mul(l, r, variable_ids),
+            Expression::Div(l, r) => Expression::diff_div(l, r, variable_ids),
+            Expression::Neg(v) => Expression::diff_neg(v, variable_ids),
+            Expression::Transcendental(v) => v.differential(variable_ids),
+            Expression::Tensor(v) => v.differential(variable_ids),
             Expression::IndexedTensor(v) => todo!(),
+            Expression::Matrix(v) => v.differential(variable_ids),
         }
     }
 }
@@ -26,7 +25,7 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let x = new_symbol("x".to_string());
+        let x = new_variable("x".to_string());
 
         let expression = x.clone().pow(2.0.into());
         let diff = expression.differential(&["x"])[0].clone();
@@ -36,7 +35,7 @@ mod tests {
 
     #[test]
     fn it_works2() {
-        let x = new_symbol("x".to_string());
+        let x = new_variable("x".to_string());
 
         let expression = (2.0 * x.clone()).exp();
         let diff = expression.differential(&["x"])[0].clone();
@@ -46,7 +45,7 @@ mod tests {
 
     #[test]
     fn it_works3() {
-        let x = new_symbol("x".to_string());
+        let x = new_variable("x".to_string());
 
         let expression = x.clone().sin() + x.clone().cos().exp();
         let diff = expression.differential(&["x"])[0].clone();
@@ -56,7 +55,7 @@ mod tests {
 
     #[test]
     fn it_works4() {
-        let x = new_symbol("x".to_string());
+        let x = new_variable("x".to_string());
 
         let expression = x.clone().pow(2.0.into());
         let diff = expression.differential(&["x"])[0].clone();
@@ -74,9 +73,9 @@ mod tests {
 
     #[test]
     fn it_works5() {
-        let x = new_symbol("x".to_string());
-        let mu = new_symbol("mu".to_string());
-        let sigma = new_symbol("sigma".to_string());
+        let x = new_variable("x".to_string());
+        let mu = new_variable("mu".to_string());
+        let sigma = new_variable("sigma".to_string());
         let expression = -(x - mu).pow(2.0.into()) / (2.0 * sigma.pow(2.0.into()));
         let diff_x = expression.differential(&["x"])[0].clone();
         let diff_mu = expression.differential(&["mu"])[0].clone();
