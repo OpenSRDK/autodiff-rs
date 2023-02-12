@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, f64::consts::PI};
 
 use opensrdk_symbolic_computation::{new_symbol_tensor, Expression, Size};
 
@@ -10,6 +10,8 @@ extern crate ron;
 extern crate serde;
 extern crate thiserror;
 
+mod probability;
+
 #[test]
 fn test_main() {
     let x = new_symbol_tensor("x".to_owned(), vec![Size::Many]);
@@ -20,8 +22,7 @@ fn test_main() {
     let pdf_expression = (-0.5
         * ((x.clone() - mu.clone())
             .inner_prod(precision, &[[0, 0]])
-            .inner_prod(x.clone() - mu.clone(), &[[1, 0]]))
-        .as_degenerated_tensor_scalar())
+            .inner_prod(x.clone() - mu.clone(), &[[1, 0]])))
     .exp();
 
     let diff = pdf_expression.differential(&["x", "mu", "lambda"]);
@@ -46,12 +47,9 @@ fn test_main2() {
 
     let pdf_expression = (-0.5
         * ((x.clone() - mu.clone())
-            .to_mat()
             .t()
-            .as_tensor()
             .inner_prod(precision, &[[1, 0]])
-            .inner_prod(x.clone() - mu.clone(), &[[1, 0]]))
-        .as_degenerated_tensor_scalar())
+            .inner_prod(x.clone() - mu.clone(), &[[1, 0]])))
     .exp();
 
     let diff = pdf_expression.differential(&["x", "mu", "lambda"]);
@@ -65,43 +63,4 @@ fn test_main2() {
     println!("{:#?}", diff[1].tex_code(&tex_symbols));
     println!("sigma diff");
     println!("{:#?}", diff[2].tex_code(&tex_symbols));
-}
-
-trait Distribution<T> {
-    fn ln_pdf(&self, value: &T, condition: &HashMap<String, Expression>) -> Expression;
-
-    fn pdf(&self, value: &T, condition: &HashMap<String, Expression>) -> Expression {
-        self.ln_pdf(value, condition).exp()
-    }
-}
-
-struct MultivariateNormal {
-    x: String,
-    mu: String,
-    sigma: String,
-}
-
-impl MultivariateNormal {
-    pub fn new(x: String, mu: String, sigma: String) -> MultivariateNormal {
-        MultivariateNormal { x, mu, sigma }
-    }
-}
-
-impl Distribution<Vec<f64>> for MultivariateNormal {
-    fn ln_pdf(&self, value: &Vec<f64>, condition: &HashMap<String, Expression>) -> Expression {
-        let x = &condition[&self.x.clone()];
-        let mu = condition[&self.mu.clone()];
-        let sigma = &condition[&self.sigma.clone()];
-
-        let pdf_expression = (-0.5
-            * ((x.clone() - mu.clone())
-                .inner_prod(precision, &[[0, 0]])
-                .inner_prod(x.clone() - mu.clone(), &[[1, 0]]))
-            .as_scalar())
-        .exp();
-
-        let res: Result<usize, usize> = Ok(0);
-
-        res.pdf_expression
-    }
 }
