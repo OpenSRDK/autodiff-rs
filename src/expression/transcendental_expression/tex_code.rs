@@ -1,22 +1,41 @@
-use crate::TranscendentalExpression;
+use crate::{BracketsLevel, TranscendentalExpression};
+use std::collections::HashMap;
 
 impl TranscendentalExpression {
-    pub fn tex_code(&self) -> String {
+    pub(crate) fn _tex_code(
+        &self,
+        symbols: &HashMap<&str, &str>,
+        _brackets_level: BracketsLevel,
+    ) -> String {
         match self {
-            TranscendentalExpression::Abs(arg) => format!("\\left|{}\\right|", arg.tex_code()),
-            TranscendentalExpression::Pow(base, exponent) => {
-                format!("{}^{{{}}}", base.tex_code(), exponent.tex_code())
+            TranscendentalExpression::Abs(arg) => {
+                TranscendentalExpression::tex_code_abs(arg, symbols)
             }
-            TranscendentalExpression::Exp(arg) => format!("\\exp({})", arg.tex_code()),
-            TranscendentalExpression::Log(base, antilogarithm) => format!(
-                "\\log_{{{}}}({})",
-                base.tex_code(),
-                antilogarithm.tex_code()
-            ),
-            TranscendentalExpression::Ln(arg) => format!("\\ln({})", arg.tex_code()),
-            TranscendentalExpression::Sin(arg) => format!("\\sin({})", arg.tex_code()),
-            TranscendentalExpression::Cos(arg) => format!("\\cos({})", arg.tex_code()),
-            TranscendentalExpression::Tan(arg) => format!("\\tan({})", arg.tex_code()),
+            TranscendentalExpression::Pow(base, exponent) => {
+                TranscendentalExpression::tex_code_pow(base, exponent, symbols)
+            }
+            TranscendentalExpression::Exp(arg) => {
+                TranscendentalExpression::tex_code_exp(arg, symbols)
+            }
+            TranscendentalExpression::Log(base, antilogarithm) => {
+                TranscendentalExpression::tex_code_log(base, antilogarithm, symbols)
+            }
+            TranscendentalExpression::Ln(arg) => {
+                TranscendentalExpression::tex_code_ln(arg, symbols)
+            }
+            TranscendentalExpression::Sin(arg) => {
+                TranscendentalExpression::tex_code_sin(arg, symbols)
+            }
+            TranscendentalExpression::Cos(arg) => {
+                TranscendentalExpression::tex_code_cos(arg, symbols)
+            }
+            TranscendentalExpression::Tan(arg) => {
+                TranscendentalExpression::tex_code_tan(arg, symbols)
+            }
         }
+    }
+
+    pub fn tex_code(&self, symbols: &HashMap<&str, &str>) -> String {
+        self._tex_code(symbols, BracketsLevel::None)
     }
 }

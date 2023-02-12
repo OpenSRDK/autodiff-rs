@@ -1,82 +1,90 @@
-use crate::{Expression, Size, TensorExpression};
-use opensrdk_linear_algebra::{
-    generate_rank_combinations, sparse::operations::kronecker_delta::KroneckerDelta, Tensor,
-};
+use crate::{BracketsLevel, Expression, Size, TensorExpression};
+use opensrdk_linear_algebra::{generate_rank_combinations, RankIndex};
 use std::{collections::HashMap, iter::once};
 
 type TermIndex = usize;
-type RankIndex = usize; // TODO
 
 fn next_char(c: char, count: usize) -> char {
     std::char::from_u32(c as u32 + count as u32).unwrap_or(c)
 }
 
 pub trait InnerProd {
-    fn inner_prod(self, rank_combinations: &[HashMap<RankIndex, String>]) -> TensorExpression;
+    fn inner_prod(self, rank_combinations: &[HashMap<RankIndex, String>]) -> Expression;
 }
 
 impl<I> InnerProd for I
 where
-    I: Iterator<Item = TensorExpression>,
+    I: Iterator<Item = Expression>,
 {
-    fn inner_prod(self, rank_combinations: &[HashMap<RankIndex, String>]) -> TensorExpression {
+    fn inner_prod(self, rank_combinations: &[HashMap<RankIndex, String>]) -> Expression {
         // Flatten InnerProd
         let terms = self
             .zip(rank_combinations.iter())
             .flat_map(|(t, rank_combination)| {
-                if let TensorExpression::InnerProd {
-                    terms: t,
-                    mut rank_combinations,
-                } = t
-                {
-                    let not_1dimension_ranks = TensorExpression::not_1dimension_ranks_in_inner_prod(
-                        &t,
-                        &rank_combinations,
-                    );
+                if let Expression::Tensor(t) = &t {
+                    if let TensorExpression::InnerProd {
+                        terms: t,
+                        rank_combinations,
+                    } = t.as_ref()
+                    {
+                        let t = t.clone();
+                        let mut rank_combinations = rank_combinations.clone();
+                        let not_1dimension_ranks =
+                            TensorExpression::not_1dimension_ranks_in_inner_prod(
+                                &t,
+                                &rank_combinations,
+                            );
 
-                    for (&rank, id) in rank_combination.iter() {
-                        let term_index = not_1dimension_ranks[&rank];
-                        rank_combinations[term_index].insert(rank, id.to_owned());
+                        for (&rank, id) in rank_combination.iter() {
+                            if let Some(&term_index) = not_1dimension_ranks.get(&rank) {
+                                rank_combinations[term_index].insert(rank, id.to_owned());
+                            }
+                        }
+
+                        return t
+                            .into_iter()
+                            .zip(rank_combinations.into_iter())
+                            .collect::<Vec<_>>();
                     }
-
-                    return t
-                        .into_iter()
-                        .zip(rank_combinations.into_iter())
-                        .collect::<Vec<_>>();
                 }
 
                 vec![(t, rank_combination.clone())]
             })
             .collect::<Vec<_>>();
 
-        // Merge Zero
-        if terms
-            .iter()
-            .find(|&(t, _)| TensorExpression::Zero.eq(t))
-            .is_some()
-        {
-            return TensorExpression::Zero;
+        if terms.iter().find(|&t| &t.0 == &0.0.into()).is_some() {
+            return 0.0.into();
         }
 
         // Merge KroneckerDeltas
         let deltas = terms
             .iter()
             .filter_map(|(t, r)| {
-                if let TensorExpression::KroneckerDeltas(rank_pairs) = t {
-                    Some((rank_pairs, r))
-                } else {
-                    None
+                if let Expression::Tensor(t) = t {
+                    if let TensorExpression::KroneckerDeltas(rank_pairs) = t.as_ref() {
+                        return Some((rank_pairs.clone(), r));
+                    }
                 }
+
+                None
             })
             .collect::<Vec<_>>();
         let not_deltas = terms
             .iter()
-            .filter(|(t, _)| !matches!(t, TensorExpression::KroneckerDeltas(_)))
+            .filter(|(t, _)| {
+                if let Expression::Tensor(t) = t {
+                    if let &TensorExpression::KroneckerDeltas(_) = t.as_ref() {
+                        return false;
+                    }
+                }
+
+                true
+            })
             .collect::<Vec<_>>();
 
         let flatten_deltas = deltas
             .iter()
-            .map(|&(t, _)| t)
+            .map(|(t, _)| t)
             .flatten()
             .cloned()
             .collect::<Vec<_>>();
@@ -98,7 +106,7 @@ where
         if flatten_deltas.len() > 0 {
             let merged_deltas = TensorExpression::KroneckerDeltas(flatten_deltas);
 
-            new_terms.insert(0, merged_deltas);
+            new_terms.insert(0, merged_deltas.into());
             new_rank_combinations.insert(0, flatten_deltas_combination);
         }
 
@@ -106,53 +114,12 @@ where
             terms: new_terms,
             rank_combinations: new_rank_combinations,
         }
+        .into()
     }
 }
 
-impl TensorExpression {
-    pub fn inner_prod(self, rhs: TensorExpression, rank_pairs: &[[RankIndex; 2]]) -> Self {
-        // Merge constant
-        if let TensorExpression::Constant(vl) = &self {
-            if let TensorExpression::Constant(vr) = &rhs {
-                return TensorExpression::Constant(vl.clone().inner_prod(vr.clone(), rank_pairs));
-            }
-            if let TensorExpression::KroneckerDeltas(rank_pairs_r) = &rhs {
-                return TensorExpression::Constant(
-                    vl.mul_kronecker_deltas(
-                        &rank_pairs_r
-                            .iter()
-                            .map(|rank_pair| KroneckerDelta(rank_pair[0], rank_pair[1]))
-                            .collect::<Vec<_>>(),
-                    ),
-                );
-            }
-            if vl.total_size() == 1 {
-                return TensorExpression::MulScalarLhs(
-                    Expression::Constant(vl[&vec![0; vl.rank()]]).into(),
-                    rhs.into(),
-                );
-            }
-        }
-        if let TensorExpression::Constant(vr) = &rhs {
-            if let TensorExpression::KroneckerDeltas(rank_pairs_l) = &self {
-                return TensorExpression::Constant(
-                    vr.mul_kronecker_deltas(
-                        &rank_pairs_l
-                            .iter()
-                            .map(|rank_pair| KroneckerDelta(rank_pair[0], rank_pair[1]))
-                            .collect::<Vec<_>>(),
-                    ),
-                );
-            }
-            if vr.total_size() == 1 {
-                return TensorExpression::MulScalarRhs(
-                    self.into(),
-                    Expression::Constant(vr[&vec![0; vr.rank()]]).into(),
-                );
-            }
-        }
-        // Merging Zero, KroneckerDeltas, InnerProds are done in InnerProd::inner_prod
-
+impl Expression {
+    pub fn inner_prod(self, rhs: Expression, rank_pairs: &[[RankIndex; 2]]) -> Expression {
         vec![self, rhs]
             .into_iter()
             .inner_prod(&generate_rank_combinations(rank_pairs))
@@ -161,10 +128,10 @@ impl TensorExpression {
 
 impl TensorExpression {
     pub(crate) fn diff_inner_prod(
-        symbols: &[&str],
-        v: &Vec<TensorExpression>,
+        v: &Vec<Expression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
-    ) -> Vec<TensorExpression> {
+        symbols: &[&str],
+    ) -> Vec<Expression> {
         let mut result = v[0]
             .differential(symbols)
             .into_iter()
@@ -193,17 +160,10 @@ impl TensorExpression {
         result
     }
 
-    pub(crate) fn rust_code_inner_prod(
-        terms: &Vec<TensorExpression>,
-        rank_combinations: &Vec<HashMap<RankIndex, String>>,
-        parentheses: bool,
-    ) -> String {
-        todo!()
-    }
-
     pub(crate) fn tex_code_inner_prod(
-        terms: &Vec<TensorExpression>,
+        terms: &Vec<Expression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
+        symbols: &HashMap<&str, &str>,
     ) -> String {
         let mut ids = Vec::<String>::new();
         let mut id_index = HashMap::<String, usize>::new();
@@ -232,7 +192,7 @@ impl TensorExpression {
             sorted.sort_by(|a, b| a.0.cmp(b.0));
             result.push_str(&format!(
                 "{}_{{{}}}",
-                terms[i].tex_code(),
+                terms[i]._tex_code(symbols, BracketsLevel::ForMul),
                 sorted
                     .into_iter()
                     .map(|(j, id)| format!("[{}] = {}", j, next_char('i', id_index[id])))
@@ -245,7 +205,7 @@ impl TensorExpression {
     }
 
     pub(crate) fn size_inner_prod(
-        terms: &Vec<TensorExpression>,
+        terms: &Vec<Expression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
     ) -> Vec<Size> {
         let max_rank = terms.iter().map(|vi| vi.sizes().len()).max().unwrap();
@@ -255,7 +215,7 @@ impl TensorExpression {
             let term_sizes = terms[i].sizes();
 
             for (rank, size) in term_sizes.iter().enumerate() {
-                if sizes[rank].eq(&Size::Many) {
+                if sizes[rank] == Size::Many {
                     continue;
                 }
                 if let Some(_) = rank_combinations[i].get(&rank) {
@@ -269,7 +229,7 @@ impl TensorExpression {
     }
 
     pub fn not_1dimension_ranks_in_inner_prod(
-        terms: &Vec<TensorExpression>,
+        terms: &Vec<Expression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
     ) -> HashMap<RankIndex, TermIndex> {
         let mut not_1dimension_ranks = HashMap::new();

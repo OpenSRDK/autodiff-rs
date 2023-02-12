@@ -1,16 +1,15 @@
-use crate::{Expression, TranscendentalExpression};
-use num_traits::ToPrimitive;
+use std::collections::HashMap;
+
+use crate::{BracketsLevel, Expression, TranscendentalExpression};
 
 impl Expression {
     pub fn ln(self) -> Self {
-        if let Expression::Constant(v) = self {
-            return Expression::Constant(v.ln());
+        if let Expression::Constant(mut v) = self {
+            v.elems_mut().into_iter().for_each(|v| *v = v.ln());
+            return v.into();
         }
         if let Expression::Mul(l, r) = &self {
             return l.as_ref().clone().ln() + r.as_ref().clone().ln();
-        }
-        if let Expression::Pow(base, exponent) = &self {
-            return exponent.to_f64().unwrap_or_default() * base.as_ref().clone().ln();
         }
         if let Expression::Transcendental(v) = &self {
             match v.as_ref() {
@@ -29,7 +28,10 @@ impl Expression {
 }
 
 impl TranscendentalExpression {
-    pub(crate) fn rust_code_ln(arg: &Box<Expression>) -> String {
-        format!("{}.ln()", arg._rust_code(true))
+    pub(crate) fn tex_code_ln(arg: &Box<Expression>, symbols: &HashMap<&str, &str>) -> String {
+        format!(
+            r"\ln{{{}}}",
+            arg._tex_code(symbols, BracketsLevel::ForOperation)
+        )
     }
 }

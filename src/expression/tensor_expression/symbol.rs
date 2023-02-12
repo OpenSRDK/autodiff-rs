@@ -1,81 +1,18 @@
-use crate::{Size, TensorExpression, Value};
-use std::{
-    collections::{HashMap, HashSet},
-    iter::once,
-};
+use crate::{Expression, Size, TensorExpression};
+use std::collections::HashSet;
 
-pub fn new_symbol_tensor(name: String, sizes: Vec<Size>) -> TensorExpression {
-    TensorExpression::Symbol(name, sizes)
+pub fn new_symbol_tensor(name: String, sizes: Vec<Size>) -> Expression {
+    Expression::Symbol(name, sizes)
 }
 
 impl TensorExpression {
-    pub fn symbols(&self) -> HashSet<String> {
+    pub fn symbols(&self) -> HashSet<&str> {
         match self {
-            TensorExpression::Symbol(symbol, _) => {
-                once(symbol.clone()).collect::<HashSet<String>>()
-            }
-            TensorExpression::Constant(_) | TensorExpression::Zero => HashSet::new(),
-            TensorExpression::Add(l, r) => l
-                .symbols()
-                .into_iter()
-                .chain(r.symbols().into_iter())
-                .collect(),
-            TensorExpression::Sub(l, r) => l
-                .symbols()
-                .into_iter()
-                .chain(r.symbols().into_iter())
-                .collect(),
-            TensorExpression::MulScalarLhs(l, r) => l
-                .symbols()
-                .into_iter()
-                .chain(r.symbols().into_iter())
-                .collect(),
-            TensorExpression::MulScalarRhs(l, r) => l
-                .symbols()
-                .into_iter()
-                .chain(r.symbols().into_iter())
-                .collect(),
-            TensorExpression::Neg(v) => v.symbols(),
             TensorExpression::KroneckerDeltas(_) => HashSet::new(),
             TensorExpression::InnerProd {
                 terms,
                 rank_combinations: _,
             } => terms.iter().map(|v| v.symbols()).flatten().collect(),
         }
-    }
-
-    pub(crate) fn assign_symbol(
-        values: &HashMap<&str, Value>,
-        symbol: &String,
-        sizes: &Vec<Size>,
-    ) -> TensorExpression {
-        let v = values.get(symbol.as_str());
-
-        match v {
-            Some(v) => TensorExpression::Constant(v.as_tensor_ref().clone()),
-            None => TensorExpression::Symbol(symbol.clone(), sizes.clone()),
-        }
-    }
-
-    pub(crate) fn diff_symbol(
-        symbols: &[&str],
-        symbol: &String,
-        sizes: &Vec<Size>,
-    ) -> Vec<TensorExpression> {
-        let rank = sizes.len();
-        symbols
-            .iter()
-            .map(|s| {
-                if s.eq(symbol) {
-                    TensorExpression::KroneckerDeltas((0..rank).map(|r| [r, r + rank]).collect())
-                } else {
-                    TensorExpression::Zero
-                }
-            })
-            .collect()
-    }
-
-    pub(crate) fn rust_code_symbol(symbol: &String) -> String {
-        format!("{}.clone()", symbol)
     }
 }

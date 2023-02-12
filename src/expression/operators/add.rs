@@ -1,20 +1,29 @@
-use crate::Expression;
-use std::ops::Add;
+use crate::{BracketsLevel, ConstantValue, Expression};
+use std::{collections::HashMap, ops::Add};
 
 impl Add<Expression> for Expression {
     type Output = Self;
 
     fn add(self, rhs: Expression) -> Self::Output {
-        if let Expression::Constant(vl) = self {
-            if let Expression::Constant(vr) = rhs {
-                return Expression::Constant(vl + vr);
+        if !self.is_same_size(&rhs) {
+            println!("{:#?}", self);
+            println!("{:#?}", rhs);
+            panic!("Cannot add expressions of different sizes");
+        }
+        if let Expression::Constant(vl) = &self {
+            if let Expression::Constant(mut vr) = rhs {
+                vl.elems()
+                    .into_iter()
+                    .zip(vr.elems_mut().into_iter())
+                    .for_each(|(vl, vr)| *vr = vl + *vr);
+                return vr.into();
             }
-            if vl == 0.0 {
+            if vl == &ConstantValue::Scalar(0.0) {
                 return rhs;
             }
         }
-        if let Expression::Constant(vr) = rhs {
-            if vr == 0.0 {
+        if let Expression::Constant(vr) = &rhs {
+            if vr == &ConstantValue::Scalar(0.0) {
                 return self;
             }
         }
@@ -27,7 +36,7 @@ impl Add<f64> for Expression {
     type Output = Self;
 
     fn add(self, rhs: f64) -> Self::Output {
-        self + Expression::Constant(rhs)
+        self + Expression::Constant(ConstantValue::Scalar(rhs))
     }
 }
 
@@ -35,15 +44,15 @@ impl Add<Expression> for f64 {
     type Output = Expression;
 
     fn add(self, rhs: Expression) -> Self::Output {
-        Expression::Constant(self) + rhs
+        Expression::Constant(ConstantValue::Scalar(self)) + rhs
     }
 }
 
 impl Expression {
     pub(crate) fn diff_add(
-        symbols: &[&str],
         l: &Box<Expression>,
         r: &Box<Expression>,
+        symbols: &[&str],
     ) -> Vec<Expression> {
         l.differential(symbols)
             .into_iter()
@@ -52,15 +61,23 @@ impl Expression {
             .collect()
     }
 
-    pub(crate) fn rust_code_add(
+    pub(crate) fn tex_code_add(
         l: &Box<Expression>,
         r: &Box<Expression>,
-        parentheses: bool,
+        symbols: &HashMap<&str, &str>,
+        brackets_level: BracketsLevel,
     ) -> String {
-        if parentheses {
-            format!("({} + {})", l._rust_code(true), r._rust_code(true))
-        } else {
-            format!("{} + {}", l._rust_code(true), r._rust_code(true))
+        let inner = format!(
+            "{{{} + {}}}",
+            l._tex_code(symbols, BracketsLevel::None),
+            r._tex_code(symbols, BracketsLevel::None)
+        );
+
+        match brackets_level {
+            BracketsLevel::None => inner,
+            BracketsLevel::ForMul | BracketsLevel::ForDiv | BracketsLevel::ForOperation => {
+                format!(r"\left({}\right)", inner)
+            }
         }
     }
 }

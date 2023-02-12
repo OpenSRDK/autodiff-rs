@@ -1,9 +1,12 @@
-use crate::{Expression, TranscendentalExpression};
+use std::collections::HashMap;
+
+use crate::{BracketsLevel, Expression, TranscendentalExpression};
 
 impl Expression {
     pub fn tan(self) -> Self {
-        if let Expression::Constant(v) = self {
-            return Expression::Constant(v.tan());
+        if let Expression::Constant(mut v) = self {
+            v.elems_mut().into_iter().for_each(|v| *v = v.tan());
+            return v.into();
         }
 
         TranscendentalExpression::Tan(self.into()).into()
@@ -11,7 +14,10 @@ impl Expression {
 }
 
 impl TranscendentalExpression {
-    pub(crate) fn rust_code_tan(arg: &Box<Expression>) -> String {
-        format!("{}.tan()", arg._rust_code(true))
+    pub(crate) fn tex_code_tan(arg: &Box<Expression>, symbols: &HashMap<&str, &str>) -> String {
+        format!(
+            r"\tan\right({}\left)",
+            arg._tex_code(symbols, BracketsLevel::None)
+        )
     }
 }

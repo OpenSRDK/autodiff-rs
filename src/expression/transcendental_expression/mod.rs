@@ -1,20 +1,20 @@
-use crate::Expression;
-
 pub mod assign;
 pub mod differential;
 pub mod functions;
-pub mod into;
-pub mod rust_code;
+pub mod size;
 pub mod symbol;
 pub mod tex_code;
 
 pub use assign::*;
 pub use differential::*;
-pub use rust_code::*;
+pub use size::*;
 pub use symbol::*;
 pub use tex_code::*;
 
-#[derive(Clone, Debug, PartialEq)]
+use crate::Expression;
+use serde::{Deserialize, Serialize};
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum TranscendentalExpression {
     Abs(Box<Expression>),
     Pow(Box<Expression>, Box<Expression>),
@@ -24,4 +24,10 @@ pub enum TranscendentalExpression {
     Sin(Box<Expression>),
     Cos(Box<Expression>),
     Tan(Box<Expression>),
+}
+
+impl From<TranscendentalExpression> for Expression {
+    fn from(t: TranscendentalExpression) -> Self {
+        Expression::Transcendental(t.into())
+    }
 }

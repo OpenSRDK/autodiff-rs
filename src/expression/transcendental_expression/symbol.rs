@@ -2,7 +2,7 @@ use crate::TranscendentalExpression;
 use std::collections::HashSet;
 
 impl TranscendentalExpression {
-    pub fn symbols(&self) -> HashSet<String> {
+    pub fn symbols(&self) -> HashSet<&str> {
         match self {
             TranscendentalExpression::Abs(arg) => arg.symbols(),
             TranscendentalExpression::Pow(base, exponential) => base

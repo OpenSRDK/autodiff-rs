@@ -1,8 +1,8 @@
-use crate::{Expression, TranscendentalExpression, Value};
+use crate::{ConstantValue, Expression, TranscendentalExpression};
 use std::collections::HashMap;
 
 impl TranscendentalExpression {
-    pub fn assign(&self, values: &HashMap<&str, Value>) -> Expression {
+    pub fn assign(self, values: &HashMap<&str, ConstantValue>) -> Expression {
         match self {
             TranscendentalExpression::Abs(arg) => arg.assign(values).abs(),
             TranscendentalExpression::Pow(base, exponent) => {

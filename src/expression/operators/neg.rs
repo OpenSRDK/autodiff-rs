@@ -1,12 +1,13 @@
-use crate::Expression;
-use std::ops::Neg;
+use crate::{BracketsLevel, Expression};
+use std::{collections::HashMap, ops::Neg};
 
 impl Neg for Expression {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
-        if let Expression::Constant(v) = self {
-            return Expression::Constant(-v);
+        if let Expression::Constant(mut v) = self {
+            v.elems_mut().into_iter().for_each(|v| *v = -*v);
+            return v.into();
         }
         if let Expression::Neg(v) = self {
             return *v;
@@ -17,11 +18,11 @@ impl Neg for Expression {
 }
 
 impl Expression {
-    pub(crate) fn diff_neg(symbols: &[&str], v: &Box<Expression>) -> Vec<Expression> {
+    pub(crate) fn diff_neg(v: &Box<Expression>, symbols: &[&str]) -> Vec<Expression> {
         v.differential(symbols).into_iter().map(|e| -e).collect()
     }
 
-    pub(crate) fn rust_code_neg(v: &Box<Expression>) -> String {
-        format!("-{}", v._rust_code(true))
+    pub(crate) fn tex_code_neg(v: &Box<Expression>, symbols: &HashMap<&str, &str>) -> String {
+        format!("{{-{}}}", v._tex_code(symbols, BracketsLevel::ForOperation))
     }
 }
