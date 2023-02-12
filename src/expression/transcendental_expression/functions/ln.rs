@@ -4,8 +4,9 @@ use crate::{BracketsLevel, Expression, TranscendentalExpression};
 
 impl Expression {
     pub fn ln(self) -> Self {
-        if let Expression::Constant(v) = self {
-            return Expression::Constant(v.ln());
+        if let Expression::Constant(mut v) = self {
+            v.elems_mut().into_iter().for_each(|v| *v = v.ln());
+            return v.into();
         }
         if let Expression::Mul(l, r) = &self {
             return l.as_ref().clone().ln() + r.as_ref().clone().ln();

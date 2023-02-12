@@ -6,11 +6,11 @@ use crate::{BracketsLevel, ConstantValue, Expression, MatrixExpression};
 
 impl Expression {
     pub fn det(self) -> Expression {
-        if let Expression::Constant(v) = &self {
-            let det = |v: &Matrix| v.getrf().unwrap().0.trdet().into();
+        if let Expression::Constant(v) = self {
+            let det = |v: Matrix| v.getrf().unwrap().0.trdet().into();
             return match v {
                 ConstantValue::Scalar(v) => v.abs().into(),
-                ConstantValue::Tensor(v) => det(&v.reduce_1dimension_rank().to_mat()),
+                ConstantValue::Tensor(v) => det(v.reduce_1dimension_rank().to_mat()),
                 ConstantValue::Matrix(v) => return det(v),
             };
         }

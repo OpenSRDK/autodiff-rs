@@ -1,49 +1,59 @@
-use crate::{BracketsLevel, ConstantValue, Expression};
+use crate::{BracketsLevel, ConstantValue, Expression, TranscendentalExpression};
 use std::{collections::HashMap, ops::Mul};
 
 impl Mul<Expression> for Expression {
     type Output = Self;
 
     fn mul(self, rhs: Expression) -> Self::Output {
+        if !self.is_same_size(&rhs) {
+            panic!("Cannot add expressions of different sizes");
+        }
         // Merge constant
-        if let Expression::Constant(vl) = self {
-            if let Expression::Constant(vr) = rhs {
-                return (vl * vr).into();
+        if let Expression::Constant(vl) = &self {
+            if let Expression::Constant(mut vr) = rhs {
+                vl.elems()
+                    .into_iter()
+                    .zip(vr.elems_mut().into_iter())
+                    .for_each(|(vl, vr)| *vr = vl * *vr);
+                return vr.into();
             }
-            if vl == ConstantValue::Scalar(0.0) {
+            if vl == &ConstantValue::Scalar(0.0) {
                 return 0.0.into();
             }
-            if vl == ConstantValue::Scalar(1.0) {
+            if vl == &ConstantValue::Scalar(1.0) {
                 return rhs;
             }
         }
-        if let Expression::Constant(vr) = rhs {
-            if vr == ConstantValue::Scalar(0.0) {
+        if let Expression::Constant(vr) = &rhs {
+            if vr == &ConstantValue::Scalar(0.0) {
                 return 0.0.into();
             }
-            if vr == ConstantValue::Scalar(1.0) {
+            if vr == &ConstantValue::Scalar(1.0) {
                 return self;
             }
         }
         // Merge pow
-        if let Expression::Pow(vl, el) = &self {
-            if let Expression::Pow(vr, er) = &rhs {
-                if vl.as_ref().eq(vr) {
-                    return Expression::Pow(vl.clone(), el + er);
+        if let Expression::Transcendental(vl) = &self {
+            if let TranscendentalExpression::Pow(vl, el) = vl.as_ref() {
+                if let Expression::Transcendental(vr) = &rhs {
+                    if let TranscendentalExpression::Pow(vr, er) = vr.as_ref() {
+                        if vl.as_ref() == vr.as_ref() {
+                            return vl.clone().pow(*el.clone() + *er.clone());
+                        }
+                    }
                 }
-            }
-            if vl.as_ref().eq(&rhs) {
-                return Expression::Pow(vl.clone(), el + 1.0);
+                if vl.as_ref() == &rhs {
+                    let one: Expression = 1.0.into();
+                    return vl.clone().pow(*el.clone() + one);
+                }
             }
         }
-        if let Expression::Pow(vr, er) = &rhs {
-            if let Expression::Pow(vl, el) = &self {
-                if vr.as_ref().eq(vl) {
-                    return Expression::Pow(vr.clone(), el + er);
+        if let Expression::Transcendental(vr) = &rhs {
+            if let TranscendentalExpression::Pow(vr, er) = vr.as_ref() {
+                if vr.as_ref() == &self {
+                    let one: Expression = 1.0.into();
+                    return vr.clone().pow(*er.clone() + one);
                 }
-            }
-            if vr.as_ref().eq(&self) {
-                return Expression::Pow(vr.clone(), er + 1.0);
             }
         }
 

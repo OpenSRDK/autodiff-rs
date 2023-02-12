@@ -21,9 +21,11 @@ impl Expression {
 
 impl MatrixExpression {
     pub(crate) fn diff_t(v: &Expression, symbols: &[&str]) -> Vec<Expression> {
-        let tensor = TensorExpression::KroneckerDeltas(vec![[0, 1]])
-            .inner_prod(TensorExpression::Matrix(v.clone().into()), &[[0, 1]])
-            .inner_prod(TensorExpression::KroneckerDeltas(vec![[0, 1]]), &[[0, 1]]);
+        let delta_01: Expression = TensorExpression::KroneckerDeltas(vec![[0, 1]]).into();
+        let tensor = delta_01
+            .clone()
+            .inner_prod(v.clone(), &[[0, 1]])
+            .inner_prod(delta_01, &[[0, 1]]);
 
         tensor.differential(symbols)
     }

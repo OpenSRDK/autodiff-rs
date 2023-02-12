@@ -4,9 +4,9 @@ use crate::{BracketsLevel, Expression, TranscendentalExpression};
 
 impl Expression {
     pub fn log(self, antilogarithm: Expression) -> Self {
-        if let Expression::Constant(base) = self {
+        if let Expression::Constant(base) = &self {
             if let Expression::Constant(antilogarithm) = antilogarithm {
-                return Expression::Constant(antilogarithm.log(base));
+                return antilogarithm.into_scalar().log(base.into_scalar()).into();
             }
         }
         if let Expression::Mul(l, r) = &self {

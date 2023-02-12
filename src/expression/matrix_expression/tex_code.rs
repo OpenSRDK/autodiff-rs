@@ -6,7 +6,7 @@ impl MatrixExpression {
     pub(crate) fn _tex_code(
         &self,
         symbols: &HashMap<&str, &str>,
-        brackets_level: BracketsLevel,
+        _brackets_level: BracketsLevel,
     ) -> String {
         match self {
             MatrixExpression::T(v) => MatrixExpression::tex_code_t(v, symbols),

@@ -4,8 +4,9 @@ use crate::{BracketsLevel, Expression, TranscendentalExpression};
 
 impl Expression {
     pub fn sin(self) -> Self {
-        if let Expression::Constant(v) = self {
-            return Expression::Constant(v.sin());
+        if let Expression::Constant(mut v) = self {
+            v.elems_mut().into_iter().for_each(|v| *v = v.sin());
+            return v.into();
         }
 
         TranscendentalExpression::Sin(self.into()).into()

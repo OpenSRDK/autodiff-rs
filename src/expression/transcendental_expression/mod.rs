@@ -1,11 +1,13 @@
 pub mod assign;
 pub mod differential;
 pub mod functions;
+pub mod size;
 pub mod symbol;
 pub mod tex_code;
 
 pub use assign::*;
 pub use differential::*;
+pub use size::*;
 pub use symbol::*;
 pub use tex_code::*;
 

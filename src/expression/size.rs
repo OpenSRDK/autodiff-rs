@@ -1,4 +1,4 @@
-use crate::{ConstantValue, Expression, TensorExpression, TranscendentalExpression};
+use crate::{ConstantValue, Expression};
 use opensrdk_linear_algebra::Tensor;
 use serde::{Deserialize, Serialize};
 
@@ -37,7 +37,7 @@ impl Expression {
         }
     }
 
-    pub fn is_same_size(&self, other: &TensorExpression) -> bool {
+    pub fn is_same_size(&self, other: &Expression) -> bool {
         let sl = self.sizes();
         let sr = other.sizes();
 
@@ -50,36 +50,5 @@ impl Expression {
 
     pub fn not_1dimension_ranks(&self) -> usize {
         self.sizes().iter().filter(|&d| *d != Size::One).count()
-    }
-}
-
-impl TranscendentalExpression {
-    pub fn sizes(&self) -> Vec<Size> {
-        match self {
-            TranscendentalExpression::Abs(arg) => arg.sizes(),
-            TranscendentalExpression::Pow(base, exponent) => {
-                [base.sizes(), exponent.sizes()].concat()
-            }
-            TranscendentalExpression::Exp(arg) => arg.sizes(),
-            TranscendentalExpression::Log(base, antilogarithm) => {
-                [base.sizes(), antilogarithm.sizes()].concat()
-            }
-            TranscendentalExpression::Ln(arg) => arg.sizes(),
-            TranscendentalExpression::Sin(arg) => arg.sizes(),
-            TranscendentalExpression::Cos(arg) => arg.sizes(),
-            TranscendentalExpression::Tan(arg) => arg.sizes(),
-        }
-    }
-}
-
-impl TensorExpression {
-    pub fn sizes(&self) -> Vec<Size> {
-        match self {
-            TensorExpression::KroneckerDeltas(_) => vec![],
-            TensorExpression::InnerProd {
-                terms,
-                rank_combinations,
-            } => TensorExpression::size_inner_prod(terms, rank_combinations),
-        }
     }
 }

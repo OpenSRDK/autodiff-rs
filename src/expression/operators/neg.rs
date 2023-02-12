@@ -5,8 +5,9 @@ impl Neg for Expression {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
-        if let Expression::Constant(v) = self {
-            return (-v).into();
+        if let Expression::Constant(mut v) = self {
+            v.elems_mut().into_iter().for_each(|v| *v = -*v);
+            return v.into();
         }
         if let Expression::Neg(v) = self {
             return *v;

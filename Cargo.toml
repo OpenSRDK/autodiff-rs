@@ -14,7 +14,7 @@ categories = ["mathematics", "science"]
 [dependencies]
 thiserror = "1.0.28"
 rayon = "1.5.1"
-opensrdk-linear-algebra = "0.8.7"
+opensrdk-linear-algebra = "0.8.8"
 serde = { version = "1", features = ["derive"] }
 
 [dev-dependencies]

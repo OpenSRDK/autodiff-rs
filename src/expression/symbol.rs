@@ -6,9 +6,9 @@ pub fn new_symbol(name: String) -> Expression {
 }
 
 impl Expression {
-    pub fn symbols(&self) -> HashSet<String> {
+    pub fn symbols(&self) -> HashSet<&str> {
         match self {
-            Expression::Symbol(symbol, _) => once(symbol.clone()).collect::<HashSet<String>>(),
+            Expression::Symbol(symbol, _) => once(symbol.as_str()).collect::<HashSet<_>>(),
             Expression::Constant(_) => HashSet::new(),
             Expression::Add(l, r) => l
                 .symbols()
@@ -47,8 +47,8 @@ impl Expression {
         let rank = sizes.len();
         symbols
             .iter()
-            .map(|s| {
-                if s.eq(symbol) {
+            .map(|&s| {
+                if s == symbol.as_str() {
                     TensorExpression::KroneckerDeltas((0..rank).map(|r| [r, r + rank]).collect())
                         .into()
                 } else {

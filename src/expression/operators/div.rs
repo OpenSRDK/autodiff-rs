@@ -5,11 +5,19 @@ impl Div<Expression> for Expression {
     type Output = Self;
 
     fn div(self, rhs: Expression) -> Self::Output {
-        if let Expression::Constant(vr) = rhs {
-            if let Expression::Constant(vl) = self {
-                return (vl / vr).into();
+        if !self.is_same_size(&rhs) {
+            panic!("Cannot add expressions of different sizes");
+        }
+        if let Expression::Constant(vr) = &rhs {
+            if let Expression::Constant(mut vl) = self {
+                vl.elems_mut()
+                    .into_iter()
+                    .zip(vr.elems().into_iter())
+                    .for_each(|(vl, vr)| *vl = *vl / vr);
+                return vl.into();
             }
-            if vr == ConstantValue::Scalar(1.0) {
+
+            if vr == &ConstantValue::Scalar(1.0) {
                 return self;
             }
         }
