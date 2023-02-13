@@ -10,6 +10,11 @@ impl Expression {
         match self {
             Expression::Variable(id, _) => once(id.as_str()).collect::<HashSet<_>>(),
             Expression::Constant(_) => HashSet::new(),
+            Expression::IndexedTensor(_, elems) => elems
+                .values()
+                .into_iter()
+                .flat_map(|v| v.variable_ids())
+                .collect(),
             Expression::Add(l, r) => l
                 .variable_ids()
                 .into_iter()
@@ -33,7 +38,6 @@ impl Expression {
             Expression::Neg(v) => v.variable_ids(),
             Expression::Transcendental(v) => v.variable_ids(),
             Expression::Tensor(v) => v.variable_ids(),
-            Expression::IndexedTensor(v) => todo!(),
             Expression::Matrix(v) => v.variable_ids(),
         }
     }
@@ -41,10 +45,10 @@ impl Expression {
     pub(crate) fn diff_variable(
         symbol: &String,
         sizes: &Vec<Size>,
-        symbols: &[&str],
+        variable_ids: &[&str],
     ) -> Vec<Expression> {
         let rank = sizes.len();
-        symbols
+        variable_ids
             .iter()
             .map(|&s| {
                 if s == symbol.as_str() {

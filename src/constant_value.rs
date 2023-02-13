@@ -9,7 +9,7 @@ pub enum ConstantValue {
 }
 
 impl ConstantValue {
-    pub fn size(&self) -> Vec<usize> {
+    pub fn sizes(&self) -> Vec<usize> {
         match self {
             ConstantValue::Scalar(_) => vec![],
             ConstantValue::Tensor(v) => {

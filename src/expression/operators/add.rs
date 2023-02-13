@@ -52,11 +52,11 @@ impl Expression {
     pub(crate) fn diff_add(
         l: &Box<Expression>,
         r: &Box<Expression>,
-        symbols: &[&str],
+        variable_ids: &[&str],
     ) -> Vec<Expression> {
-        l.differential(symbols)
+        l.differential(variable_ids)
             .into_iter()
-            .zip(r.differential(symbols).into_iter())
+            .zip(r.differential(variable_ids).into_iter())
             .map(|(li, ri)| li + ri)
             .collect()
     }

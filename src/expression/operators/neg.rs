@@ -18,8 +18,11 @@ impl Neg for Expression {
 }
 
 impl Expression {
-    pub(crate) fn diff_neg(v: &Box<Expression>, symbols: &[&str]) -> Vec<Expression> {
-        v.differential(symbols).into_iter().map(|e| -e).collect()
+    pub(crate) fn diff_neg(v: &Box<Expression>, variable_ids: &[&str]) -> Vec<Expression> {
+        v.differential(variable_ids)
+            .into_iter()
+            .map(|e| -e)
+            .collect()
     }
 
     pub(crate) fn tex_code_neg(v: &Box<Expression>, symbols: &HashMap<&str, &str>) -> String {

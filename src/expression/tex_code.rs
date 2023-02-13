@@ -18,6 +18,7 @@ impl Expression {
         match self {
             Expression::Variable(id, _) => format!("{{{}}}", variables[id.as_str()]),
             Expression::Constant(_) => r"\text{const.}".to_owned(),
+            Expression::IndexedTensor(_, _) => r"\text{abbreviated.}".to_owned(),
             Expression::Add(l, r) => Expression::tex_code_add(l, r, variables, brackets_level),
             Expression::Sub(l, r) => Expression::tex_code_sub(l, r, variables, brackets_level),
             Expression::Mul(l, r) => Expression::tex_code_mul(l, r, variables, brackets_level),
@@ -25,7 +26,6 @@ impl Expression {
             Expression::Neg(v) => Expression::tex_code_neg(v, variables),
             Expression::Transcendental(v) => v._tex_code(variables, brackets_level),
             Expression::Tensor(v) => v._tex_code(variables, brackets_level),
-            Expression::IndexedTensor(v) => r"\text{abbreviated.}".to_owned(),
             Expression::Matrix(v) => v._tex_code(variables, brackets_level),
         }
     }

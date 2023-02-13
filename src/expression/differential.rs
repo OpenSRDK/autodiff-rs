@@ -5,6 +5,9 @@ impl Expression {
         match self {
             Expression::Variable(id, sizes) => Expression::diff_variable(id, sizes, variable_ids),
             Expression::Constant(_) => vec![0.0.into(); variable_ids.len()],
+            Expression::IndexedTensor(sizes, elems) => {
+                Expression::diff_indexed_tensor(sizes, elems, variable_ids)
+            }
             Expression::Add(l, r) => Expression::diff_add(l, r, variable_ids),
             Expression::Sub(l, r) => Expression::diff_sub(l, r, variable_ids),
             Expression::Mul(l, r) => Expression::diff_mul(l, r, variable_ids),
@@ -12,7 +15,6 @@ impl Expression {
             Expression::Neg(v) => Expression::diff_neg(v, variable_ids),
             Expression::Transcendental(v) => v.differential(variable_ids),
             Expression::Tensor(v) => v.differential(variable_ids),
-            Expression::IndexedTensor(v) => todo!(),
             Expression::Matrix(v) => v.differential(variable_ids),
         }
     }

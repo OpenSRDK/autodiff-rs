@@ -1,5 +1,6 @@
 use super::rbf;
 use super::MultivariateNormal;
+use opensrdk_symbolic_computation::new_indexed_tensor;
 use opensrdk_symbolic_computation::{new_variable, Expression};
 
 // #[test]
@@ -10,17 +11,13 @@ fn test_gp() {
     let sigma = new_variable("sigma".to_string());
     let param = new_variable("theta".to_string());
 
-    let k = Expression::IndexedTensor(
-        (0..20)
-            .flat_map(|i| (0..20).map(move |j| (i, j)))
-            .map(|(i, j)| {
-                (
-                    vec![i, j],
-                    rbf(x[i].clone().into(), x[j].clone().into(), param.clone()),
-                )
-            })
-            .collect(),
-    );
+    let k = new_indexed_tensor(vec![20, 20], |index| {
+        rbf(
+            x[index[0]].clone().into(),
+            x[index[1]].clone().into(),
+            param.clone(),
+        )
+    });
 
     let normal = MultivariateNormal::new("y".to_string(), y_mean.into(), k + sigma, 20);
 }

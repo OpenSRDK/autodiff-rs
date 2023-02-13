@@ -46,11 +46,11 @@ impl Expression {
     pub(crate) fn diff_div(
         l: &Box<Expression>,
         r: &Box<Expression>,
-        symbols: &[&str],
+        variable_ids: &[&str],
     ) -> Vec<Expression> {
-        l.differential(symbols)
+        l.differential(variable_ids)
             .into_iter()
-            .zip(r.differential(symbols).into_iter())
+            .zip(r.differential(variable_ids).into_iter())
             .map(|(li, ri)| {
                 (li * r.as_ref().clone() - l.as_ref().clone() * ri)
                     / r.as_ref().clone().pow(2.0.into())

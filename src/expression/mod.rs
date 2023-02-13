@@ -1,5 +1,6 @@
 pub mod assign;
 pub mod differential;
+pub mod indexed_tensor;
 pub mod matrix_expression;
 pub mod operators;
 pub mod size;
@@ -10,6 +11,7 @@ pub mod variable;
 
 pub use assign::*;
 pub use differential::*;
+pub use indexed_tensor::*;
 pub use matrix_expression::*;
 use opensrdk_linear_algebra::{sparse::SparseTensor, Matrix};
 pub use size::*;
@@ -26,6 +28,7 @@ use std::collections::HashMap;
 pub enum Expression {
     Variable(String, Vec<Size>),
     Constant(ConstantValue),
+    IndexedTensor(Vec<usize>, HashMap<Vec<usize>, Expression>),
     Add(Box<Expression>, Box<Expression>),
     Sub(Box<Expression>, Box<Expression>),
     Mul(Box<Expression>, Box<Expression>),
@@ -33,7 +36,6 @@ pub enum Expression {
     Neg(Box<Expression>),
     Transcendental(Box<TranscendentalExpression>),
     Tensor(Box<TensorExpression>),
-    IndexedTensor(HashMap<Vec<usize>, Expression>),
     Matrix(Box<MatrixExpression>),
 }
 
