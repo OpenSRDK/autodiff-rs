@@ -25,7 +25,7 @@ impl Expression {
             Expression::Neg(v) => Expression::tex_code_neg(v, variables),
             Expression::Transcendental(v) => v._tex_code(variables, brackets_level),
             Expression::Tensor(v) => v._tex_code(variables, brackets_level),
-            Expression::IndexedTensor(v) => todo!(),
+            Expression::IndexedTensor(v) => r"\text{abbreviated.}".to_owned(),
             Expression::Matrix(v) => v._tex_code(variables, brackets_level),
         }
     }

@@ -1,11 +1,11 @@
-use super::{ContinuousDistribution, JointDistribution, VariableId};
+use super::{ContinuousDistribution, JointDistribution};
 use opensrdk_symbolic_computation::{new_variable_tensor, Expression, Size};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, f64::consts::PI, ops::Mul};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct MultivariateNormal {
-    output: VariableId,
+    output_id: String,
     mu: Expression,
     sigma: Expression,
     d: usize,
@@ -13,13 +13,13 @@ pub struct MultivariateNormal {
 
 impl MultivariateNormal {
     pub fn new(
-        output: VariableId,
+        output_id: String,
         mu: Expression,
         sigma: Expression,
         d: usize,
     ) -> MultivariateNormal {
         MultivariateNormal {
-            output,
+            output_id,
             mu,
             sigma,
             d,
@@ -40,7 +40,7 @@ where
 
 impl ContinuousDistribution for MultivariateNormal {
     fn value_ids(&self) -> HashSet<&str> {
-        HashSet::from([self.output.as_str()])
+        HashSet::from([self.output_id.as_str()])
     }
 
     fn conditions(&self) -> Vec<&Expression> {
@@ -48,7 +48,7 @@ impl ContinuousDistribution for MultivariateNormal {
     }
 
     fn pdf(&self) -> Expression {
-        let x = new_variable_tensor(self.output.clone(), vec![Size::Many, Size::One]);
+        let x = new_variable_tensor(self.output_id.clone(), vec![Size::Many, Size::One]);
         let mu = self.mu.clone();
         let sigma = self.sigma.clone();
         let d = self.d as f64;

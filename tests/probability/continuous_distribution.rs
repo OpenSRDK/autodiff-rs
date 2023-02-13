@@ -25,5 +25,3 @@ pub trait ContinuousDistribution: Clone + Debug + Serialize {
         self.pdf().ln()
     }
 }
-
-pub type VariableId = String;

@@ -43,6 +43,12 @@ impl From<f64> for Expression {
     }
 }
 
+impl From<Vec<f64>> for Expression {
+    fn from(v: Vec<f64>) -> Self {
+        Expression::Constant(ConstantValue::Tensor(v.into()))
+    }
+}
+
 impl From<SparseTensor> for Expression {
     fn from(v: SparseTensor) -> Self {
         Expression::Constant(ConstantValue::Tensor(v))
