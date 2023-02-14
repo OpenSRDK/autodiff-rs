@@ -5,8 +5,8 @@ impl Expression {
         match self {
             Expression::Variable(id, sizes) => Expression::diff_variable(id, sizes, variable_ids),
             Expression::Constant(_) => vec![0.0.into(); variable_ids.len()],
-            Expression::IndexedTensor(sizes, elems) => {
-                Expression::diff_indexed_tensor(sizes, elems, variable_ids)
+            Expression::PartialVariable(sizes, elems) => {
+                Expression::diff_partial_variable(sizes, elems, variable_ids)
             }
             Expression::Add(l, r) => Expression::diff_add(l, r, variable_ids),
             Expression::Sub(l, r) => Expression::diff_sub(l, r, variable_ids),

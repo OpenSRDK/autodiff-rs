@@ -8,21 +8,21 @@ fn next_char(c: char, count: usize) -> char {
     std::char::from_u32(c as u32 + count as u32).unwrap_or(c)
 }
 
-pub trait InnerProd {
-    fn inner_prod(self, rank_combinations: &[HashMap<RankIndex, String>]) -> Expression;
+pub trait DotProduct {
+    fn dot_product(self, rank_combinations: &[HashMap<RankIndex, String>]) -> Expression;
 }
 
-impl<I> InnerProd for I
+impl<I> DotProduct for I
 where
     I: Iterator<Item = Expression>,
 {
-    fn inner_prod(self, rank_combinations: &[HashMap<RankIndex, String>]) -> Expression {
+    fn dot_product(self, rank_combinations: &[HashMap<RankIndex, String>]) -> Expression {
         // Flatten InnerProd
         let terms = self
             .zip(rank_combinations.iter())
             .flat_map(|(t, rank_combination)| {
                 if let Expression::Tensor(t) = &t {
-                    if let TensorExpression::InnerProd {
+                    if let TensorExpression::DotProduct {
                         terms: t,
                         rank_combinations,
                     } = t.as_ref()
@@ -30,7 +30,7 @@ where
                         let t = t.clone();
                         let mut rank_combinations = rank_combinations.clone();
                         let not_1dimension_ranks =
-                            TensorExpression::not_1dimension_ranks_in_inner_prod(
+                            TensorExpression::not_1dimension_ranks_in_dot_product(
                                 &t,
                                 &rank_combinations,
                             );
@@ -110,7 +110,7 @@ where
             new_rank_combinations.insert(0, flatten_deltas_combination);
         }
 
-        TensorExpression::InnerProd {
+        TensorExpression::DotProduct {
             terms: new_terms,
             rank_combinations: new_rank_combinations,
         }
@@ -119,15 +119,15 @@ where
 }
 
 impl Expression {
-    pub fn inner_prod(self, rhs: Expression, rank_pairs: &[[RankIndex; 2]]) -> Expression {
+    pub fn dot(self, rhs: Expression, rank_pairs: &[[RankIndex; 2]]) -> Expression {
         vec![self, rhs]
             .into_iter()
-            .inner_prod(&generate_rank_combinations(rank_pairs))
+            .dot_product(&generate_rank_combinations(rank_pairs))
     }
 }
 
 impl TensorExpression {
-    pub(crate) fn diff_inner_prod(
+    pub(crate) fn diff_dot_product(
         v: &Vec<Expression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
         symbols: &[&str],
@@ -138,7 +138,7 @@ impl TensorExpression {
             .map(|d| {
                 once(d)
                     .chain(v[1..].iter().cloned())
-                    .inner_prod(rank_combinations)
+                    .dot_product(rank_combinations)
             })
             .collect::<Vec<_>>();
 
@@ -153,14 +153,14 @@ impl TensorExpression {
                             .cloned()
                             .chain(once(d))
                             .chain(v[i + 1..].iter().cloned())
-                            .inner_prod(rank_combinations);
+                            .dot_product(rank_combinations);
                 });
         }
 
         result
     }
 
-    pub(crate) fn tex_code_inner_prod(
+    pub(crate) fn tex_code_dot_product(
         terms: &Vec<Expression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
         symbols: &HashMap<&str, &str>,
@@ -204,7 +204,7 @@ impl TensorExpression {
         format!("{{{}}}", result)
     }
 
-    pub(crate) fn size_inner_prod(
+    pub(crate) fn size_dot_product(
         terms: &Vec<Expression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
     ) -> Vec<Size> {
@@ -228,7 +228,7 @@ impl TensorExpression {
         sizes
     }
 
-    pub fn not_1dimension_ranks_in_inner_prod(
+    pub fn not_1dimension_ranks_in_dot_product(
         terms: &Vec<Expression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
     ) -> HashMap<RankIndex, TermIndex> {

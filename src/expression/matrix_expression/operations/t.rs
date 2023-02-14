@@ -24,8 +24,8 @@ impl MatrixExpression {
         let delta_01: Expression = TensorExpression::KroneckerDeltas(vec![[0, 1]]).into();
         let tensor = delta_01
             .clone()
-            .inner_prod(v.clone(), &[[0, 1]])
-            .inner_prod(delta_01, &[[0, 1]]);
+            .dot(v.clone(), &[[0, 1]])
+            .dot(delta_01, &[[0, 1]]);
 
         tensor.differential(symbols)
     }

@@ -19,8 +19,8 @@ fn test_main() {
 
     let pdf_expression = (-0.5
         * ((x.clone() - mu.clone())
-            .inner_prod(precision, &[[0, 0]])
-            .inner_prod(x.clone() - mu.clone(), &[[1, 0]])))
+            .dot(precision, &[[0, 0]])
+            .dot(x.clone() - mu.clone(), &[[1, 0]])))
     .exp();
 
     let diff = pdf_expression.differential(&["x", "mu", "lambda"]);
@@ -46,8 +46,8 @@ fn test_main2() {
     let pdf_expression = (-0.5
         * ((x.clone() - mu.clone())
             .t()
-            .inner_prod(precision, &[[1, 0]])
-            .inner_prod(x.clone() - mu.clone(), &[[1, 0]])))
+            .dot(precision, &[[1, 0]])
+            .dot(x.clone() - mu.clone(), &[[1, 0]])))
     .exp();
 
     let diff = pdf_expression.differential(&["x", "mu", "lambda"]);

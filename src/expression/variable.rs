@@ -10,7 +10,7 @@ impl Expression {
         match self {
             Expression::Variable(id, _) => once(id.as_str()).collect::<HashSet<_>>(),
             Expression::Constant(_) => HashSet::new(),
-            Expression::IndexedTensor(_, elems) => elems
+            Expression::PartialVariable(_, elems) => elems
                 .values()
                 .into_iter()
                 .flat_map(|v| v.variable_ids())
@@ -52,8 +52,14 @@ impl Expression {
             .iter()
             .map(|&s| {
                 if s == symbol.as_str() {
-                    TensorExpression::KroneckerDeltas((0..rank).map(|r| [r, r + rank]).collect())
+                    if rank == 0 {
+                        1.0.into()
+                    } else {
+                        TensorExpression::KroneckerDeltas(
+                            (0..rank).map(|r| [r, r + rank]).collect(),
+                        )
                         .into()
+                    }
                 } else {
                     0.0.into()
                 }

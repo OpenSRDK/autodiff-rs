@@ -31,7 +31,7 @@ impl<Rhs> Mul<Rhs> for MultivariateNormal
 where
     Rhs: ContinuousDistribution,
 {
-    type Output = JointDistribution<MultivariateNormal, Rhs>;
+    type Output = JointDistribution<Self, Rhs>;
 
     fn mul(self, rhs: Rhs) -> Self::Output {
         JointDistribution::new(self, rhs)
@@ -57,8 +57,8 @@ impl ContinuousDistribution for MultivariateNormal {
             * sigma.clone().det().pow((-0.5).into())
             * (-0.5
                 * ((x.clone() - mu.clone())
-                    .inner_prod(sigma.inv(), &[[0, 0]])
-                    .inner_prod(x.clone() - mu.clone(), &[[1, 0]])))
+                    .dot(sigma.inv(), &[[0, 0]])
+                    .dot(x.clone() - mu.clone(), &[[1, 0]])))
             .exp();
 
         pdf_expression

@@ -12,7 +12,7 @@ impl Expression {
         match self {
             Expression::Variable(_, sizes) => sizes.clone(),
             Expression::Constant(v) => v.sizes().into_abstract_size(),
-            Expression::IndexedTensor(sizes, _) => sizes.into_abstract_size(),
+            Expression::PartialVariable(sizes, _) => sizes.into_abstract_size(),
             Expression::Add(l, _) => l.sizes(),
             Expression::Sub(l, _) => l.sizes(),
             Expression::Mul(l, _) => l.sizes(),

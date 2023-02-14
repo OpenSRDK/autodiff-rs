@@ -18,14 +18,14 @@ impl Expression {
                 }
             }
             Expression::Constant(_) => self,
-            Expression::IndexedTensor(sizes, mut elems) => {
+            Expression::PartialVariable(sizes, mut elems) => {
                 let mut new_elems = HashMap::new();
 
                 for (index, elem) in elems.drain() {
                     new_elems.insert(index, elem.assign(variables));
                 }
 
-                Expression::IndexedTensor(sizes, new_elems)
+                Expression::PartialVariable(sizes, new_elems)
             }
             Expression::Add(l, r) => l.assign(variables) + r.assign(variables),
             Expression::Sub(l, r) => l.assign(variables) - r.assign(variables),

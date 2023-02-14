@@ -28,7 +28,7 @@ impl MatrixExpression {
                 let v_inv_t = v.clone().inv().t();
                 let d_v_det_d_v = v_det * v_inv_t;
 
-                d_v_det_d_v.inner_prod(d_v_d_symbol, &[[0, 0], [1, 1]])
+                d_v_det_d_v.dot(d_v_d_symbol, &[[0, 0], [1, 1]])
             })
             .collect()
     }

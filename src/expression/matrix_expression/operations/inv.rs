@@ -25,9 +25,9 @@ impl MatrixExpression {
             .into_iter()
             .map(|d_v_d_symbol| {
                 let v_inv = v.clone().inv();
-                let d_v_inv_d_v = -v_inv.clone().inner_prod(v_inv, &[[1, 0]]);
+                let d_v_inv_d_v = -v_inv.clone().dot(v_inv, &[[1, 0]]);
 
-                d_v_inv_d_v.inner_prod(d_v_d_symbol, &[[0, 0], [1, 1]])
+                d_v_inv_d_v.dot(d_v_d_symbol, &[[0, 0], [1, 1]])
             })
             .collect()
     }

@@ -1,6 +1,8 @@
 use super::rbf;
 use super::MultivariateNormal;
-use opensrdk_symbolic_computation::new_indexed_tensor;
+use opensrdk_linear_algebra::Matrix;
+use opensrdk_linear_algebra::Vector;
+use opensrdk_symbolic_computation::new_partial_variable;
 use opensrdk_symbolic_computation::{new_variable, Expression};
 
 // #[test]
@@ -11,7 +13,7 @@ fn test_gp() {
     let sigma = new_variable("sigma".to_string());
     let param = new_variable("theta".to_string());
 
-    let k = new_indexed_tensor(vec![20, 20], |index| {
+    let k = new_partial_variable(vec![20, 20], |index| {
         rbf(
             x[index[0]].clone().into(),
             x[index[1]].clone().into(),
@@ -21,3 +23,5 @@ fn test_gp() {
 
     let normal = MultivariateNormal::new("y".to_string(), y_mean.into(), k + sigma, 20);
 }
+
+fn test_recurrent_gp() {}

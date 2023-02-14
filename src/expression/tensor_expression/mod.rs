@@ -18,7 +18,7 @@ use std::collections::HashMap;
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum TensorExpression {
     KroneckerDeltas(Vec<[usize; 2]>),
-    InnerProd {
+    DotProduct {
         terms: Vec<Expression>,
         rank_combinations: Vec<HashMap<usize, String>>,
     },

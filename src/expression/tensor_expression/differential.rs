@@ -6,10 +6,10 @@ impl TensorExpression {
             TensorExpression::KroneckerDeltas(_) => {
                 vec![0.0.into(); variable_ids.len()]
             }
-            TensorExpression::InnerProd {
+            TensorExpression::DotProduct {
                 terms,
                 rank_combinations,
-            } => TensorExpression::diff_inner_prod(terms, rank_combinations, variable_ids),
+            } => TensorExpression::diff_dot_product(terms, rank_combinations, variable_ids),
         }
     }
 }

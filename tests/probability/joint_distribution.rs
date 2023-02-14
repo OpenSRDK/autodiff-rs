@@ -1,3 +1,5 @@
+use std::ops::Mul;
+
 use super::ContinuousDistribution;
 use serde::Serialize;
 
@@ -18,6 +20,19 @@ where
 {
     pub fn new(dl: Lhs, dr: Rhs) -> JointDistribution<Lhs, Rhs> {
         JointDistribution { dl, dr }
+    }
+}
+
+impl<SelfLhs, SelfRhs, Rhs> Mul<Rhs> for JointDistribution<SelfLhs, SelfRhs>
+where
+    SelfLhs: ContinuousDistribution,
+    SelfRhs: ContinuousDistribution,
+    Rhs: ContinuousDistribution,
+{
+    type Output = JointDistribution<Self, Rhs>;
+
+    fn mul(self, rhs: Rhs) -> Self::Output {
+        JointDistribution::new(self, rhs)
     }
 }
 

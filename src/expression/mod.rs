@@ -1,8 +1,8 @@
 pub mod assign;
 pub mod differential;
-pub mod indexed_tensor;
 pub mod matrix_expression;
 pub mod operators;
+pub mod partial_variable;
 pub mod size;
 pub mod tensor_expression;
 pub mod tex_code;
@@ -11,9 +11,9 @@ pub mod variable;
 
 pub use assign::*;
 pub use differential::*;
-pub use indexed_tensor::*;
 pub use matrix_expression::*;
 use opensrdk_linear_algebra::{sparse::SparseTensor, Matrix};
+pub use partial_variable::*;
 pub use size::*;
 pub use tensor_expression::*;
 pub use tex_code::*;
@@ -28,7 +28,7 @@ use std::collections::HashMap;
 pub enum Expression {
     Variable(String, Vec<Size>),
     Constant(ConstantValue),
-    IndexedTensor(Vec<usize>, HashMap<Vec<usize>, Expression>),
+    PartialVariable(Vec<usize>, HashMap<Vec<usize>, Expression>),
     Add(Box<Expression>, Box<Expression>),
     Sub(Box<Expression>, Box<Expression>),
     Mul(Box<Expression>, Box<Expression>),

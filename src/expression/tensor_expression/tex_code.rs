@@ -11,10 +11,10 @@ impl TensorExpression {
             TensorExpression::KroneckerDeltas(rank_pairs) => {
                 TensorExpression::tex_code_kronecker_deltas(rank_pairs, brackets_level)
             }
-            TensorExpression::InnerProd {
+            TensorExpression::DotProduct {
                 terms,
                 rank_combinations,
-            } => TensorExpression::tex_code_inner_prod(terms, rank_combinations, symbols),
+            } => TensorExpression::tex_code_dot_product(terms, rank_combinations, symbols),
         }
     }
 
