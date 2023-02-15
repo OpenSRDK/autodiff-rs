@@ -8,6 +8,7 @@ impl TensorExpression {
                 terms,
                 rank_combinations,
             } => TensorExpression::size_dot_product(terms, rank_combinations),
+            TensorExpression::DirectProduct(terms) => TensorExpression::size_direct_product(terms),
         }
     }
 }

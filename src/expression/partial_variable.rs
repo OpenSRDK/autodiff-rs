@@ -20,9 +20,6 @@ pub fn new_partial_variable(
         .into_iter()
         .map(|index| {
             let value = factory(&index);
-            if value.sizes().len() != 0 {
-                panic!("Partial variable element must be scalar");
-            }
             (index, value)
         })
         .collect::<HashMap<_, _>>();

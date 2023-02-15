@@ -10,6 +10,9 @@ impl TensorExpression {
                 terms,
                 rank_combinations,
             } => TensorExpression::diff_dot_product(terms, rank_combinations, variable_ids),
+            TensorExpression::DirectProduct(terms) => {
+                TensorExpression::diff_direct_product(terms, variable_ids)
+            }
         }
     }
 }

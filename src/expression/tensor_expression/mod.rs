@@ -22,6 +22,7 @@ pub enum TensorExpression {
         terms: Vec<Expression>,
         rank_combinations: Vec<HashMap<usize, String>>,
     },
+    DirectProduct(Vec<Expression>),
 }
 
 impl Expression {

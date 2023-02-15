@@ -128,31 +128,31 @@ impl Expression {
 
 impl TensorExpression {
     pub(crate) fn diff_dot_product(
-        v: &Vec<Expression>,
+        terms: &Vec<Expression>,
         rank_combinations: &Vec<HashMap<RankIndex, String>>,
         symbols: &[&str],
     ) -> Vec<Expression> {
-        let mut result = v[0]
+        let mut result = terms[0]
             .differential(symbols)
             .into_iter()
             .map(|d| {
                 once(d)
-                    .chain(v[1..].iter().cloned())
+                    .chain(terms[1..].iter().cloned())
                     .dot_product(rank_combinations)
             })
             .collect::<Vec<_>>();
 
-        for i in 1..v.len() {
+        for i in 1..terms.len() {
             result
                 .iter_mut()
-                .zip(v[i].differential(symbols).into_iter())
+                .zip(terms[i].differential(symbols).into_iter())
                 .for_each(|(r, d)| {
                     *r = r.clone()
-                        + v[0..i]
+                        + terms[0..i]
                             .iter()
                             .cloned()
                             .chain(once(d))
-                            .chain(v[i + 1..].iter().cloned())
+                            .chain(terms[i + 1..].iter().cloned())
                             .dot_product(rank_combinations);
                 });
         }

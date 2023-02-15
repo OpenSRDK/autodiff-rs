@@ -12,7 +12,10 @@ impl TensorExpression {
             TensorExpression::DotProduct {
                 terms,
                 rank_combinations: _,
-            } => terms.iter().map(|v| v.variable_ids()).flatten().collect(),
+            } => terms.iter().map(|t| t.variable_ids()).flatten().collect(),
+            TensorExpression::DirectProduct(terms) => {
+                terms.iter().map(|t| t.variable_ids()).flatten().collect()
+            }
         }
     }
 }
