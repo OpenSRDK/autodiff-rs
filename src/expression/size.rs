@@ -12,7 +12,7 @@ impl Expression {
         match self {
             Expression::Variable(_, sizes) => sizes.clone(),
             Expression::Constant(v) => v.sizes().into_abstract_size(),
-            Expression::PartialVariable(sizes, _) => sizes.into_abstract_size(),
+            Expression::PartialVariable(v) => v.sizes().into_abstract_size(),
             Expression::Add(l, _) => l.sizes(),
             Expression::Sub(l, _) => l.sizes(),
             Expression::Mul(l, _) => l.sizes(),
@@ -44,7 +44,7 @@ pub trait AbstractSize {
     fn into_abstract_size(&self) -> Vec<Size>;
 }
 
-impl AbstractSize for Vec<usize> {
+impl AbstractSize for [usize] {
     fn into_abstract_size(&self) -> Vec<Size> {
         self.iter()
             .map(|&size| if size > 1 { Size::Many } else { Size::One })

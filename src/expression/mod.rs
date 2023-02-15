@@ -20,7 +20,7 @@ pub use tex_code::*;
 pub use transcendental_expression::*;
 pub use variable::*;
 
-use crate::ConstantValue;
+use crate::{ConstantValue, ExpressionArray};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -28,7 +28,7 @@ use std::collections::HashMap;
 pub enum Expression {
     Variable(String, Vec<Size>),
     Constant(ConstantValue),
-    PartialVariable(Vec<usize>, HashMap<Vec<usize>, Expression>),
+    PartialVariable(ExpressionArray),
     Add(Box<Expression>, Box<Expression>),
     Sub(Box<Expression>, Box<Expression>),
     Mul(Box<Expression>, Box<Expression>),
