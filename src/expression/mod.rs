@@ -79,18 +79,24 @@ mod tests {
 
     use opensrdk_linear_algebra::sparse::SparseTensor;
 
+    use crate::Expression;
+
     #[test]
     fn it_works() {
         let a = 5.0f64;
         let b = vec![a; 8];
         let mut hash = HashMap::new();
-        hash.insert(vec![1usize; 1], 2.0);
-        hash.insert(vec![2usize; 2], 3.0);
-        hash.insert(vec![3usize; 1], 4.0);
-        hash.insert(vec![4usize; 2], 2.0);
-        let c = SparseTensor::from(vec![5usize; 8], hash);
-        println!("a {:#?}", a);
-        println!("b {:#?}", b);
-        println!("c {:#?}", c);
+        hash.insert(vec![3usize; 8], 2.0);
+        hash.insert(vec![1usize; 8], 3.0);
+        hash.insert(vec![4usize; 8], 4.0);
+        hash.insert(vec![5usize; 8], 2.0);
+        let c = SparseTensor::from(vec![6usize; 8], hash).unwrap();
+
+        let ea = Expression::from(a);
+        let eb = Expression::from(b);
+        let ec = Expression::from(c);
+        println!("a {:#?}", ea);
+        println!("b {:#?}", eb);
+        println!("c {:#?}", ec);
     }
 }
