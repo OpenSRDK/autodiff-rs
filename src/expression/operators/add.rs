@@ -81,3 +81,49 @@ impl Expression {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+
+    use opensrdk_linear_algebra::sparse::SparseTensor;
+
+    use crate::Expression;
+
+    #[test]
+    fn it_works() {
+        let a1 = 5.0f64;
+        let b1 = vec![a1; 8];
+        let mut hash1 = HashMap::new();
+        hash1.insert(vec![3usize; 8], 2.0);
+        hash1.insert(vec![1usize; 8], 3.0);
+        hash1.insert(vec![4usize; 8], 4.0);
+        hash1.insert(vec![5usize; 8], 2.0);
+        let c1 = SparseTensor::from(vec![6usize; 8], hash1).unwrap();
+
+        let ea1 = Expression::from(a1);
+        let eb1 = Expression::from(b1);
+        let ec1 = Expression::from(c1);
+
+        let a2 = 5.0f64;
+        let b2 = vec![a2; 8];
+        let mut hash2 = HashMap::new();
+        hash2.insert(vec![3usize; 8], 2.0);
+        hash2.insert(vec![1usize; 8], 3.0);
+        hash2.insert(vec![4usize; 8], 4.0);
+        hash2.insert(vec![5usize; 8], 2.0);
+        let c2 = SparseTensor::from(vec![6usize; 8], hash2).unwrap();
+
+        let ea2 = Expression::from(a2);
+        let eb2 = Expression::from(b2);
+        let ec2 = Expression::from(c2);
+
+        let ea = ea1 + ea2;
+        let eb = eb1 + eb2;
+        let ec = ec1 + ec2;
+
+        println!("a {:#?}", ea);
+        println!("b {:#?}", eb);
+        println!("c {:#?}", ec);
+    }
+}
