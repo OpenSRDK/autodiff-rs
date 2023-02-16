@@ -10,7 +10,8 @@ impl Expression {
         match self {
             Expression::Variable(id, _) => once(id.as_str()).collect::<HashSet<_>>(),
             Expression::Constant(_) => HashSet::new(),
-            Expression::PartialVariable(_, elems) => elems
+            Expression::PartialVariable(v) => v
+                .elems()
                 .values()
                 .into_iter()
                 .flat_map(|v| v.variable_ids())

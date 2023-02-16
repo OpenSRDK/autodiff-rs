@@ -1,4 +1,4 @@
-use super::operations::dot::DotProduct;
+use super::operations::{DirectProduct, DotProduct};
 use crate::{ConstantValue, Expression, TensorExpression};
 use std::collections::HashMap;
 
@@ -7,12 +7,16 @@ impl TensorExpression {
         match self {
             TensorExpression::KroneckerDeltas(_) => self.into(),
             TensorExpression::DotProduct {
-                terms: v,
+                terms,
                 rank_combinations,
-            } => v
+            } => terms
                 .into_iter()
-                .map(|v| v.assign(variables))
+                .map(|t| t.assign(variables))
                 .dot_product(&rank_combinations),
+            TensorExpression::DirectProduct(terms) => terms
+                .into_iter()
+                .map(|t| t.assign(variables))
+                .direct_product(),
         }
     }
 }

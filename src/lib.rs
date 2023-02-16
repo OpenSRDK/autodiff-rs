@@ -9,8 +9,10 @@ extern crate thiserror;
 
 pub mod constant_value;
 pub mod expression;
+pub mod expression_array;
 pub mod float;
 
 pub use constant_value::*;
 pub use expression::*;
+pub use expression_array::*;
 pub use float::*;

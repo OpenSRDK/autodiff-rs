@@ -18,7 +18,7 @@ impl Expression {
         match self {
             Expression::Variable(id, _) => format!("{{{}}}", variables[id.as_str()]),
             Expression::Constant(_) => r"\text{const.}".to_owned(),
-            Expression::PartialVariable(_, _) => r"\text{abbreviated.}".to_owned(),
+            Expression::PartialVariable(_) => r"\text{abbreviated.}".to_owned(),
             Expression::Add(l, r) => Expression::tex_code_add(l, r, variables, brackets_level),
             Expression::Sub(l, r) => Expression::tex_code_sub(l, r, variables, brackets_level),
             Expression::Mul(l, r) => Expression::tex_code_mul(l, r, variables, brackets_level),

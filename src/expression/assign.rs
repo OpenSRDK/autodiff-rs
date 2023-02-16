@@ -1,4 +1,4 @@
-use crate::{AbstractSize, ConstantValue, Expression};
+use crate::{AbstractSize, ConstantValue, Expression, ExpressionArray};
 use std::collections::HashMap;
 
 impl Expression {
@@ -18,15 +18,11 @@ impl Expression {
                 }
             }
             Expression::Constant(_) => self,
-            Expression::PartialVariable(sizes, mut elems) => {
-                let mut new_elems = HashMap::new();
-
-                for (index, elem) in elems.drain() {
-                    new_elems.insert(index, elem.assign(variables));
-                }
-
-                Expression::PartialVariable(sizes, new_elems)
-            }
+            Expression::PartialVariable(v) => Expression::PartialVariable(
+                ExpressionArray::from_factory(v.sizes().to_vec(), |indices| {
+                    v[indices].clone().assign(variables)
+                }),
+            ),
             Expression::Add(l, r) => l.assign(variables) + r.assign(variables),
             Expression::Sub(l, r) => l.assign(variables) - r.assign(variables),
             Expression::Mul(l, r) => l.assign(variables) * r.assign(variables),
