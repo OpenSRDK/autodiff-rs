@@ -16,7 +16,7 @@ impl TensorExpression {
                 rank_combinations,
             } => TensorExpression::tex_code_dot_product(terms, rank_combinations, symbols),
             TensorExpression::DirectProduct(terms) => {
-                TensorExpression::tex_code_direct_product(terms, symbols)
+                TensorExpression::tex_code_direct_product(terms, symbols, brackets_level)
             }
         }
     }
