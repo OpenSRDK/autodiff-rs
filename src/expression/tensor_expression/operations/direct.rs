@@ -52,9 +52,6 @@ impl TensorExpression {
             .into_iter()
             .map(|t| t.sizes())
             .fold(vec![], |mut acc, next| {
-                if acc.is_empty() {
-                    return next;
-                }
                 if acc.len() < next.len() {
                     for i in 0..acc.len() {
                         if next[i] == Size::Many {
