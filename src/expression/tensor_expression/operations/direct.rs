@@ -1,5 +1,4 @@
 use crate::{BracketsLevel, Expression, Size, TensorExpression};
-use opensrdk_linear_algebra::{generate_rank_combinations, RankIndex};
 use std::{collections::HashMap, iter::once};
 
 pub trait DirectProduct {
@@ -11,7 +10,7 @@ where
     I: Iterator<Item = Expression>,
 {
     fn direct_product(self) -> Expression {
-        todo!()
+        TensorExpression::DirectProduct(self.collect()).into()
     }
 }
 
@@ -32,11 +31,42 @@ impl TensorExpression {
     pub(crate) fn tex_code_direct_product(
         terms: &Vec<Expression>,
         symbols: &HashMap<&str, &str>,
+        brackets_level: BracketsLevel,
     ) -> String {
-        todo!()
+        let inner = terms
+            .into_iter()
+            .map(|t| t.tex_code(symbols))
+            .collect::<Vec<_>>()
+            .join(r" \otimes ");
+
+        match brackets_level {
+            BracketsLevel::None => inner,
+            BracketsLevel::ForMul | BracketsLevel::ForDiv | BracketsLevel::ForOperation => {
+                format!(r"\left({}\right)", inner)
+            }
+        }
     }
 
     pub(crate) fn size_direct_product(terms: &Vec<Expression>) -> Vec<Size> {
-        todo!()
+        terms
+            .into_iter()
+            .map(|t| t.sizes())
+            .fold(vec![], |mut acc, next| {
+                if acc.len() < next.len() {
+                    for i in 0..acc.len() {
+                        if next[i] == Size::Many {
+                            acc[i] = next[i];
+                        }
+                    }
+                    acc.extend(next[acc.len()..].iter().copied());
+                } else {
+                    for i in 0..next.len() {
+                        if next[i] == Size::Many {
+                            acc[i] = next[i];
+                        }
+                    }
+                }
+                acc
+            })
     }
 }
