@@ -76,6 +76,5 @@ mod tests {
                 SparseTensor::from(vec![6usize; 8], hash).unwrap()
             ))
         )
-        //There is an error here. Variable ec cannot have any size.
     }
 }
