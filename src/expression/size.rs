@@ -95,4 +95,46 @@ mod tests {
 
         assert_eq!(vec![Size::Many; 0], sa);
     }
+
+    #[test]
+    fn it_works3() {
+        let mut hash1 = HashMap::new();
+        hash1.insert(vec![3usize; 8], 2.0);
+        hash1.insert(vec![1usize; 8], 3.0);
+        hash1.insert(vec![4usize; 8], 4.0);
+        hash1.insert(vec![5usize; 8], 2.0);
+        let c1 = Expression::from(SparseTensor::from(vec![6usize; 8], hash1).unwrap());
+
+        let mut hash2 = HashMap::new();
+        hash2.insert(vec![4usize; 8], 1.0);
+        hash2.insert(vec![1usize; 8], 4.0);
+        hash2.insert(vec![6usize; 8], 3.0);
+        let c2 = Expression::from(SparseTensor::from(vec![8usize; 8], hash2).unwrap());
+
+        let mut hash3 = HashMap::new();
+        hash3.insert(vec![4usize; 6], 1.0);
+        hash3.insert(vec![1usize; 6], 4.0);
+        hash3.insert(vec![6usize; 6], 3.0);
+        let c3 = Expression::from(SparseTensor::from(vec![8usize; 6], hash3).unwrap());
+
+        let result1 = &c1.is_same_size(&c2);
+        let result2 = &c1.is_same_size(&c3);
+
+        assert_eq!(result1, &true);
+        assert_eq!(result2, &false);
+    }
+
+    #[test]
+    fn it_works4() {
+        let mut hash = HashMap::new();
+        hash.insert(vec![3usize; 8], 2.0);
+        hash.insert(vec![1usize; 8], 3.0);
+        hash.insert(vec![4usize; 8], 4.0);
+        hash.insert(vec![5usize; 8], 2.0);
+        let c = Expression::from(SparseTensor::from(vec![6usize; 8], hash).unwrap());
+
+        let rank = c.not_1dimension_ranks();
+
+        assert_eq!(rank, 8usize);
+    }
 }
