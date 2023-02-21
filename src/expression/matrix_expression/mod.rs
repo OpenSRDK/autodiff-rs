@@ -58,3 +58,21 @@ impl From<MatrixExpression> for Expression {
         Expression::Matrix(m.into())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::{collections::HashMap, ops::Add};
+
+    use opensrdk_linear_algebra::Matrix;
+
+    use crate::Expression;
+
+    #[test]
+    fn it_works() {
+        let len = 7usize;
+        let a = Matrix::from(len, vec![1.0; len * len]).unwrap();
+        println!("{:?}", a);
+        let ea = Expression::from(a);
+        println!("{:?}", ea);
+    }
+}
