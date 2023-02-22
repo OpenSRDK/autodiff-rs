@@ -103,6 +103,8 @@ where
             .map(|&(_, r)| r.clone())
             .collect::<Vec<_>>();
 
+        // TODO: Merge constants
+
         if flatten_deltas.len() > 0 {
             let merged_deltas = TensorExpression::KroneckerDeltas(flatten_deltas);
 

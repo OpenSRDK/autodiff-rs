@@ -75,3 +75,113 @@ impl ConstantValue {
         }
     }
 }
+
+impl ConstantValue {
+    pub fn add(&self, rhs: ConstantValue) -> ConstantValue {
+        match (self, rhs) {
+            (ConstantValue::Scalar(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Scalar(lhs + rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs + rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs + rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs + rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Tensor(lhs.clone() + rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs + rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Matrix(lhs.clone() + rhs)
+            }
+            _ => panic!(),
+        }
+    }
+
+    pub fn sub(&self, rhs: ConstantValue) -> ConstantValue {
+        match (self, rhs) {
+            (ConstantValue::Scalar(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Scalar(lhs - rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs - rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs - rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs - rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Tensor(lhs.clone() - rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs - rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Matrix(lhs.clone() - rhs)
+            }
+            _ => panic!(),
+        }
+    }
+
+    pub fn mul(&self, rhs: ConstantValue) -> ConstantValue {
+        match (self, rhs) {
+            (ConstantValue::Scalar(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Scalar(lhs * rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs * rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs * rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs * rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Tensor(lhs.clone() * rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs * rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Matrix(lhs.clone() * rhs)
+            }
+            _ => panic!(),
+        }
+    }
+
+    pub fn div(self, rhs: &ConstantValue) -> ConstantValue {
+        match (self, rhs) {
+            (ConstantValue::Scalar(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Scalar(lhs / rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs / rhs.clone())
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs / rhs.clone())
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs / rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Tensor(lhs / rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs / rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Matrix(lhs / rhs)
+            }
+            _ => panic!(),
+        }
+    }
+}

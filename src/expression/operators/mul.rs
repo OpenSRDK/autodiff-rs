@@ -10,18 +10,14 @@ impl Mul<Expression> for Expression {
         }
         // Merge constant
         if let Expression::Constant(vl) = &self {
-            if let Expression::Constant(mut vr) = rhs {
-                vl.elems()
-                    .into_iter()
-                    .zip(vr.elems_mut().into_iter())
-                    .for_each(|(vl, vr)| *vr = vl * *vr);
-                return vr.into();
-            }
             if vl == &ConstantValue::Scalar(0.0) {
                 return 0.0.into();
             }
             if vl == &ConstantValue::Scalar(1.0) {
                 return rhs;
+            }
+            if let Expression::Constant(vr) = rhs {
+                return vl.mul(vr).into();
             }
         }
         if let Expression::Constant(vr) = &rhs {

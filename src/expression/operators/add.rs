@@ -6,20 +6,14 @@ impl Add<Expression> for Expression {
 
     fn add(self, rhs: Expression) -> Self::Output {
         if !self.is_same_size(&rhs) {
-            println!("{:#?}", self);
-            println!("{:#?}", rhs);
             panic!("Cannot add expressions of different sizes");
         }
         if let Expression::Constant(vl) = &self {
-            if let Expression::Constant(mut vr) = rhs {
-                vl.elems()
-                    .into_iter()
-                    .zip(vr.elems_mut().into_iter())
-                    .for_each(|(vl, vr)| *vr = vl + *vr);
-                return vr.into();
-            }
             if vl == &ConstantValue::Scalar(0.0) {
                 return rhs;
+            }
+            if let Expression::Constant(vr) = rhs {
+                return vl.add(vr).into();
             }
         }
         if let Expression::Constant(vr) = &rhs {
