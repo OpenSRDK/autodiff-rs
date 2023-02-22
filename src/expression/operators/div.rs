@@ -9,16 +9,11 @@ impl Div<Expression> for Expression {
             panic!("Cannot add expressions of different sizes");
         }
         if let Expression::Constant(vr) = &rhs {
-            if let Expression::Constant(mut vl) = self {
-                vl.elems_mut()
-                    .into_iter()
-                    .zip(vr.elems().into_iter())
-                    .for_each(|(vl, vr)| *vl = *vl / vr);
-                return vl.into();
-            }
-
             if vr == &ConstantValue::Scalar(1.0) {
                 return self;
+            }
+            if let Expression::Constant(vl) = self {
+                return vl.div(vr).into();
             }
         }
 
