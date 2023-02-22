@@ -62,11 +62,10 @@ mod tests {
 
         let a = Expression::from(-a1);
         let b = Expression::from(b1.iter().map(|j| -j).collect::<Vec<f64>>());
-        //let c = Expression::from(-c1);
+        let c = Expression::from(-c1);
 
         assert_eq!(ea, a);
         assert_eq!(eb, b);
-        //assert_eq!(ec, c);
-        println!("{:?}", ec);
+        assert_eq!(ec, c);
     }
 }

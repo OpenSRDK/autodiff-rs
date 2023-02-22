@@ -27,7 +27,6 @@ mod tests {
         let a = Matrix::from(len, vec![1.0; len * len]).unwrap();
         let a_sizes = vec![a.rows(), a.cols()].into_abstract_size();
         let ea_size = Expression::from(a).sizes();
-        //println!("{:?}", ea_size);
         assert_eq!(a_sizes, ea_size);
     }
 }

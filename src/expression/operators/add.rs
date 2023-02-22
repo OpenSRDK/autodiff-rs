@@ -123,11 +123,11 @@ mod tests {
                 .map(|(i, j)| b2[i] + j)
                 .collect::<Vec<f64>>(),
         );
-        //let c = Expression::from(c1 + c2);
+        let c = Expression::from(c1 + c2);
 
         assert_eq!(ea, a);
         assert_eq!(eb, b);
-        //assert_eq!(ec, c);
-        println!("{:?}", ec);
+        assert_eq!(ec, c);
+        //println!("{:?}", ec);
     }
 }
