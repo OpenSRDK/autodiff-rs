@@ -33,6 +33,7 @@ mod tests {
         let len = 7usize;
         let a = Matrix::from(len, vec![1.0; len * len]).unwrap();
         let ea = Expression::from(a);
+        //let mat_ea = ea.matrix();
 
         let tex_symbols = vec![].into_iter().collect();
 

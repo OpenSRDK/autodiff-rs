@@ -59,22 +59,21 @@ impl From<MatrixExpression> for Expression {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use std::{collections::HashMap, ops::Add};
+#[cfg(test)]
+mod tests {
+    use std::{collections::HashMap, ops::Add};
 
-//     use opensrdk_linear_algebra::Matrix;
+    use opensrdk_linear_algebra::Matrix;
 
-//     use crate::Expression;
+    use crate::Expression;
 
-//     #[test]
-//     fn it_works() {
-//         let len = 7usize;
-//         let a = Matrix::from(len, vec![1.0; len * len]).unwrap();
-//         //println!("{:?}", a);
-//         let ea_mat = Expression::from(a.clone()).matrix();
-//         let ea_into_mat = Expression::from(a).into_matrix();
-//         println!("{:?}", ea_mat);
-//         println!("{:?}", ea_into_mat);
-//     }
-// }
+    #[test]
+    fn it_works() {
+        let len = 7usize;
+        let a = Matrix::from(len, vec![1.0; len * len]).unwrap();
+        let ea_mat = Box::new(Expression::from(a.clone())).matrix();
+        let ea_into_mat = Box::new(Expression::from(a)).into_matrix();
+        println!("{:?}", ea_mat);
+        println!("{:?}", ea_into_mat);
+    }
+}
