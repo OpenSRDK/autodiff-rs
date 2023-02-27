@@ -11,19 +11,30 @@ impl MatrixExpression {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use std::collections::HashSet;
+#[cfg(test)]
+mod tests {
+    use std::collections::HashSet;
 
-//     use crate::new_variable;
+    use crate::{new_variable, MatrixExpression};
 
-//     #[test]
-//     fn it_works() {
-//         let id = "x";
-//         let a = HashSet::from([id; 1]);
-//         let ea = new_variable((id).to_string());
-//         let ha = ea.variable_ids();
+    #[test]
+    fn it_works() {
+        let id = "x";
+        let a = HashSet::from([id; 1]);
+        let ea = new_variable((id).to_string());
+        let mea_t = MatrixExpression::T(Box::new(ea.clone()));
+        let a_t = mea_t.variable_ids();
 
-//         assert_eq!(a, ha);
-//     }
-// }
+        assert_eq!(a, a_t);
+
+        let mea_inv = MatrixExpression::Inv(Box::new(ea.clone()));
+        let a_inv = mea_inv.variable_ids();
+
+        assert_eq!(a, a_inv);
+
+        let mea_det = MatrixExpression::Det(Box::new(ea.clone()));
+        let a_det = mea_det.variable_ids();
+
+        assert_eq!(a, a_det);
+    }
+}

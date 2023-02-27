@@ -17,12 +17,17 @@ mod tests {
 
     use opensrdk_linear_algebra::{sparse::SparseTensor, Matrix};
 
-    use crate::{new_variable, new_variable_tensor, AbstractSize, ConstantValue, Expression};
+    use crate::{
+        new_variable, new_variable_tensor, AbstractSize, ConstantValue, Expression,
+        MatrixExpression,
+    };
 
     #[test]
     fn it_works1() {
         let id = "x";
         let ea = new_variable((id).to_string());
+
+        let mea_t = MatrixExpression::T(Box::new(ea.clone()));
         let mut hash1 = HashMap::new();
 
         let len = 7usize;
@@ -30,7 +35,8 @@ mod tests {
 
         hash1.insert(id, ConstantValue::Matrix(a.clone()));
 
-        let result = ea.assign(&hash1);
-        assert_eq!(result, Expression::from(ConstantValue::Matrix(a)))
+        let result = mea_t.assign(&hash1);
+
+        assert_eq!(result, Expression::from(ConstantValue::Matrix(a.t())))
     }
 }

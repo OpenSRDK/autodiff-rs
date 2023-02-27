@@ -65,15 +65,29 @@ mod tests {
 
     use opensrdk_linear_algebra::Matrix;
 
-    use crate::Expression;
+    use crate::{Expression, MatrixExpression};
 
     #[test]
     fn it_works() {
         let len = 7usize;
         let a = Matrix::from(len, vec![1.0; len * len]).unwrap();
-        let ea_mat = Box::new(Expression::from(a.clone())).matrix();
-        let ea_into_mat = Box::new(Expression::from(a)).into_matrix();
-        println!("{:?}", ea_mat);
-        println!("{:?}", ea_into_mat);
+
+        let mea_mat_t = MatrixExpression::T(Box::new(Expression::from(a.clone())));
+        let ea_mat_t = Expression::from(mea_mat_t.clone());
+        let mea_mat_t_mat = Box::new(ea_mat_t.clone()).into_matrix();
+
+        assert_eq!(mea_mat_t, mea_mat_t_mat);
+
+        let mea_mat_inv = MatrixExpression::Inv(Box::new(Expression::from(a.clone())));
+        let ea_mat_inv = Expression::from(mea_mat_inv.clone());
+        let mea_mat_inv_mat = Box::new(ea_mat_inv.clone()).into_matrix();
+
+        assert_eq!(mea_mat_inv, mea_mat_inv_mat);
+
+        let mea_mat_det = MatrixExpression::Det(Box::new(Expression::from(a.clone())));
+        let ea_mat_det = Expression::from(mea_mat_det.clone());
+        let mea_mat_det_mat = Box::new(ea_mat_det.clone()).into_matrix();
+
+        assert_eq!(mea_mat_det, mea_mat_det_mat);
     }
 }

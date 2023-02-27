@@ -26,32 +26,32 @@ mod tests {
 
     use opensrdk_linear_algebra::{sparse::SparseTensor, Matrix};
 
-    use crate::{new_variable, Expression};
+    use crate::{new_variable, Expression, MatrixExpression};
 
     #[test]
     fn it_works1() {
         let len = 7usize;
         let a = Matrix::from(len, vec![1.0; len * len]).unwrap();
         let ea = Expression::from(a);
-        //let mat_ea = ea.matrix();
+        let mea_t = MatrixExpression::T(Box::new(ea.clone()));
 
         let tex_symbols = vec![].into_iter().collect();
 
-        let tex_a = ea.tex_code(&tex_symbols);
+        let tex_a = mea_t.tex_code(&tex_symbols);
 
-        assert_eq!("\\text{const.}", tex_a);
+        assert_eq!("\\text{const.}^\\top", tex_a);
     }
 
     #[test]
     fn it_works2() {
         let id = "x";
-        let a = HashSet::from([id; 1]);
         let ea = new_variable((id).to_string());
+        let mea_t = MatrixExpression::T(Box::new(ea.clone()));
 
         let tex_symbols = vec![("x", "y")].into_iter().collect();
 
-        let tex_a = ea.tex_code(&tex_symbols);
+        let tex_a = mea_t.tex_code(&tex_symbols);
 
-        assert_eq!("{y}", tex_a);
+        assert_eq!("{y}^\\top", tex_a);
     }
 }
