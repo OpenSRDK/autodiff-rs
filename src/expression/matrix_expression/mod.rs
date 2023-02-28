@@ -69,25 +69,23 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let len = 7usize;
-        let a = Matrix::from(len, vec![1.0; len * len]).unwrap();
+        let len = 3usize;
+        let a = Matrix::from(len, vec![1.0, 3.0, 4.0, 0.0, 1.0, 0.0, 0.0, 0.0, 3.0]).unwrap();
+        let ea = Expression::from(a.clone());
 
-        let mea_mat_t = MatrixExpression::T(Box::new(Expression::from(a.clone())));
-        let ea_mat_t = Expression::from(mea_mat_t.clone());
-        let mea_mat_t_mat = Box::new(ea_mat_t.clone()).into_matrix();
+        let a_t = a.clone().t();
+        let ea_t = ea.clone().t();
 
-        assert_eq!(mea_mat_t, mea_mat_t_mat);
+        assert_eq!(Expression::from(a_t), ea_t);
 
-        let mea_mat_inv = MatrixExpression::Inv(Box::new(Expression::from(a.clone())));
-        let ea_mat_inv = Expression::from(mea_mat_inv.clone());
-        let mea_mat_inv_mat = Box::new(ea_mat_inv.clone()).into_matrix();
+        let a_inv = a.clone().getrf().unwrap().getri().unwrap();
+        let ea_inv = ea.clone().inv();
 
-        assert_eq!(mea_mat_inv, mea_mat_inv_mat);
+        assert_eq!(Expression::from(a_inv), ea_inv);
 
-        let mea_mat_det = MatrixExpression::Det(Box::new(Expression::from(a.clone())));
-        let ea_mat_det = Expression::from(mea_mat_det.clone());
-        let mea_mat_det_mat = Box::new(ea_mat_det.clone()).into_matrix();
+        let a_det = a.clone().getrf().unwrap().0.trdet();
+        let ea_det = ea.clone().det();
 
-        assert_eq!(mea_mat_det, mea_mat_det_mat);
+        assert_eq!(Expression::from(a_det), ea_det);
     }
 }

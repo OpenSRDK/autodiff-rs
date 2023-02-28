@@ -29,29 +29,21 @@ mod tests {
     use crate::{new_variable, Expression, MatrixExpression};
 
     #[test]
-    fn it_works1() {
-        let len = 7usize;
-        let a = Matrix::from(len, vec![1.0; len * len]).unwrap();
-        let ea = Expression::from(a);
-        let mea_t = MatrixExpression::T(Box::new(ea.clone()));
-
-        let tex_symbols = vec![].into_iter().collect();
-
-        let tex_a = mea_t.tex_code(&tex_symbols);
-
-        assert_eq!("\\text{const.}^\\top", tex_a);
-    }
-
-    #[test]
-    fn it_works2() {
+    fn it_works() {
         let id = "x";
         let ea = new_variable((id).to_string());
-        let mea_t = MatrixExpression::T(Box::new(ea.clone()));
-
         let tex_symbols = vec![("x", "y")].into_iter().collect();
 
-        let tex_a = mea_t.tex_code(&tex_symbols);
+        let ea_t = ea.clone().t();
+        let tex_a_t = ea_t.tex_code(&tex_symbols);
+        assert_eq!("{y}^\\top", tex_a_t);
 
-        assert_eq!("{y}^\\top", tex_a);
+        let ea_inv = ea.clone().inv();
+        let tex_a_inv = ea_inv.tex_code(&tex_symbols);
+        assert_eq!("{{y}^{-1}}", tex_a_inv);
+
+        let ea_det = ea.clone().det();
+        let tex_a_det = ea_det.tex_code(&tex_symbols);
+        assert_eq!("\\left\\|{y}\\right\\|", tex_a_det);
     }
 }

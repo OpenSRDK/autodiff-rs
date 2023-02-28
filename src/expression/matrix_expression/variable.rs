@@ -22,18 +22,19 @@ mod tests {
         let id = "x";
         let a = HashSet::from([id; 1]);
         let ea = new_variable((id).to_string());
-        let mea_t = MatrixExpression::T(Box::new(ea.clone()));
-        let a_t = mea_t.variable_ids();
+        
+        let ea_t = ea.clone().t();
+        let a_t = ea_t.variable_ids();
 
         assert_eq!(a, a_t);
 
-        let mea_inv = MatrixExpression::Inv(Box::new(ea.clone()));
-        let a_inv = mea_inv.variable_ids();
+        let ea_inv = ea.clone().inv();
+        let a_inv = ea_inv.variable_ids();
 
         assert_eq!(a, a_inv);
 
-        let mea_det = MatrixExpression::Det(Box::new(ea.clone()));
-        let a_det = mea_det.variable_ids();
+        let ea_det = ea.clone().det();
+        let a_det = ea_det.variable_ids();
 
         assert_eq!(a, a_det);
     }
