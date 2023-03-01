@@ -26,12 +26,12 @@ mod tests {
 
     use opensrdk_linear_algebra::{sparse::SparseTensor, Matrix};
 
-    use crate::{new_variable, Expression, MatrixExpression};
+    use crate::{new_variable, new_variable_tensor, Expression, MatrixExpression, Size};
 
     #[test]
     fn it_works() {
         let id = "x";
-        let ea = new_variable((id).to_string());
+        let ea = new_variable_tensor((id).to_string(), vec![Size::Many, Size::Many]);
         let tex_symbols = vec![("x", "y")].into_iter().collect();
 
         let ea_t = ea.clone().t();

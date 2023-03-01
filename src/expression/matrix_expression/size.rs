@@ -13,39 +13,34 @@ impl MatrixExpression {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use std::{collections::HashMap, ops::Add, collections::HashSet};
+#[cfg(test)]
+mod tests {
+    use std::{collections::HashMap, collections::HashSet, ops::Add};
 
-//     use opensrdk_linear_algebra::Matrix;
+    use opensrdk_linear_algebra::Matrix;
 
-//     use crate::{Expression, MatrixExpression, Size, new_variable};
+    use crate::{new_variable, new_variable_tensor, Expression, MatrixExpression, Size};
 
-//     #[test]
-//     fn it_works() {
-//         let id = "x";
-//         let a = HashSet::from([id; 1]);
-//         let ea = new_variable((id).to_string());
+    #[test]
+    fn it_works() {
+        let id = "x";
+        let ea = new_variable_tensor((id).to_string(), vec![Size::Many, Size::Many]);
 
-//         // let len = 3usize;
-//         // let a = Matrix::from(len, vec![1.0, 3.0, 4.0, 0.0, 1.0, 0.0, 0.0, 0.0, 3.0]).unwrap();
-//         // let ea = Expression::from(a);
+        let size = ea.sizes();
 
-//         let size = ea.sizes();
+        let ea_t = ea.clone().t();
+        let size_t = ea_t.sizes();
 
-//         let ea_t = ea.clone().t();
-//         let size_t = ea_t.sizes();
+        assert_eq!(vec![size[1], size[0]], size_t);
 
-//         assert_eq!(vec![size[1], size[0]], size_t);
+        let ea_inv = ea.clone().inv();
+        let size_inv = ea_inv.sizes();
 
-//         let ea_inv = ea.clone().inv();
-//         let size_inv = ea_inv.sizes();
+        assert_eq!(size, size_inv);
 
-//         assert_eq!(size, size_inv);
+        let ea_det = ea.clone().det();
+        let size_det = ea_det.sizes();
 
-//         let ea_det = ea.clone().det();
-//         let size_det = ea_det.sizes();
-
-//         assert_eq!(vec![Size::One, Size::One], size_det);
-//     }
-// }
+        assert_eq!(vec![Size::One, Size::One], size_det);
+    }
+}
