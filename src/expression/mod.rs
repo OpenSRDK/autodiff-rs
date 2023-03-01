@@ -72,3 +72,31 @@ impl From<ConstantValue> for Expression {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+
+    use opensrdk_linear_algebra::sparse::SparseTensor;
+
+    use crate::Expression;
+
+    #[test]
+    fn it_works() {
+        let a = 5.0f64;
+        let b = vec![a; 8];
+        let mut hash = HashMap::new();
+        hash.insert(vec![3usize; 8], 2.0);
+        hash.insert(vec![1usize; 8], 3.0);
+        hash.insert(vec![4usize; 8], 4.0);
+        hash.insert(vec![5usize; 8], 2.0);
+        let c = SparseTensor::from(vec![6usize; 8], hash).unwrap();
+
+        let ea = Expression::from(a);
+        let eb = Expression::from(b);
+        let ec = Expression::from(c);
+        println!("a {:#?}", ea);
+        println!("b {:#?}", eb);
+        println!("c {:#?}", ec);
+    }
+}

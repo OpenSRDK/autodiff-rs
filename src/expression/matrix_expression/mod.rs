@@ -58,3 +58,34 @@ impl From<MatrixExpression> for Expression {
         Expression::Matrix(m.into())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::{collections::HashMap, ops::Add};
+
+    use opensrdk_linear_algebra::Matrix;
+
+    use crate::{Expression, MatrixExpression};
+
+    #[test]
+    fn it_works() {
+        let len = 3usize;
+        let a = Matrix::from(len, vec![1.0, 3.0, 4.0, 0.0, 1.0, 0.0, 0.0, 0.0, 3.0]).unwrap();
+        let ea = Expression::from(a.clone());
+
+        let a_t = a.clone().t();
+        let ea_t = ea.clone().t();
+
+        assert_eq!(Expression::from(a_t), ea_t);
+
+        let a_inv = a.clone().getrf().unwrap().getri().unwrap();
+        let ea_inv = ea.clone().inv();
+
+        assert_eq!(Expression::from(a_inv), ea_inv);
+
+        let a_det = a.clone().getrf().unwrap().0.trdet();
+        let ea_det = ea.clone().det();
+
+        assert_eq!(Expression::from(a_det), ea_det);
+    }
+}
