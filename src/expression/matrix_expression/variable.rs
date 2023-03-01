@@ -15,14 +15,14 @@ impl MatrixExpression {
 mod tests {
     use std::collections::HashSet;
 
-    use crate::{new_variable, MatrixExpression};
+    use crate::{new_variable, new_variable_tensor, size, MatrixExpression, Size};
 
     #[test]
     fn it_works() {
         let id = "x";
         let a = HashSet::from([id; 1]);
-        let ea = new_variable((id).to_string());
-        
+        let ea = new_variable_tensor((id).to_string(), vec![Size::Many]);
+
         let ea_t = ea.clone().t();
         let a_t = ea_t.variable_ids();
 
