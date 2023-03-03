@@ -66,8 +66,8 @@ mod tests {
         hash.insert(vec![5usize; 8], 2.0);
         let c = SparseTensor::from(vec![6usize; 8], hash).unwrap();
 
-        let ea = Expression::from(a);
-        let tea = ea.into_tensor();
-        println!("{:?}", tea);
+        let ec = Expression::from(c);
+        let tec = ec.into_tensor();
+        println!("{:?}", tec);
     }
 }

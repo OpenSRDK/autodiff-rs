@@ -1,3 +1,5 @@
+use opensrdk_linear_algebra::sparse::SparseTensor;
+
 use crate::{BracketsLevel, Expression, Size, TensorExpression};
 use std::{collections::HashMap, iter::once};
 
@@ -25,10 +27,44 @@ impl TensorExpression {
         terms: &Vec<Expression>,
         symbols: &[&str],
     ) -> Vec<Expression> {
-        let elems = terms
-            .into_iter()
-            .map(|t| t.differential(symbols))
-            .collect::<Vec<_>>();
+        let terms_len = terms.len();
+        let symbols_len = symbols.len();
+
+        let result = (0..terms_len)
+            .map(|i| {
+                let elems_left = (0..i).map(|j| terms[j]).product::<Expression>();
+                let elems_right = (i + 1..terms_len).map(|k| terms[k]).product::<Expression>();
+                let elem_diff = terms[i].differential(symbols);
+
+                let elems = (0..symbols_len)
+                    .map(|l| elems_left * elem_diff[l] * elems_right)
+                    .collect::<Vec<Expression>>();
+                elems
+            })
+            .sum::<Expression>();
+
+        // let mut hash = HashMap::new();
+
+        // let a = SparseTensor::new(vec![1usize; symbols_len]);
+        // let ea = Expression::from(a);
+        // let tea = ea.into_tensor();
+
+        // let mut result = tea.clone();
+        // let mut elems_left = ;
+        // let mut elem = tea.clone();
+        // let mut elems_right = ;
+
+        // for i in 0..terms_len {
+        //   for j in 0..i {
+        //     elems_left *= terms[j];
+        //   }
+        //   elem = terms[i].differential(symbols);
+        //   for k in i + 1..terms_len {
+        //     elems_right *= terms[k];
+        //   }
+        //   for l in 0..symbols_len{
+        //     result[l] += elems_left * elem[l] * elems_right;
+        //   }
         todo!()
     }
 
