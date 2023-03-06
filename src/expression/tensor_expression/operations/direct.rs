@@ -32,18 +32,29 @@ impl TensorExpression {
 
         let result = (0..terms_len)
             .map(|i| {
-                let elems_left = (0..i).map(|j| terms[j]).direct_product();
-                let elems_right = (i + 1..terms_len).map(|k| terms[k]).direct_product();
+                let elems_left = (0..i).map(|j| terms[j].clone()).direct_product();
+                let elems_right = (i + 1..terms_len)
+                    .map(|k| terms[k].clone())
+                    .direct_product();
                 let elem_diff = terms[i].differential(symbols);
 
                 let elems = (0..symbols_len)
-                    .map(|l| elems_left * elem_diff[l] * elems_right)
+                    .map(|l| {
+                        elems_left
+                            .clone()
+                            .direct(elem_diff[l].clone())
+                            .direct(elems_right.clone())
+                    })
                     .collect::<Vec<Expression>>();
                 elems
             })
-            .sum::<Expression>();
-
-        todo!()
+            .fold(vec![Expression::from(0f64); symbols_len], |sum, x| {
+                let result_orig = (0..symbols_len)
+                    .map(|m| sum[m].clone() + x[m].clone())
+                    .collect::<Vec<Expression>>();
+                result_orig
+            });
+        result
     }
 
     pub(crate) fn tex_code_direct_product(
@@ -91,11 +102,14 @@ impl TensorExpression {
 
 #[cfg(test)]
 mod tests {
-    use std::{collections::HashMap, ops::Add};
+    use std::{
+        collections::{HashMap, HashSet},
+        ops::Add,
+    };
 
     use opensrdk_linear_algebra::{sparse::SparseTensor, Matrix};
 
-    use crate::{Expression, MatrixExpression};
+    use crate::{new_variable, Expression, MatrixExpression, TensorExpression};
 
     #[test]
     fn it_works() {
@@ -119,5 +133,40 @@ mod tests {
         let dp = ea.direct(eb);
 
         println!("{:?}", dp);
+    }
+
+    #[test]
+    fn it_works1() {
+        let mut hash1 = HashMap::new();
+        hash1.insert(vec![3usize; 8], 2.0);
+        hash1.insert(vec![1usize; 8], 3.0);
+        hash1.insert(vec![4usize; 8], 4.0);
+        hash1.insert(vec![5usize; 8], 2.0);
+        let a = SparseTensor::from(vec![6usize; 8], hash1).unwrap();
+
+        let ea = Expression::from(a);
+
+        let mut hash2 = HashMap::new();
+        hash2.insert(vec![3usize; 8], 2.0);
+        hash2.insert(vec![2usize; 8], 3.0);
+        hash2.insert(vec![4usize; 8], 1.0);
+        let b = SparseTensor::from(vec![6usize; 8], hash2).unwrap();
+
+        let eb = Expression::from(b);
+
+        let id = "x";
+        let ec = new_variable((id).to_string());
+
+        let ids = &["x", "y"];
+
+        let diff_dp = TensorExpression::diff_direct_product(&vec![ea, eb, ec], ids);
+        println!("{:?}", diff_dp);
+
+        let tex_symbols = vec![("x", "y")].into_iter().collect();
+        let tex_x = diff_dp[0].tex_code(&tex_symbols);
+        let tex_y = diff_dp[1].tex_code(&tex_symbols);
+
+        println!("{:?}", tex_x);
+        println!("{:?}", tex_y);
     }
 }
