@@ -159,7 +159,7 @@ mod tests {
 
         let ids = &["x", "y"];
 
-        let diff_dp = TensorExpression::diff_direct_product(&vec![ea, eb, ec], ids);
+        let diff_dp = TensorExpression::diff_direct_product(&vec![ec.clone(), ea, eb, ec], ids);
         println!("{:?}", diff_dp);
 
         let tex_symbols = vec![("x", "y")].into_iter().collect();
