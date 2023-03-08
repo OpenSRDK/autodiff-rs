@@ -25,7 +25,7 @@ impl ExpressionArray {
     pub fn from_factory(sizes: Vec<usize>, factory: impl Fn(&[usize]) -> Expression) -> Self {
         //let elems = HashMap::with_hasher(factory);
         let mut elems = HashMap::new();
-        elems.insert(key, factory(key));
+        elems.insert(sizes.clone(), factory(&sizes));
         Self {
             sizes,
             elems,
