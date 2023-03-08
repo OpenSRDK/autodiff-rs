@@ -23,13 +23,12 @@ impl ExpressionArray {
     }
 
     pub fn from_factory(sizes: Vec<usize>, factory: impl Fn(&[usize]) -> Expression) -> Self {
-        // let elems = HashMap::with_hasher(factory);
-        // Self {
-        //     sizes,
-        //     elems,
-        //     default: Box::new(0.0.into()),
-        // }
-        todo!()
+        let elems = HashMap::with_hasher(factory);
+        Self {
+            sizes,
+            elems,
+            default: Box::new(0.0.into()),
+        }
     }
 
     pub fn sizes(&self) -> &[usize] {
