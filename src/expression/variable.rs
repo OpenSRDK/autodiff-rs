@@ -84,4 +84,24 @@ mod tests {
 
         assert_eq!(a, ha);
     }
+    #[test]
+    fn it_works2() {
+        let x = new_variable("x".to_string());
+        let mu = new_variable("mu".to_string());
+        let sigma = new_variable("sigma".to_string());
+        let expression = x * mu * sigma;
+        let diff_x = expression.differential(&["x"])[0].clone();
+        let diff_mu = expression.differential(&["mu"])[0].clone();
+        let diff_sigma = expression.differential(&["sigma"])[0].clone();
+        let diff_anpan = expression.differential(&["anpan"])[0].clone();
+
+        let tex_symbols = vec![("x", "x"), ("mu", r"\mu"), ("sigma", r"\Sigma")]
+            .into_iter()
+            .collect();
+
+        println!("{:#?}", diff_x.tex_code(&tex_symbols));
+        println!("{:#?}", diff_mu.tex_code(&tex_symbols));
+        println!("{:#?}", diff_sigma.tex_code(&tex_symbols));
+        println!("{:#?}", diff_anpan.tex_code(&tex_symbols));
+    }
 }
