@@ -24,7 +24,6 @@ impl ExpressionArray {
     }
 
     pub fn from_factory(sizes: Vec<usize>, factory: impl Fn(&[usize]) -> Expression) -> Self {
-        //let elems = HashMap::with_hasher(factory);
         let mut elems = HashMap::new();
         let elems_orig = indices_cartesian_product(&sizes);
         for i in 0..elems_orig.len() {
