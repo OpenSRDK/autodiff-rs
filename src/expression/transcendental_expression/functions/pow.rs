@@ -13,7 +13,7 @@ impl Expression {
             }
 
             if let Expression::Constant(base) = self {
-                return base.into_scalar().powf(exponent.into_scalar()).into();
+                return base.into_scalar().powf(exponent.into_scalar() + 1.0).into();
             }
         }
 

@@ -89,7 +89,7 @@ mod tests {
         let x = new_variable("x".to_string());
         let mu = new_variable("mu".to_string());
         let sigma = new_variable("sigma".to_string());
-        let expression = x * mu * sigma;
+        let expression = x * mu / sigma;
         let diff_x = expression.differential(&["x"])[0].clone();
         let diff_mu = expression.differential(&["mu"])[0].clone();
         let diff_sigma = expression.differential(&["sigma"])[0].clone();
