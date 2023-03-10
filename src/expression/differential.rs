@@ -80,6 +80,7 @@ mod tests {
         let diff_x = expression.differential(&["x"])[0].clone();
         let diff_mu = expression.differential(&["mu"])[0].clone();
         let diff_sigma = expression.differential(&["sigma"])[0].clone();
+        let diff_anpan = expression.differential(&["anpan"])[0].clone();
 
         let tex_symbols = vec![("x", "x"), ("mu", r"\mu"), ("sigma", r"\Sigma")]
             .into_iter()
@@ -88,5 +89,6 @@ mod tests {
         println!("{:#?}", diff_x.tex_code(&tex_symbols));
         println!("{:#?}", diff_mu.tex_code(&tex_symbols));
         println!("{:#?}", diff_sigma.tex_code(&tex_symbols));
+        println!("{:#?}", diff_anpan.tex_code(&tex_symbols));
     }
 }
