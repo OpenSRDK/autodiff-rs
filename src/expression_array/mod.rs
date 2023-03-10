@@ -25,10 +25,12 @@ impl ExpressionArray {
 
     pub fn from_factory(sizes: Vec<usize>, factory: impl Fn(&[usize]) -> Expression) -> Self {
         let mut elems = HashMap::new();
-        let elems_orig = indices_cartesian_product(&sizes);
-        for i in 0..elems_orig.len() {
-            elems.insert(elems_orig[i].clone(), factory(&elems_orig[i]));
-        }
+        let indices = indices_cartesian_product(&sizes);
+
+        indices.iter().for_each(|index| {
+            elems.insert(index.clone(), factory(&index));
+        });
+
         Self {
             sizes,
             elems,

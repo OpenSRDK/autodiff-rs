@@ -67,7 +67,9 @@ mod tests {
         let c = SparseTensor::from(vec![6usize; 8], hash).unwrap();
 
         let ec = Expression::from(c);
-        let tec = ec.into_tensor();
-        println!("{:?}", tec);
+        // TODO: into_tensor is for internal use. don't use here.
+        // TODO: At first it is needed to extract ConstantValue from ec, and then convert it to SparseTensor.
+        // let tec = ec.into_tensor();
+        // println!("{:?}", tec);
     }
 }
