@@ -24,7 +24,7 @@ where
     type Output = KernelAdd<Self, R>;
 
     fn add(self, rhs: R) -> Self::Output {
-        KernelAdd { lhs: self, rhs }
+        KernelAdd::new(self, rhs)
     }
 }
 
@@ -35,6 +35,6 @@ where
     type Output = KernelMul<Self, R>;
 
     fn mul(self, rhs: R) -> Self::Output {
-        KernelMul { lhs: self, rhs }
+        KernelMul::new(self, rhs)
     }
 }

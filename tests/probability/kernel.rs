@@ -14,6 +14,16 @@ where
     rhs: R,
 }
 
+impl<L, R> KernelAdd<L, R>
+where
+    L: PositiveDefiniteKernel,
+    R: PositiveDefiniteKernel,
+{
+    pub fn new(lhs: L, rhs: R) -> Self {
+        Self { lhs, rhs }
+    }
+}
+
 impl<L, R> PositiveDefiniteKernel for KernelAdd<L, R>
 where
     L: PositiveDefiniteKernel,
@@ -39,6 +49,16 @@ where
 {
     lhs: L,
     rhs: R,
+}
+
+impl<L, R> KernelMul<L, R>
+where
+    L: PositiveDefiniteKernel,
+    R: PositiveDefiniteKernel,
+{
+    pub fn new(lhs: L, rhs: R) -> Self {
+        Self { lhs, rhs }
+    }
 }
 
 impl<L, R> PositiveDefiniteKernel for KernelMul<L, R>

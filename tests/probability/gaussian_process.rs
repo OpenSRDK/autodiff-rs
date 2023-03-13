@@ -9,6 +9,8 @@ use opensrdk_symbolic_computation::new_variable_tensor;
 use opensrdk_symbolic_computation::ExpressionArray;
 use opensrdk_symbolic_computation::Size;
 use opensrdk_symbolic_computation::{new_variable, Expression};
+use std::iter::once;
+use std::ops::Index;
 
 // #[test]
 fn test_gp() {
@@ -24,7 +26,7 @@ fn test_gp() {
     let k = new_partial_variable(ExpressionArray::from_factory(vec![n, n], |index| {
         let i = index[0];
         let j = index[1];
-        kernel.expression(x[i].clone().into(), x[j].clone().into(), param.clone())
+        kernel.expression(x[i].clone().into(), x[j].clone().into(), &[param.clone()])
     }));
 
     let normal = MultivariateNormal::new(y.into(), y_mean.into(), k + sigma, n);
@@ -56,10 +58,10 @@ fn test_recurrent_gp() {
         let j = index[1];
         kernel.expression(
             new_partial_variable(ExpressionArray::from_factory(vec![1, ud], |indices| {
-                u[&[i, indices[1]]].clone()
+                u.index(&[i, indices[1]]).clone()
             })),
             new_partial_variable(ExpressionArray::from_factory(vec![1, ud], |indices| {
-                u[&[j, indices[1]]].clone()
+                u.index(&[j, indices[1]]).clone()
             })),
             &[theta_y.clone()],
         )
@@ -70,14 +72,14 @@ fn test_recurrent_gp() {
         kernel.expression(
             new_partial_variable(ExpressionArray::from_factory(vec![1, ud + xd], |indices| {
                 if indices[1] < ud {
-                    u[&[i, indices[1]]].clone()
+                    u.index(&[i, indices[1]]).clone()
                 } else {
                     x[i][index[1]].into()
                 }
             })),
             new_partial_variable(ExpressionArray::from_factory(vec![1, ud + xd], |indices| {
                 if indices[1] < ud {
-                    u[&[j, indices[1]]].clone()
+                    u.index(&[j, indices[1]]).clone()
                 } else {
                     x[j][index[1]].into()
                 }
