@@ -47,8 +47,8 @@ impl Expression {
             .into_iter()
             .zip(r.differential(variable_ids).into_iter())
             .map(|(li, ri)| {
-                (li * r.as_ref().clone() - l.as_ref().clone() * ri)
-                    / r.as_ref().clone().pow(2.0.into())
+                (li * r.as_ref().clone()
+                    - l.as_ref().clone() * ri / r.as_ref().clone().pow(2.0.into()))
             })
             .collect()
     }
