@@ -19,15 +19,13 @@ mod tests {
     use crate::Expression;
     #[test]
     fn it_works() {
-        fn it_works() {
-            let len = 3usize;
-            let a = Matrix::from(len, vec![1.0, 3.0, 4.0, 0.0, 1.0, 0.0, 0.0, 0.0, 3.0]).unwrap();
-            let ea = Expression::from(a.clone());
+        let len = 3usize;
+        let a = Matrix::from(len, vec![1.0, 3.0, 4.0, 0.0, 1.0, 0.0, 0.0, 0.0, 3.0]).unwrap();
+        let ea = Expression::from(a.clone());
 
-            let tr_a = a.clone().tr();
-            let tr_ea = ea.clone().tr();
+        let tr_a = a.clone().tr();
+        let tr_ea = ea.clone().tr();
 
-            assert_eq!(Expression::from(tr_a), tr_ea);
-        }
+        assert_eq!(Expression::from(tr_a), tr_ea);
     }
 }
