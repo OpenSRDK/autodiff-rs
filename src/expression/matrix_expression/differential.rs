@@ -9,3 +9,30 @@ impl MatrixExpression {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+
+    use crate::new_variable_tensor;
+    #[test]
+    fn it_works() {
+        use crate::Size;
+
+        let x = new_variable_tensor("x".to_string(), vec![Size::Many, Size::Many]);
+        let mu = new_variable_tensor("mu".to_string(), vec![Size::Many, Size::Many]);
+        let sigma = new_variable_tensor("sigma".to_string(), vec![Size::Many, Size::Many]);
+        let expression = x * mu / sigma;
+        let diff_x = expression.clone().differential(&["x"]);
+        println!("diff: {:?}", diff_x);
+        let tex_symbols: Vec<_> = vec![("x", "x"), ("mu", r"\mu"), ("sigma", r"\sigma")]
+            .into_iter()
+            .collect();
+        let tex_symbols: HashMap<_, _> = tex_symbols.into_iter().collect();
+
+        assert_eq!(
+            expression.tex_code(&tex_symbols),
+            r"{\left({{x} \times {\mu}}\right) / {\sigma}}"
+        );
+    }
+}
