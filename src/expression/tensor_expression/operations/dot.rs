@@ -260,3 +260,35 @@ impl TensorExpression {
         not_1dimension_ranks
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        use opensrdk_linear_algebra::{sparse::SparseTensor, Matrix};
+
+        use crate::Expression;
+
+        let mut a = SparseTensor::new(vec![2, 2]);
+        a[&[0, 0]] = 1.0;
+        a[&[0, 1]] = 2.0;
+        a[&[1, 0]] = 3.0;
+        a[&[1, 1]] = 4.0;
+
+        let ea = Expression::from(a.clone());
+
+        let mut b = SparseTensor::new(vec![2, 2]);
+        b[&[0, 0]] = 5.0;
+        b[&[0, 1]] = 6.0;
+        b[&[1, 0]] = 7.0;
+        b[&[1, 1]] = 8.0;
+
+        let eb = Expression::from(b.clone());
+
+        let dp = a.dot(&b, &[[0, 0], [1, 1]]);
+        let edp = ea.dot(eb, &[[0, 0], [1, 1]]);
+
+        println!("dp: {:?}", dp);
+        println!("edp: {:?}", edp);
+    }
+}
