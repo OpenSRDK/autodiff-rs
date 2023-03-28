@@ -39,3 +39,32 @@ impl MatrixExpression {
         )
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use opensrdk_linear_algebra::Matrix;
+
+    use crate::{new_variable_tensor, Expression, MatrixExpression, Size};
+    #[test]
+    fn it_works() {
+        let len = 3usize;
+        let a = Matrix::from(len, vec![1.0, 3.0, 4.0, 0.0, 1.0, 0.0, 0.0, 0.0, 3.0]).unwrap();
+        let ea = Expression::from(a.clone());
+
+        let a_inv = a.clone().getrf().unwrap().getri().unwrap();
+        let ea_inv = ea.clone().inv();
+
+        assert_eq!(Expression::from(a_inv), ea_inv);
+
+        let diff_ea_inv = MatrixExpression::diff_inv(&ea, &["a"]);
+        println!("diff_ea_inv: {:?}", diff_ea_inv);
+
+        let x = new_variable_tensor("x".to_string(), vec![Size::Many, Size::Many]);
+        let mu = new_variable_tensor("mu".to_string(), vec![Size::Many, Size::Many]);
+        let sigma = new_variable_tensor("sigma".to_string(), vec![Size::Many, Size::Many]);
+        let expression = x * mu / sigma;
+        let inv = expression.clone().inv();
+        let diff_x = MatrixExpression::diff_inv(&inv, &["x"]);
+        println!("diff_x: {:?}", diff_x);
+    }
+}
