@@ -12,7 +12,6 @@ impl MatrixExpression {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
 
     use crate::new_variable_tensor;
     #[test]
