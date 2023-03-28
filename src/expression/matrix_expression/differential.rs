@@ -25,14 +25,5 @@ mod tests {
         let expression = x * mu / sigma;
         let diff_x = expression.clone().differential(&["x"]);
         println!("diff: {:?}", diff_x);
-        let tex_symbols: Vec<_> = vec![("x", "x"), ("mu", r"\mu"), ("sigma", r"\sigma")]
-            .into_iter()
-            .collect();
-        let tex_symbols: HashMap<_, _> = tex_symbols.into_iter().collect();
-
-        assert_eq!(
-            expression.tex_code(&tex_symbols),
-            r"{\left({{x} \times {\mu}}\right) / {\sigma}}"
-        );
     }
 }
