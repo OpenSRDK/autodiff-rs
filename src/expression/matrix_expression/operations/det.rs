@@ -1,8 +1,8 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use opensrdk_linear_algebra::Matrix;
 
-use crate::{new_variable_tensor, BracketsLevel, ConstantValue, Expression, MatrixExpression};
+use crate::{BracketsLevel, ConstantValue, Expression, MatrixExpression};
 
 impl Expression {
     pub fn det(self) -> Expression {
@@ -25,6 +25,7 @@ impl MatrixExpression {
             .into_iter()
             .map(|d_v_d_symbol| {
                 let v_det = v.clone().det();
+                println!("v_det: {:?}", v_det);
                 let v_inv_t = v.clone().inv().t();
                 let d_v_det_d_v = v_det * v_inv_t;
 
@@ -56,7 +57,6 @@ mod tests {
         let sigma = new_variable_tensor("sigma".to_string(), vec![Size::Many, Size::Many]);
         let expression = x * mu / sigma;
         let det = expression.clone().det();
-        println!("det: {:?}", det);
         let diff_x = MatrixExpression::diff_det(&det, &["x"]);
         println!("diff_x: {:?}", diff_x);
         let tex_symbols: Vec<_> = vec![("x", "x"), ("mu", r"\mu"), ("sigma", r"\sigma")]
@@ -78,6 +78,4 @@ mod tests {
         //     r"\frac{-x \mu}{\Sigma^2}"
         // );
     }
-    #[test]
-    fn diff_det_test() {}
 }
