@@ -6,7 +6,7 @@ impl Mul<Expression> for Expression {
 
     fn mul(self, rhs: Expression) -> Self::Output {
         if !self.is_same_size(&rhs) {
-            panic!("Cannot add expressions of different sizes");
+            panic!("Cannot multiply expressions of different sizes");
         }
         // Merge constant
         if let Expression::Constant(vl) = &self {
