@@ -16,3 +16,21 @@ impl TensorExpression {
         }
     }
 }
+
+// #[cfg(test)]
+// mod tests {
+
+//     use crate::TensorExpression;
+
+//     #[test]
+//     fn differential() {
+//         let x = TensorExpression::KroneckerDeltas(vec![[1, 1], [2, 2]]);
+//         let y = TensorExpression::KroneckerDeltas(vec![[1, 1], [2, 2]]);
+//         let z = TensorExpression::KroneckerDeltas(vec![[1, 1], [2, 2]]);
+//         let x = x.dot(y, &[[0, 0], [1, 1]]).dot(z, &[[0, 0], [1, 1]]);
+
+//         let diff = x.differential(&["x"]);
+//         println!("diff:{:?}", diff);
+//         assert_eq!(diff.len(), 1);
+//     }
+// }

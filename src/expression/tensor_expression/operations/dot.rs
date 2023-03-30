@@ -286,9 +286,11 @@ mod tests {
         let eb = Expression::from(b.clone());
 
         let dp = a.dot(&b, &[[0, 0], [1, 1]]);
-        let edp = ea.dot(eb, &[[0, 0], [1, 1]]);
+        let edp = Expression::from(dp.clone());
+        let eadeb = ea.dot(eb, &[[0, 0], [1, 1]]);
 
         println!("dp: {:?}", dp);
         println!("edp: {:?}", edp);
+        assert_eq!(edp, eadeb);
     }
 }
