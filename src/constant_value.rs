@@ -185,3 +185,36 @@ impl ConstantValue {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use opensrdk_linear_algebra::{mat, sparse::SparseTensor};
+
+    use crate::ConstantValue;
+
+    #[test]
+    fn sizes() {
+        let a = ConstantValue::Scalar(1.0);
+        let mut bt = SparseTensor::<f64>::new(vec![2, 2]);
+        bt[&[0, 0]] = 1.0;
+        bt[&[0, 1]] = 2.0;
+        bt[&[1, 0]] = 3.0;
+        bt[&[1, 1]] = 4.0;
+
+        let b = ConstantValue::Tensor(bt);
+        let cm = mat!(
+          1.0, 2.0;
+          3.0, 4.0
+        );
+
+        let c = ConstantValue::Matrix(cm);
+
+        assert_eq!(a.sizes(), vec![]);
+        assert_eq!(b.sizes(), vec![2, 2]);
+        assert_eq!(c.sizes(), vec![2, 2]);
+    }
+
+    fn elems() {
+        todo!()
+    }
+}
