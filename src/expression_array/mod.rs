@@ -50,3 +50,25 @@ impl ExpressionArray {
         (self.sizes, self.elems)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::{HashMap, HashSet};
+
+    use opensrdk_linear_algebra::sparse::SparseTensor;
+
+    use crate::{new_variable, Expression};
+
+    #[test]
+    fn it_works1() {
+        let test_orig = vec![
+            Expression::from(1f64),
+            Expression::from(3f64),
+            Expression::from(1f64),
+            Expression::from(2f64),
+        ];
+        let factory = |i: &usize| test_orig[i];
+        let sizes = vec![1usize, 2usize, 3usize, 4usize];
+        let test = from_factory(sizes, factory);
+    }
+}
