@@ -20,3 +20,19 @@ impl TensorExpression {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{BracketsLevel, TensorExpression};
+
+    #[test]
+    fn it_works() {
+        let rank_pairs = [[0, 1], [1, 0]];
+        let brackets_level = BracketsLevel::ForOperation;
+        let result = TensorExpression::tex_code_kronecker_deltas(&rank_pairs, brackets_level);
+        assert_eq!(
+            result,
+            r"\left({\delta_{[0], [1]}} {\delta_{[1], [0]}}\right)"
+        );
+    }
+}
