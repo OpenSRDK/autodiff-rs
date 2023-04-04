@@ -57,7 +57,7 @@ mod tests {
 
     use opensrdk_linear_algebra::sparse::SparseTensor;
 
-    use crate::{new_variable, Expression};
+    use crate::{new_variable, Expression, ExpressionArray};
 
     #[test]
     fn it_works1() {
@@ -67,8 +67,9 @@ mod tests {
             Expression::from(1f64),
             Expression::from(2f64),
         ];
-        let factory = |i: &usize| test_orig[i];
+        let factory = |i: &[usize]| test_orig[i[0].clone()].clone();
         let sizes = vec![1usize, 2usize, 3usize, 4usize];
-        let test = from_factory(sizes, factory);
+        let test = ExpressionArray::from_factory(sizes, factory);
+        println!("{:?}", test);
     }
 }
