@@ -289,7 +289,7 @@ mod tests {
         let edp = Expression::from(dp.clone());
         let eadeb = ea.dot(eb, &[[0, 0], [1, 1]]);
 
-        println!("dp: {:?}", dp);
         println!("edp: {:?}", edp);
+        println!("eadeb: {:?}", eadeb);
     }
 }
