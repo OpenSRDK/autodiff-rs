@@ -21,37 +21,53 @@ impl TensorExpression {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use opensrdk_linear_algebra::Matrix;
+#[cfg(test)]
+mod tests {
 
-//     use crate::expression::tensor_expression::TensorExpression;
-//     use crate::expression::Expression;
-//     use crate::{new_variable_tensor, ConstantValue, Size};
-//     use std::collections::HashMap;
+    use opensrdk_linear_algebra::generate_rank_combinations;
 
-//     #[test]
-//     fn it_works() {
-//         let id = "x";
-//         let ea = new_variable_tensor((id).to_string(), vec![Size::Many, Size::Many]);
+    use crate::expression::tensor_expression::TensorExpression;
+    use crate::expression::Expression;
+    use crate::{new_variable, new_variable_tensor, ConstantValue, Size};
+    use std::collections::HashMap;
 
-//         let ea_t = ea.clone().t();
-//         let mut hash1 = HashMap::new();
+    #[test]
+    fn it_works() {
+        let id1 = "x";
+        let id2 = "y";
 
-//         let len = 7usize;
-//         let a = Matrix::from(len, vec![1.0; len * len]).unwrap();
+        let mut variables = HashMap::new();
+        variables.insert("x", ConstantValue::Scalar(1.0));
+        variables.insert("y", ConstantValue::Scalar(2.0));
 
-//         hash1.insert(id, ConstantValue::Matrix(a.clone()));
+        let ka = TensorExpression::KroneckerDeltas(vec![[1, 1], [2, 2]]).assign(&variables);
+        assert_eq!(
+            ka,
+            TensorExpression::KroneckerDeltas(vec![[1, 1], [2, 2]]).into()
+        );
 
-//         let result = ea_t.assign(&hash1);
+        let edo = TensorExpression::DotProduct {
+            terms: vec![
+                new_variable((id1).to_string()),
+                new_variable((id2).to_string()),
+            ],
+            rank_combinations: generate_rank_combinations(&[[2, 2]]).to_vec(),
+        };
+        let doa = edo.assign(&variables);
+        println!("doa: {:?}", doa);
 
-//         assert_eq!(result, Expression::from(ConstantValue::Matrix(a.t())));
-
-//         let mut variables = HashMap::new();
-//         variables.insert("x", ConstantValue::Scalar(1.0));
-//         variables.insert("y", ConstantValue::Scalar(2.0));
-
-//         let expr = TensorExpression::KroneckerDeltas(vec![[1, 1], [2, 2]]).assign(&variables);
-//         assert_eq!(expr, Expression::Constant(ConstantValue::Scalar(2.0)));
-//     }
-// }
+        let ed = TensorExpression::DirectProduct(vec![
+            new_variable((id1).to_string()),
+            new_variable((id2).to_string()),
+        ]);
+        let da = ed.assign(&variables);
+        assert_eq!(
+            da,
+            TensorExpression::DirectProduct(vec![
+                Expression::Constant(ConstantValue::Scalar(1.0)),
+                Expression::Constant(ConstantValue::Scalar(2.0)),
+            ])
+            .into()
+        )
+    }
+}
