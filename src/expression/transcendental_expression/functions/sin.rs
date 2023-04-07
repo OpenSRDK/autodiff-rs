@@ -21,3 +21,20 @@ impl TranscendentalExpression {
         )
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use crate::new_variable;
+
+    #[test]
+    fn it_works() {
+        let id = "theta";
+        let va = new_variable(id.to_string());
+        let tex_symbols = vec![("theta", r"\theta")].into_iter().collect();
+
+        let ea_sin = va.clone().sin();
+        let tex_a_sin = ea_sin.tex_code(&tex_symbols);
+        assert_eq!(r"\sin\right({\theta}\left)", tex_a_sin);
+    }
+}
