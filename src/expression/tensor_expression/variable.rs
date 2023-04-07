@@ -22,14 +22,12 @@ impl TensorExpression {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashSet;
 
-    use crate::{new_variable_tensor, size, MatrixExpression, Size};
+    use crate::{new_variable_tensor, Size};
 
     #[test]
     fn it_works() {
         let id = "x";
-        let a = HashSet::from([id; 1]);
         let ea = new_variable_tensor((id).to_string(), vec![Size::Many, Size::Many, Size::Many]);
         println!("{:?}", ea);
     }
