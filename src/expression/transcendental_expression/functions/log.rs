@@ -39,3 +39,34 @@ impl TranscendentalExpression {
         )
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use crate::{new_variable, ConstantValue, Expression};
+
+    #[test]
+    fn it_works() {
+        let id1 = "x";
+        let id2 = "y";
+
+        let va1 = new_variable(id1.to_string());
+        let va2 = new_variable(id2.to_string());
+        let tex_symbols = vec![("x", "x"), ("y", "y")].into_iter().collect();
+
+        let va_log = va1
+            .clone()
+            .log(Expression::Constant(ConstantValue::Scalar(10.0)));
+        let tex_va_log = va_log.tex_code(&tex_symbols);
+        println!("{}", tex_va_log);
+
+        let base = Expression::Constant(ConstantValue::Scalar(10.0));
+
+        let va12_log = base.clone().log(Expression::Mul(
+            Box::new(va1.clone()),
+            Box::new(va2.clone()),
+        ));
+        let tex_va12_log = va12_log.tex_code(&tex_symbols);
+        println!("{}", tex_va12_log);
+    }
+}
