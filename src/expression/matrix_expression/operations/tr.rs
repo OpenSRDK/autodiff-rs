@@ -23,9 +23,11 @@ mod tests {
         let a = Matrix::from(len, vec![1.0, 3.0, 4.0, 0.0, 1.0, 0.0, 0.0, 0.0, 3.0]).unwrap();
         let ea = Expression::from(a.clone());
 
-        let tr_a = a.clone().tr();
-        let tr_ea = ea.clone().tr();
+        assert_eq!(Expression::from(a.clone()), ea);
 
-        assert_eq!(Expression::from(tr_a), tr_ea);
+        let tr_a = a.clone().tr();
+        println!("{:?}", tr_a);
+        let tr_ea = ea.clone().tr();
+        println!("{:?}", tr_ea);
     }
 }
