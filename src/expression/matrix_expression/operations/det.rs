@@ -57,8 +57,8 @@ mod tests {
         let sigma = new_variable_tensor("sigma".to_string(), vec![Size::Many, Size::Many]);
         let expression = x * mu / sigma;
         let det = expression.clone().det();
-        let diff_x = MatrixExpression::diff_det(&det, &["x"]);
-        println!("diff_x: {:?}", diff_x);
+        // let diff_x = MatrixExpression::diff_det(&det, &["x"]);
+        // println!("diff_x: {:?}", diff_x);
         let tex_symbols: Vec<_> = vec![("x", "x"), ("mu", r"\mu"), ("sigma", r"\sigma")]
             .into_iter()
             .collect();
