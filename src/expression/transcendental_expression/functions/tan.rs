@@ -16,7 +16,7 @@ impl Expression {
 impl TranscendentalExpression {
     pub(crate) fn tex_code_tan(arg: &Box<Expression>, symbols: &HashMap<&str, &str>) -> String {
         format!(
-            r"\tan\right({}\left)",
+            r"\tan\left({}\right)",
             arg._tex_code(symbols, BracketsLevel::None)
         )
     }
@@ -35,6 +35,6 @@ mod tests {
 
         let ea_tan = va.clone().tan();
         let tex_a_tan = ea_tan.tex_code(&tex_symbols);
-        assert_eq!(r"\tan\right({\theta}\left)", tex_a_tan);
+        assert_eq!(r"\tan\left({\theta}\right)", tex_a_tan);
     }
 }

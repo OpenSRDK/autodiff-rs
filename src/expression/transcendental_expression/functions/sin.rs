@@ -16,7 +16,7 @@ impl Expression {
 impl TranscendentalExpression {
     pub(crate) fn tex_code_sin(arg: &Box<Expression>, symbols: &HashMap<&str, &str>) -> String {
         format!(
-            r"\sin\right({}\left)",
+            r"\sin\left({}\right)",
             arg._tex_code(symbols, BracketsLevel::None)
         )
     }
@@ -35,6 +35,6 @@ mod tests {
 
         let ea_sin = va.clone().sin();
         let tex_a_sin = ea_sin.tex_code(&tex_symbols);
-        assert_eq!(r"\sin\right({\theta}\left)", tex_a_sin);
+        assert_eq!(r"\sin\left({\theta}\right)", tex_a_sin);
     }
 }
