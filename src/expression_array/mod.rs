@@ -50,3 +50,25 @@ impl ExpressionArray {
         (self.sizes, self.elems)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{Expression, ExpressionArray};
+
+    #[test]
+    fn it_works() {
+        let v1 = ExpressionArray::new(vec![2, 3]);
+        assert_eq!(v1.sizes(), &[2, 3]);
+
+        let v2 = ExpressionArray::from_factory(vec![2, 3], |index| {
+            let sum_index = index.iter().sum::<usize>();
+            println!("{:?} -> {}", index, sum_index);
+            Expression::from(sum_index as f64)
+        });
+        assert_eq!(v2.sizes(), &[2, 3]);
+        assert_eq!(v2.elems().len(), 6);
+
+        let v3 = v2.eject();
+        println!("{:?}", v3);
+    }
+}
