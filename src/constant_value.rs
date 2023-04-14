@@ -193,8 +193,9 @@ mod tests {
     use crate::ConstantValue;
 
     #[test]
-    fn sizes() {
+    fn it_works() {
         let a = ConstantValue::Scalar(1.0);
+
         let mut bt = SparseTensor::<f64>::new(vec![2, 2]);
         bt[&[0, 0]] = 1.0;
         bt[&[0, 1]] = 2.0;
@@ -202,6 +203,45 @@ mod tests {
         bt[&[1, 1]] = 4.0;
 
         let b = ConstantValue::Tensor(bt);
+
+        let cm = mat!(
+          1.0, 2.0;
+          3.0, 4.0
+        );
+
+        let mut c = ConstantValue::Matrix(cm);
+
+        assert_eq!(a.sizes(), vec![]);
+        assert_eq!(b.sizes(), vec![2, 2]);
+        assert_eq!(c.sizes(), vec![2, 2]);
+
+        println!("a.elems: {:?}", a.elems());
+        println!("b.elems: {:?}", b.elems());
+        println!("c.elems: {:?}", c.elems());
+
+        println!("c.elems_mut:{:?}", c.elems_mut());
+
+        let asc = a.clone().into_scalar();
+        println!("asc: {:?}", asc);
+
+        let btn = b.clone().into_tensor();
+        println!("btn: {:?}", btn);
+
+        let cmt = c.clone().into_matrix();
+        println!("cmt: {:?}", cmt);
+    }
+
+    fn operations() {
+        let a = ConstantValue::Scalar(1.0);
+
+        let mut bt = SparseTensor::<f64>::new(vec![2, 2]);
+        bt[&[0, 0]] = 1.0;
+        bt[&[0, 1]] = 2.0;
+        bt[&[1, 0]] = 3.0;
+        bt[&[1, 1]] = 4.0;
+
+        let b = ConstantValue::Tensor(bt);
+
         let cm = mat!(
           1.0, 2.0;
           3.0, 4.0
@@ -209,12 +249,13 @@ mod tests {
 
         let c = ConstantValue::Matrix(cm);
 
-        assert_eq!(a.sizes(), vec![]);
-        assert_eq!(b.sizes(), vec![2, 2]);
-        assert_eq!(c.sizes(), vec![2, 2]);
-    }
+        let d = a + b;
+        let e = b + a;
+        let f = a + c;
+        let g = c + a;
+        let h = b + c;
+        let i = c + b;
 
-    fn elems() {
         todo!()
     }
 }
