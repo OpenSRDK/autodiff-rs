@@ -11,6 +11,15 @@ impl Index<&[usize]> for ExpressionArray {
 
 impl IndexMut<&[usize]> for ExpressionArray {
     fn index_mut(&mut self, index: &[usize]) -> &mut Self::Output {
+        if index.len() != self.sizes.len() {
+            panic!("index length must be same as sizes length");
+        }
+
+        for (i, &size) in self.sizes.iter().enumerate() {
+            if index[i] >= size {
+                panic!("index out of range");
+            }
+        }
         self.elems
             .entry(index.to_vec())
             .or_insert(*self.default.clone())
