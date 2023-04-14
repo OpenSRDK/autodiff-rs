@@ -1,5 +1,5 @@
 use crate::{Expression, ExpressionArray};
-use std::ops::Index;
+use std::ops::{Index, IndexMut};
 
 impl Index<&[usize]> for ExpressionArray {
     type Output = Expression;
@@ -9,19 +9,30 @@ impl Index<&[usize]> for ExpressionArray {
     }
 }
 
+impl IndexMut<&[usize]> for ExpressionArray {
+    fn index_mut(&mut self, index: &[usize]) -> &mut Self::Output {
+        self.elems
+            .entry(index.to_vec())
+            .or_insert(*self.default.clone())
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use std::ops::Index;
 
     use crate::{Expression, ExpressionArray};
 
     #[test]
     fn it_works() {
-        let v1 = ExpressionArray::new(vec![2, 3]);
-        let index = v1.index(&([0, 0]));
-        println!("{:?}", index);
+        let mut v1 = ExpressionArray::new(vec![2, 3]);
+        v1[&[0, 0]] = 1.0.into();
+        v1[&[0, 1]] = 2.0.into();
+        v1[&[0, 2]] = 3.0.into();
+
         assert_eq!(v1.sizes(), &[2, 3]);
-        assert_eq!(v1[&([0, 0])], 0.0.into());
+        assert_eq!(v1[&([0, 0])], 1.0.into());
+        assert_eq!(v1[&([0, 1])], 2.0.into());
+        assert_eq!(v1[&([0, 2])], 3.0.into());
 
         let v2 = ExpressionArray::from_factory(vec![2, 3], |index| {
             let sum_index = index.iter().sum::<usize>();
