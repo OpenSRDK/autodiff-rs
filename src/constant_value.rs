@@ -1,3 +1,5 @@
+use std::ops::Add;
+
 use opensrdk_linear_algebra::{sparse::SparseTensor, Matrix, Tensor};
 use serde::{Deserialize, Serialize};
 
@@ -72,6 +74,37 @@ impl ConstantValue {
             v
         } else {
             panic!()
+        }
+    }
+}
+
+impl Add for ConstantValue {
+    type Output = ConstantValue;
+
+    fn add(self, rhs: ConstantValue) -> ConstantValue {
+        match (self, rhs) {
+            (ConstantValue::Scalar(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Scalar(lhs + rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs + rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs + rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs + rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Tensor(lhs + rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs + rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Matrix(lhs + rhs)
+            }
+            _ => panic!(),
         }
     }
 }
@@ -231,8 +264,10 @@ mod tests {
         println!("cmt: {:?}", cmt);
     }
 
+    #[test]
     fn operations() {
-        let a = ConstantValue::Scalar(1.0);
+        let asc = 1.0;
+        let a = ConstantValue::Scalar(asc);
 
         let mut bt = SparseTensor::<f64>::new(vec![2, 2]);
         bt[&[0, 0]] = 1.0;
@@ -240,22 +275,29 @@ mod tests {
         bt[&[1, 0]] = 3.0;
         bt[&[1, 1]] = 4.0;
 
-        let b = ConstantValue::Tensor(bt);
+        let b = ConstantValue::Tensor(bt.clone());
 
         let cm = mat!(
           1.0, 2.0;
           3.0, 4.0
         );
 
-        let c = ConstantValue::Matrix(cm);
+        let c = ConstantValue::Matrix(cm.clone());
 
-        let d = a + b;
-        let e = b + a;
-        let f = a + c;
-        let g = c + a;
-        let h = b + c;
-        let i = c + b;
+        let d = a.clone() + b.clone();
+        let e = a.clone() + c.clone();
+        let f = b.clone() + a.clone();
+        let g = c.clone() + a.clone();
+        let h = a.clone() + a;
+        let i = b.clone() + b;
+        let j = c.clone() + c;
 
-        todo!()
+        assert_eq!(d, ConstantValue::Tensor(bt.clone() + asc));
+        assert_eq!(e, ConstantValue::Matrix(asc + cm.clone()));
+        assert_eq!(f, ConstantValue::Tensor(bt.clone() + asc));
+        assert_eq!(g, ConstantValue::Matrix(asc + cm.clone()));
+        assert_eq!(h, ConstantValue::Scalar(asc + asc));
+        assert_eq!(i, ConstantValue::Tensor(bt.clone() + bt));
+        assert_eq!(j, ConstantValue::Matrix(cm.clone() + cm));
     }
 }
