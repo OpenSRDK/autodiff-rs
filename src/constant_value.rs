@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub};
+use std::ops::{Add, Div, Mul, Sub};
 
 use opensrdk_linear_algebra::{sparse::SparseTensor, Matrix, Tensor};
 use serde::{Deserialize, Serialize};
@@ -139,6 +139,69 @@ impl Sub for ConstantValue {
         }
     }
 }
+
+impl Mul for ConstantValue {
+    type Output = ConstantValue;
+
+    fn mul(self, rhs: ConstantValue) -> ConstantValue {
+        match (self, rhs) {
+            (ConstantValue::Scalar(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Scalar(lhs * rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs * rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs * rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs * rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Tensor(lhs * rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs * rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Matrix(lhs * rhs)
+            }
+            _ => panic!(),
+        }
+    }
+}
+
+impl Div for ConstantValue {
+    type Output = ConstantValue;
+
+    fn div(self, rhs: ConstantValue) -> ConstantValue {
+        match (self, rhs) {
+            (ConstantValue::Scalar(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Scalar(lhs / rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs / rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs / rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs / rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Tensor(lhs / rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs / rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Matrix(lhs / rhs)
+            }
+            _ => panic!(),
+        }
+    }
+}
+
 impl ConstantValue {
     pub fn add(&self, rhs: ConstantValue) -> ConstantValue {
         match (self, rhs) {
@@ -347,5 +410,37 @@ mod tests {
         assert_eq!(o, ConstantValue::Scalar(asc - asc));
         assert_eq!(p, ConstantValue::Tensor(bt.clone() - bt.clone()));
         assert_eq!(q, ConstantValue::Matrix(cm.clone() - cm.clone()));
+
+        let r = a.clone() * b.clone();
+        let s = a.clone() * c.clone();
+        let t = b.clone() * a.clone();
+        let u = c.clone() * a.clone();
+        let v = a.clone() * a.clone();
+        let w = b.clone() * b.clone();
+        let x = c.clone() * c.clone();
+
+        assert_eq!(r, ConstantValue::Tensor(asc * bt.clone()));
+        assert_eq!(s, ConstantValue::Matrix(asc * cm.clone()));
+        assert_eq!(t, ConstantValue::Tensor(bt.clone() * asc));
+        assert_eq!(u, ConstantValue::Matrix(asc * cm.clone()));
+        assert_eq!(v, ConstantValue::Scalar(asc * asc));
+        assert_eq!(w, ConstantValue::Tensor(bt.clone() * bt.clone()));
+        assert_eq!(x, ConstantValue::Matrix(cm.clone() * cm.clone()));
+
+        let y = a.clone() / b.clone();
+        let z = a.clone() / c.clone();
+        let aa = b.clone() / a.clone();
+        let ab = c.clone() / a.clone();
+        let ac = a.clone() / a.clone();
+        let ad = b.clone() / b.clone();
+        let ae = c.clone() / c.clone();
+
+        assert_eq!(y, ConstantValue::Tensor(asc / bt.clone()));
+        assert_eq!(z, ConstantValue::Matrix(asc / cm.clone()));
+        assert_eq!(aa, ConstantValue::Tensor(bt.clone() / asc));
+        assert_eq!(ab, ConstantValue::Matrix(asc / cm.clone()));
+        assert_eq!(ac, ConstantValue::Scalar(asc / asc));
+        assert_eq!(ad, ConstantValue::Tensor(bt.clone() / bt.clone()));
+        assert_eq!(ae, ConstantValue::Matrix(cm.clone() / cm.clone()));
     }
 }
