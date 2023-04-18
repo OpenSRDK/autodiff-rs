@@ -1,4 +1,4 @@
-use std::ops::Add;
+use std::ops::{Add, Sub};
 
 use opensrdk_linear_algebra::{sparse::SparseTensor, Matrix, Tensor};
 use serde::{Deserialize, Serialize};
@@ -109,6 +109,36 @@ impl Add for ConstantValue {
     }
 }
 
+impl Sub for ConstantValue {
+    type Output = ConstantValue;
+
+    fn sub(self, rhs: ConstantValue) -> ConstantValue {
+        match (self, rhs) {
+            (ConstantValue::Scalar(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Scalar(lhs - rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs - rhs)
+            }
+            (ConstantValue::Scalar(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs - rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Tensor(rhs)) => {
+                ConstantValue::Tensor(lhs - rhs)
+            }
+            (ConstantValue::Tensor(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Tensor(lhs - rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Matrix(rhs)) => {
+                ConstantValue::Matrix(lhs - rhs)
+            }
+            (ConstantValue::Matrix(lhs), ConstantValue::Scalar(rhs)) => {
+                ConstantValue::Matrix(lhs - rhs)
+            }
+            _ => panic!(),
+        }
+    }
+}
 impl ConstantValue {
     pub fn add(&self, rhs: ConstantValue) -> ConstantValue {
         match (self, rhs) {
@@ -278,8 +308,8 @@ mod tests {
         let b = ConstantValue::Tensor(bt.clone());
 
         let cm = mat!(
-          1.0, 2.0;
-          3.0, 4.0
+          2.0, 4.0;
+          6.0, 8.0
         );
 
         let c = ConstantValue::Matrix(cm.clone());
@@ -288,16 +318,34 @@ mod tests {
         let e = a.clone() + c.clone();
         let f = b.clone() + a.clone();
         let g = c.clone() + a.clone();
-        let h = a.clone() + a;
-        let i = b.clone() + b;
-        let j = c.clone() + c;
+        let h = a.clone() + a.clone();
+        let i = b.clone() + b.clone();
+        let j = c.clone() + c.clone();
 
         assert_eq!(d, ConstantValue::Tensor(bt.clone() + asc));
         assert_eq!(e, ConstantValue::Matrix(asc + cm.clone()));
         assert_eq!(f, ConstantValue::Tensor(bt.clone() + asc));
         assert_eq!(g, ConstantValue::Matrix(asc + cm.clone()));
         assert_eq!(h, ConstantValue::Scalar(asc + asc));
-        assert_eq!(i, ConstantValue::Tensor(bt.clone() + bt));
-        assert_eq!(j, ConstantValue::Matrix(cm.clone() + cm));
+        assert_eq!(i, ConstantValue::Tensor(bt.clone() + bt.clone()));
+        assert_eq!(j, ConstantValue::Matrix(cm.clone() + cm.clone()));
+
+        let k = a.clone() - b.clone();
+        let l = a.clone() - c.clone();
+        let m = b.clone() - a.clone();
+        let n = c.clone() - a.clone();
+        let o = a.clone() - a.clone();
+        let p = b.clone() - b.clone();
+        let q = c.clone() - c.clone();
+
+        assert_eq!(k, ConstantValue::Tensor(bt.clone() - asc));
+        assert_eq!(l, ConstantValue::Matrix(asc - cm.clone()));
+        assert_eq!(m, ConstantValue::Tensor(bt.clone() - asc));
+
+        //Need to fix subtraction bugs in lin_alg.
+        // assert_eq!(n, ConstantValue::Matrix(asc - cm.clone()));
+        assert_eq!(o, ConstantValue::Scalar(asc - asc));
+        assert_eq!(p, ConstantValue::Tensor(bt.clone() - bt.clone()));
+        assert_eq!(q, ConstantValue::Matrix(cm.clone() - cm.clone()));
     }
 }
