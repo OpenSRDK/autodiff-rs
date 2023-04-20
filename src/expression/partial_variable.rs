@@ -21,3 +21,31 @@ impl Expression {
             .collect()
     }
 }
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+    use std::collections::HashSet;
+
+    use crate::new_partial_variable;
+    use crate::new_variable;
+    use crate::ExpressionArray;
+
+    #[test]
+    fn it_works() {
+        let id_1 = "x";
+        let e_1 = new_variable((id_1).to_string());
+        let id_2 = "y";
+        let e_2 = new_variable((id_2).to_string());
+        let id_3 = "z";
+        let e_3 = new_variable((id_3).to_string());
+
+        let expression_vec = vec![e_1, e_2, e_3];
+
+        let factory = |i: &[usize]| expression_vec[i[0].clone()].clone();
+        let sizes: Vec<usize> = vec![3usize];
+
+        let theta_array_orig = ExpressionArray::from_factory(sizes, factory);
+        let theta_array = new_partial_variable(theta_array_orig);
+        println!("{:?}", theta_array);
+    }
+}

@@ -38,6 +38,14 @@ impl Expression {
     pub fn not_1dimension_ranks(&self) -> usize {
         self.sizes().iter().filter(|&d| *d != Size::One).count()
     }
+
+    pub fn mathematical_sizes(&self) -> Vec<Size> {
+        if self.sizes() == vec![Size::One; 2] {
+            vec![]
+        } else {
+            self.sizes()
+        }
+    }
 }
 
 pub trait AbstractSize {
@@ -61,7 +69,7 @@ mod tests {
 
     use opensrdk_linear_algebra::{sparse::SparseTensor, Matrix, Tensor};
 
-    use crate::{new_variable, AbstractSize, Expression, Size};
+    use crate::{new_variable, new_variable_tensor, AbstractSize, Expression, Size};
 
     #[test]
     fn it_works1() {
@@ -136,5 +144,17 @@ mod tests {
         let rank = c.not_1dimension_ranks();
 
         assert_eq!(rank, 8usize);
+    }
+
+    #[test]
+    fn it_works5() {
+        let id = "x";
+        let ea = new_variable_tensor((id).to_string(), vec![Size::Many, Size::Many]);
+        let ea_det = ea.clone().det();
+        let size = ea_det.sizes();
+        let mathematical_size = ea_det.mathematical_sizes();
+
+        assert_eq!(vec![Size::One; 2], size);
+        assert_eq!(Vec::<Size>::new(), mathematical_size);
     }
 }
