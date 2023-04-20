@@ -57,3 +57,33 @@ impl ContinuousDistribution for MultivariateNormal {
         pdf_expression
     }
 }
+
+#[cfg(test)]
+
+mod tests {
+    use super::*;
+    use opensrdk_symbolic_computation::{new_variable_tensor, Expression};
+
+    #[test]
+    fn test_multivariate_normal() {
+        let xv = new_variable_tensor(("x").to_string(), vec![Size::Many, Size::One]);
+        let muv = new_variable_tensor(("mu").to_string(), vec![Size::Many, Size::One]);
+        let sigmav = new_variable_tensor(("sigma").to_string(), vec![Size::Many, Size::Many]);
+
+        let x = Expression::from(xv);
+        let mu = Expression::from(muv);
+        let sigma = Expression::from(sigmav);
+        let d = 2;
+
+        let mvn = MultivariateNormal::new(x, mu, sigma, d);
+
+        let value_ids = mvn.value_ids();
+        println!("{:?}", value_ids);
+
+        let conditions = mvn.conditions();
+        println!("{:?}", conditions);
+
+        let pdf = mvn.pdf();
+        println!("{:?}", pdf);
+    }
+}

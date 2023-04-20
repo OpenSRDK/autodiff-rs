@@ -21,3 +21,20 @@ impl TranscendentalExpression {
         )
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use crate::new_variable;
+
+    #[test]
+    fn it_works() {
+        let id = "mu";
+        let ea = new_variable(id.to_string());
+        let tex_symbols = vec![("mu", r"\mu")].into_iter().collect();
+
+        let ea_abs = ea.clone().abs();
+        let tex_a_abs = ea_abs.tex_code(&tex_symbols);
+        assert_eq!(r"\left|{\mu}\right|", tex_a_abs);
+    }
+}

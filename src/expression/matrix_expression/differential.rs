@@ -9,3 +9,20 @@ impl MatrixExpression {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use crate::new_variable_tensor;
+    #[test]
+    fn it_works() {
+        use crate::Size;
+
+        let x = new_variable_tensor("x".to_string(), vec![Size::Many, Size::Many]);
+        let mu = new_variable_tensor("mu".to_string(), vec![Size::Many, Size::Many]);
+        let sigma = new_variable_tensor("sigma".to_string(), vec![Size::Many, Size::Many]);
+        let expression = x * mu / sigma;
+        let diff_x = expression.clone().differential(&["x"]);
+        println!("diff: {:?}", diff_x);
+    }
+}

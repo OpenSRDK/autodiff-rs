@@ -1,3 +1,4 @@
+use crate::Size::One;
 use crate::{BracketsLevel, ConstantValue, Expression, TranscendentalExpression};
 use std::{collections::HashMap, ops::Mul};
 
@@ -5,8 +6,15 @@ impl Mul<Expression> for Expression {
     type Output = Self;
 
     fn mul(self, rhs: Expression) -> Self::Output {
+        // if self.sizes() == [One, One] && rhs.sizes() != [One, One] {
+        //     let self_scalar = self;
+        //     return Expression::Constant(ConstantValue::Scalar(self)) * rhs;
+        // }
+        // if self.sizes() != [One, One] && rhs.sizes() == [One, One] {
+        // }
+        // else
         if !self.is_same_size(&rhs) {
-            panic!("Cannot add expressions of different sizes");
+            panic!("Cannot multiply expressions of different sizes");
         }
         // Merge constant
         if let Expression::Constant(vl) = &self {

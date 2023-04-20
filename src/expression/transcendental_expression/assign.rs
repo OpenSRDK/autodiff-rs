@@ -19,3 +19,59 @@ impl TranscendentalExpression {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{new_variable, ConstantValue, Expression};
+
+    #[test]
+    fn it_works() {
+        let id = "mu";
+        let va = new_variable(id.to_string());
+        let abs = va.clone().abs();
+        let pow = va.clone().pow(2.0.into());
+        let exp = va.clone().exp();
+        let log = va.clone().log(100.0.into());
+        let ln = va.clone().ln();
+        let sin = va.clone().sin();
+        let cos = va.clone().cos();
+        let tan = va.clone().tan();
+
+        let variables = vec![(id, ConstantValue::Scalar(10.0))]
+            .into_iter()
+            .collect();
+
+        assert_eq!(
+            Expression::Constant(ConstantValue::Scalar(10.0)),
+            abs.assign(&variables)
+        );
+        assert_eq!(
+            Expression::Constant(ConstantValue::Scalar(100.0)),
+            pow.assign(&variables)
+        );
+        assert_eq!(
+            Expression::Constant(ConstantValue::Scalar(22026.465794806718)),
+            exp.assign(&variables)
+        );
+        assert_eq!(
+            Expression::Constant(ConstantValue::Scalar(2.0)),
+            log.assign(&variables)
+        );
+        assert_eq!(
+            Expression::Constant(ConstantValue::Scalar(2.302585092994046)),
+            ln.assign(&variables)
+        );
+        assert_eq!(
+            Expression::Constant(ConstantValue::Scalar(-0.5440211108893698)),
+            sin.assign(&variables)
+        );
+        assert_eq!(
+            Expression::Constant(ConstantValue::Scalar(-0.8390715290764524)),
+            cos.assign(&variables)
+        );
+        assert_eq!(
+            Expression::Constant(ConstantValue::Scalar(0.6483608274590866)),
+            tan.assign(&variables)
+        );
+    }
+}

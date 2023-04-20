@@ -13,7 +13,7 @@ impl Expression {
             }
 
             if let Expression::Constant(base) = self {
-                return base.into_scalar().powf(exponent.into_scalar() + 1.0).into();
+                return base.into_scalar().powf(exponent.into_scalar()).into();
             }
         }
 
@@ -32,5 +32,38 @@ impl TranscendentalExpression {
             base._tex_code(symbols, BracketsLevel::ForOperation),
             exponent._tex_code(symbols, BracketsLevel::ForOperation)
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use crate::{new_variable, ConstantValue, Expression};
+
+    #[test]
+    fn it_works() {
+        let id1 = "x";
+        let id2 = "y";
+
+        let va1 = new_variable(id1.to_string());
+        let va2 = new_variable(id2.to_string());
+        let tex_symbols = vec![("x", "x"), ("y", "y")].into_iter().collect();
+
+        // let va_pow0 = va1
+        //     .clone()
+        //     .pow(Expression::Constant(ConstantValue::Scalar(0.0)));
+        // let tex_pow0 = va_pow0.tex_code(&tex_symbols);
+        // assert_eq!(r"1", tex_pow0);
+
+        let va_pow1 = va1
+            .clone()
+            .pow(Expression::Constant(ConstantValue::Scalar(1.0)));
+        let tex_pow1 = va_pow1.tex_code(&tex_symbols);
+        assert_eq!(r"{x}", tex_pow1);
+
+        let va_pow = va1.clone().pow(va2.clone());
+        let tex_a_pow = va_pow.tex_code(&tex_symbols);
+
+        assert_eq!(r"{x}^{y}", tex_a_pow);
     }
 }
