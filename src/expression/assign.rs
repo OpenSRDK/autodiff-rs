@@ -77,4 +77,19 @@ mod tests {
             ))
         )
     }
+
+    #[test]
+    fn it_works6() {
+        let x = new_variable("x".to_string());
+        let y = new_variable("y".to_string());
+
+        let expression = x.clone().sin() + y.clone().cos().exp();
+
+        let theta_map = &mut HashMap::new();
+        theta_map.insert("x", ConstantValue::Scalar(3f64));
+        theta_map.insert("y", ConstantValue::Scalar(7f64));
+
+        println!("{:#?}", expression);
+        println!("{:#?}", expression.assign(&*theta_map));
+    }
 }

@@ -86,6 +86,7 @@ mod tests {
         let a_det = a.clone().getrf().unwrap().0.trdet();
         let ea_det = ea.clone().det();
 
+        println!("{:?}", ea_det);
         assert_eq!(Expression::from(a_det), ea_det);
     }
 }
