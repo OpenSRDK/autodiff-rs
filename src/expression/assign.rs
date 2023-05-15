@@ -79,7 +79,7 @@ mod tests {
     }
 
     #[test]
-    fn it_works6() {
+    fn it_works3() {
         let x = new_variable("x".to_string());
         let y = new_variable("y".to_string());
 
@@ -91,5 +91,34 @@ mod tests {
 
         println!("{:#?}", expression);
         println!("{:#?}", expression.assign(&*theta_map));
+    }
+
+    #[test]
+    fn it_works4() {
+        let a = new_variable("a".to_string());
+        let b = new_variable("b".to_string());
+        let c = new_variable("c".to_string());
+        let d = new_variable("d".to_string());
+        let e = new_variable("e".to_string());
+        let f = new_variable("f".to_string());
+
+        let add_1 = a.clone().sin() + b.clone().cos().exp();
+        let add_2 = add_1.clone() * c.clone();
+        let add_3 = d.clone().sin() - e.clone().cos().exp();
+        let add_4 = add_3.clone() / f.clone();
+        let add_5 = add_2.clone() + add_4.clone();
+
+        let theta_map = &mut HashMap::new();
+        theta_map.insert("a", ConstantValue::Scalar(3f64));
+        theta_map.insert("b", ConstantValue::Scalar(7f64));
+        theta_map.insert("c", ConstantValue::Scalar(-3f64));
+        theta_map.insert("d", ConstantValue::Scalar(-7f64));
+        theta_map.insert("e", ConstantValue::Scalar(4f64));
+        theta_map.insert("f", ConstantValue::Scalar(6f64));
+
+        println!("{:#?}", add_1);
+        println!("{:#?}", add_1.assign(&*theta_map));
+        println!("{:#?}", add_5);
+        println!("{:#?}", add_5.assign(&*theta_map));
     }
 }
