@@ -1,4 +1,4 @@
-use crate::{BracketsLevel, ConstantValue, Expression};
+use crate::{BracketsLevel, ConstantValue, Expression, ExpressionArray};
 use std::{collections::HashMap, ops::Add};
 
 impl Add<Expression> for Expression {
@@ -8,6 +8,7 @@ impl Add<Expression> for Expression {
         if !self.is_same_size(&rhs) {
             panic!("Cannot add expressions of different sizes");
         }
+
         if let Expression::Constant(vl) = &self {
             if vl == &ConstantValue::Scalar(0.0) {
                 return rhs;
@@ -20,6 +21,28 @@ impl Add<Expression> for Expression {
             if vr == &ConstantValue::Scalar(0.0) {
                 return self;
             }
+        }
+
+        if let (Expression::PartialVariable(vl), Expression::PartialVariable(vr)) = (&self, &rhs) {
+            if vl.sizes() == vr.sizes() {
+                panic!("Mistach Sizes of Variables");
+            }
+
+            ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
+                vl[indices].clone().add(vr[indices].clone())
+            });
+        }
+
+        if let Expression::PartialVariable(vr) = &rhs {
+            ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
+                self.clone().add(vr[indices].clone())
+            });
+        }
+
+        if let Expression::PartialVariable(vl) = &self {
+            ExpressionArray::from_factory(vl.sizes().to_vec(), |indices| {
+                vl[indices].clone().add(rhs.clone())
+            });
         }
 
         Expression::Add(self.into(), rhs.into())

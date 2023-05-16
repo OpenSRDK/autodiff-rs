@@ -1,4 +1,4 @@
-use crate::{BracketsLevel, ConstantValue, Expression};
+use crate::{BracketsLevel, ConstantValue, Expression, ExpressionArray};
 use std::{collections::HashMap, ops::Sub};
 
 impl Sub<Expression> for Expression {
@@ -21,6 +21,29 @@ impl Sub<Expression> for Expression {
                 return self;
             }
         }
+
+        if let (Expression::PartialVariable(vl), Expression::PartialVariable(vr)) = (&self, &rhs) {
+            if vl.sizes() == vr.sizes() {
+                panic!("Mistach Sizes of Variables");
+            }
+
+            ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
+                vl[indices].clone().sub(vr[indices].clone())
+            });
+        }
+
+        if let Expression::PartialVariable(vr) = &rhs {
+            ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
+                self.clone().sub(vr[indices].clone())
+            });
+        }
+
+        if let Expression::PartialVariable(vl) = &self {
+            ExpressionArray::from_factory(vl.sizes().to_vec(), |indices| {
+                vl[indices].clone().sub(rhs.clone())
+            });
+        }
+
         Self::Sub(self.into(), rhs.into())
     }
 }

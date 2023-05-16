@@ -1,4 +1,4 @@
-use crate::{BracketsLevel, ConstantValue, Expression, TranscendentalExpression};
+use crate::{BracketsLevel, ConstantValue, Expression, ExpressionArray, TranscendentalExpression};
 use std::{collections::HashMap, ops::Mul};
 
 impl Mul<Expression> for Expression {
@@ -51,6 +51,28 @@ impl Mul<Expression> for Expression {
                     return vr.clone().pow(*er.clone() + one);
                 }
             }
+        }
+
+        if let (Expression::PartialVariable(vl), Expression::PartialVariable(vr)) = (&self, &rhs) {
+            if vl.sizes() == vr.sizes() {
+                panic!("Mistach Sizes of Variables");
+            }
+
+            ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
+                vl[indices].clone().mul(vr[indices].clone())
+            });
+        }
+
+        if let Expression::PartialVariable(vr) = &rhs {
+            ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
+                self.clone().mul(vr[indices].clone())
+            });
+        }
+
+        if let Expression::PartialVariable(vl) = &self {
+            ExpressionArray::from_factory(vl.sizes().to_vec(), |indices| {
+                vl[indices].clone().mul(rhs.clone())
+            });
         }
 
         Expression::Mul(self.into(), rhs.into())

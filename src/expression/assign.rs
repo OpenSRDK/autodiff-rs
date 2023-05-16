@@ -23,6 +23,7 @@ impl Expression {
                     v[indices].clone().assign(variables)
                 }),
             ),
+            
             Expression::Add(l, r) => l.assign(variables) + r.assign(variables),
             Expression::Sub(l, r) => l.assign(variables) - r.assign(variables),
             Expression::Mul(l, r) => l.assign(variables) * r.assign(variables),
@@ -41,7 +42,10 @@ mod tests {
 
     use opensrdk_linear_algebra::sparse::SparseTensor;
 
-    use crate::{new_variable, new_variable_tensor, AbstractSize, ConstantValue, Expression};
+    use crate::{
+        new_partial_variable, new_variable, new_variable_tensor, AbstractSize, ConstantValue,
+        Expression, ExpressionArray,
+    };
 
     #[test]
     fn it_works1() {
