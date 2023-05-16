@@ -24,26 +24,26 @@ impl Add<Expression> for Expression {
         }
 
         if let (Expression::PartialVariable(vl), Expression::PartialVariable(vr)) = (&self, &rhs) {
-            if vl.sizes() == vr.sizes() {
-                panic!("Mistach Sizes of Variables");
-            }
+            // if vl.sizes() == vr.sizes() {
+            //     panic!("Mistach Sizes of Variables");
+            // }
 
             ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
                 vl[indices].clone().add(vr[indices].clone())
             });
         }
 
-        if let Expression::PartialVariable(vr) = &rhs {
-            ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
-                self.clone().add(vr[indices].clone())
-            });
-        }
+        // if let Expression::PartialVariable(vr) = &rhs {
+        //     ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
+        //         self.clone().add(vr[indices].clone())
+        //     });
+        // }
 
-        if let Expression::PartialVariable(vl) = &self {
-            ExpressionArray::from_factory(vl.sizes().to_vec(), |indices| {
-                vl[indices].clone().add(rhs.clone())
-            });
-        }
+        // if let Expression::PartialVariable(vl) = &self {
+        //     ExpressionArray::from_factory(vl.sizes().to_vec(), |indices| {
+        //         vl[indices].clone().add(rhs.clone())
+        //     });
+        // }
 
         Expression::Add(self.into(), rhs.into())
     }
