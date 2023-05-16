@@ -28,7 +28,7 @@ impl Add<Expression> for Expression {
             //     panic!("Mistach Sizes of Variables");
             // }
 
-            ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
+            return ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
                 vl[indices].clone().add(vr[indices].clone())
             });
         }
