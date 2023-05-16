@@ -8,6 +8,32 @@ impl Sub<Expression> for Expression {
         if !self.is_same_size(&rhs) {
             panic!("Cannot add expressions of different sizes");
         }
+
+        if let (Expression::PartialVariable(vl), Expression::PartialVariable(vr)) = (&self, &rhs) {
+            // if vl.sizes() == vr.sizes() {
+            //     panic!("Mistach Sizes of Variables");
+            // }
+
+            return Expression::PartialVariable(ExpressionArray::from_factory(
+                vr.sizes().to_vec(),
+                |indices| vl[indices].clone().sub(vr[indices].clone()),
+            ));
+        }
+
+        // if let Expression::PartialVariable(vr) = &rhs {
+        //     return Expression::PartialVariable(ExpressionArray::from_factory(
+        //         vr.sizes().to_vec(),
+        //         |indices| self.clone().sub(vr[indices].clone()),
+        //     ));
+        // }
+
+        // if let Expression::PartialVariable(vl) = &self {
+        //     return Expression::PartialVariable(ExpressionArray::from_factory(
+        //         vl.sizes().to_vec(),
+        //         |indices| vl[indices].clone().sub(rhs.clone()),
+        //     ));
+        // }
+
         if let Expression::Constant(vl) = &self {
             if vl == &ConstantValue::Scalar(0.0) {
                 return rhs;
@@ -21,28 +47,6 @@ impl Sub<Expression> for Expression {
                 return self;
             }
         }
-
-        if let (Expression::PartialVariable(vl), Expression::PartialVariable(vr)) = (&self, &rhs) {
-            // if vl.sizes() == vr.sizes() {
-            //     panic!("Mistach Sizes of Variables");
-            // }
-
-            ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
-                vl[indices].clone().sub(vr[indices].clone())
-            });
-        }
-
-        // if let Expression::PartialVariable(vr) = &rhs {
-        //     ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
-        //         self.clone().sub(vr[indices].clone())
-        //     });
-        // }
-
-        // if let Expression::PartialVariable(vl) = &self {
-        //     ExpressionArray::from_factory(vl.sizes().to_vec(), |indices| {
-        //         vl[indices].clone().sub(rhs.clone())
-        //     });
-        // }
 
         Self::Sub(self.into(), rhs.into())
     }

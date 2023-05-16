@@ -9,6 +9,32 @@ impl Mul<Expression> for Expression {
             panic!("Cannot add expressions of different sizes");
         }
         // Merge constant
+
+        if let (Expression::PartialVariable(vl), Expression::PartialVariable(vr)) = (&self, &rhs) {
+            // if vl.sizes() == vr.sizes() {
+            //     panic!("Mistach Sizes of Variables");
+            // }
+
+            return Expression::PartialVariable(ExpressionArray::from_factory(
+                vr.sizes().to_vec(),
+                |indices| vl[indices].clone().mul(vr[indices].clone()),
+            ));
+        }
+
+        if let Expression::PartialVariable(vr) = &rhs {
+            return Expression::PartialVariable(ExpressionArray::from_factory(
+                vr.sizes().to_vec(),
+                |indices| self.clone().mul(vr[indices].clone()),
+            ));
+        }
+
+        if let Expression::PartialVariable(vl) = &self {
+            return Expression::PartialVariable(ExpressionArray::from_factory(
+                vl.sizes().to_vec(),
+                |indices| vl[indices].clone().mul(rhs.clone()),
+            ));
+        }
+
         if let Expression::Constant(vl) = &self {
             if vl == &ConstantValue::Scalar(0.0) {
                 return 0.0.into();
@@ -51,28 +77,6 @@ impl Mul<Expression> for Expression {
                     return vr.clone().pow(*er.clone() + one);
                 }
             }
-        }
-
-        if let (Expression::PartialVariable(vl), Expression::PartialVariable(vr)) = (&self, &rhs) {
-            if vl.sizes() == vr.sizes() {
-                panic!("Mistach Sizes of Variables");
-            }
-
-            ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
-                vl[indices].clone().mul(vr[indices].clone())
-            });
-        }
-
-        if let Expression::PartialVariable(vr) = &rhs {
-            ExpressionArray::from_factory(vr.sizes().to_vec(), |indices| {
-                self.clone().mul(vr[indices].clone())
-            });
-        }
-
-        if let Expression::PartialVariable(vl) = &self {
-            ExpressionArray::from_factory(vl.sizes().to_vec(), |indices| {
-                vl[indices].clone().mul(rhs.clone())
-            });
         }
 
         Expression::Mul(self.into(), rhs.into())
