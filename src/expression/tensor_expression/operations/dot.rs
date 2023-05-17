@@ -1,4 +1,4 @@
-use crate::{BracketsLevel, Expression, Size, TensorExpression};
+use crate::{BracketsLevel, Expression, ExpressionArray, Size, TensorExpression};
 use opensrdk_linear_algebra::{generate_rank_combinations, RankIndex};
 use std::{collections::HashMap, iter::once};
 
@@ -122,6 +122,21 @@ where
 
 impl Expression {
     pub fn dot(self, rhs: Expression, rank_pairs: &[[RankIndex; 2]]) -> Expression {
+        if let (Expression::PartialVariable(vl), Expression::PartialVariable(vr)) = (&self, &rhs) {
+            // if vl.sizes() == vr.sizes() {
+            //     panic!("Mistach Sizes of Variables");
+            // }
+
+            return Expression::PartialVariable(ExpressionArray::from_factory(
+                vr.sizes().to_vec(),
+                |indices| {
+                    vec![vl[indices].clone(), vr[indices].clone()]
+                        .into_iter()
+                        .dot_product(&generate_rank_combinations(rank_pairs))
+                },
+            ));
+        }
+
         vec![self, rhs]
             .into_iter()
             .dot_product(&generate_rank_combinations(rank_pairs))
