@@ -21,19 +21,19 @@ impl Mul<Expression> for Expression {
             ));
         }
 
-        if let Expression::PartialVariable(vr) = &rhs {
-            return Expression::PartialVariable(ExpressionArray::from_factory(
-                vr.sizes().to_vec(),
-                |indices| self.clone().mul(vr[indices].clone()),
-            ));
-        }
+        // if let Expression::PartialVariable(vr) = &rhs {
+        //     return Expression::PartialVariable(ExpressionArray::from_factory(
+        //         vr.sizes().to_vec(),
+        //         |indices| self.clone().mul(vr[indices].clone()),
+        //     ));
+        // }
 
-        if let Expression::PartialVariable(vl) = &self {
-            return Expression::PartialVariable(ExpressionArray::from_factory(
-                vl.sizes().to_vec(),
-                |indices| vl[indices].clone().mul(rhs.clone()),
-            ));
-        }
+        // if let Expression::PartialVariable(vl) = &self {
+        //     return Expression::PartialVariable(ExpressionArray::from_factory(
+        //         vl.sizes().to_vec(),
+        //         |indices| vl[indices].clone().mul(rhs.clone()),
+        //     ));
+        // }
 
         if let Expression::Constant(vl) = &self {
             if vl == &ConstantValue::Scalar(0.0) {

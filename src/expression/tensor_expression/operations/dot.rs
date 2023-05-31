@@ -108,15 +108,17 @@ where
         if flatten_deltas.len() > 0 {
             let merged_deltas = TensorExpression::KroneckerDeltas(flatten_deltas);
 
-            new_terms.insert(0, merged_deltas.into());
+            new_terms.clone().insert(0, merged_deltas.into());
             new_rank_combinations.insert(0, flatten_deltas_combination);
         }
 
-        TensorExpression::DotProduct {
-            terms: new_terms,
+        let result = TensorExpression::DotProduct {
+            terms: new_terms.clone(),
             rank_combinations: new_rank_combinations,
         }
-        .into()
+        .into();
+
+        result
     }
 }
 

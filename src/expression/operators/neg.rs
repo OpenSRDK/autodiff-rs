@@ -5,6 +5,7 @@ impl Neg for Expression {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
+      
         if let Expression::PartialVariable(v) = &self {
             return Expression::PartialVariable(ExpressionArray::from_factory(
                 v.sizes().to_vec(),
