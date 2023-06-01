@@ -1,6 +1,10 @@
 use crate::{BracketsLevel, Expression, ExpressionArray, Size, TensorExpression};
 use opensrdk_linear_algebra::{generate_rank_combinations, RankIndex};
-use std::{collections::HashMap, iter::once};
+use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
+use std::{
+    collections::{HashMap, HashSet},
+    iter::once,
+};
 
 type TermIndex = usize;
 
@@ -112,11 +116,37 @@ where
             new_rank_combinations.insert(0, flatten_deltas_combination);
         }
 
-        let result = TensorExpression::DotProduct {
-            terms: new_terms.clone(),
-            rank_combinations: new_rank_combinations,
-        }
-        .into();
+        let test_const = new_terms
+            .iter()
+            .map(|i| {
+                if let Expression::Constant(_) = i {
+                    0usize
+                } else {
+                    1usize
+                }
+            })
+            .sum::<usize>();
+
+        let list_string: HashSet<&String> = new_rank_combinations
+            .iter()
+            .map(|i| {
+                let elem_list = i.values().clone().collect::<Vec<&std::string::String>>();
+                elem_list
+            })
+            .collect::<Vec<_>>()
+            .concat()
+            .into_iter()
+            .collect();
+
+        let result = if let 0usize = test_const {
+            Expression::from(5f64) //TODO: implemet to LSigma of muls.
+        } else {
+            TensorExpression::DotProduct {
+                terms: new_terms.clone(),
+                rank_combinations: new_rank_combinations,
+            }
+            .into()
+        };
 
         result
     }
