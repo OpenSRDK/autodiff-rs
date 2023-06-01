@@ -22,7 +22,7 @@ where
 {
     fn dot_product(self, rank_combinations: &[HashMap<RankIndex, String>]) -> Expression {
         // Flatten InnerProd
-        let terms = self
+        let terms = self //self は ExpressionのIterator
             .zip(rank_combinations.iter())
             .flat_map(|(t, rank_combination)| {
                 if let Expression::Tensor(t) = &t {
@@ -97,6 +97,11 @@ where
             .flat_map(|(_, r)| r.iter())
             .map(|(&rank, id)| (rank, id.to_owned()))
             .collect::<HashMap<_, _>>();
+
+        println!(
+            "{:?}",
+            (flatten_deltas.clone(), flatten_deltas_combination.clone())
+        );
 
         let mut new_terms = not_deltas
             .iter()
