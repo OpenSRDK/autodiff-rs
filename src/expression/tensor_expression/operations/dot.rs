@@ -4,6 +4,7 @@ use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use std::{
     collections::{HashMap, HashSet},
     iter::once,
+    ops::Add,
 };
 
 type TermIndex = usize;
@@ -132,19 +133,43 @@ where
             })
             .sum::<usize>();
 
-        let list_string: HashSet<&String> = new_rank_combinations
-            .iter()
-            .map(|i| {
-                let elem_list = i.values().clone().collect::<Vec<&std::string::String>>();
-                elem_list
-            })
-            .collect::<Vec<_>>()
-            .concat()
-            .into_iter()
-            .collect();
-
         let result = if let 0usize = test_const {
-            Expression::from(5f64) //TODO: implemet to LSigma of muls.
+            let list_string: HashSet<&String> = new_rank_combinations
+                .iter()
+                .map(|i| {
+                    let elem_list = i.values().clone().collect::<Vec<&std::string::String>>();
+                    elem_list
+                })
+                .collect::<Vec<_>>()
+                .concat()
+                .into_iter()
+                .collect();
+
+            let constant = list_string
+                .iter()
+                .map(|hash| {
+                    new_terms
+                        .iter()
+                        .zip(rank_combinations.iter())
+                        .map(|(t, rank_combination)| {
+                            let rank_orig = rank_combination
+                                .values()
+                                .zip(rank_combination.keys())
+                                .filter(|(value, key)| value == hash)
+                                .collect::<Vec<_>>();
+                            let mut rank = 0usize;
+                            if rank_orig.len() == 1usize {
+                                rank = rank_orig[0].1.clone();
+                            } else {
+                                todo!() //Error
+                            }
+                        })
+                        .fold(0f64, |mut constant, next| constant + next)
+                })
+                .collect::<Vec<f64>>();
+
+            Expression::from(constant)
+            //Expression::from(5f64) //TODO: implemet to LSigma of muls.
         } else {
             TensorExpression::DotProduct {
                 terms: new_terms.clone(),
