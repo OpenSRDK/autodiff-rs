@@ -1,5 +1,5 @@
-use crate::{BracketsLevel, Expression, ExpressionArray, Size, TensorExpression};
-use opensrdk_linear_algebra::{generate_rank_combinations, RankIndex};
+use crate::{BracketsLevel, ConstantValue, Expression, ExpressionArray, Size, TensorExpression};
+use opensrdk_linear_algebra::{generate_rank_combinations, RankIndex, Tensor};
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use std::{
     collections::{HashMap, HashSet},
@@ -145,7 +145,7 @@ where
                 .into_iter()
                 .collect();
 
-            let constant = list_string
+            let ranks_fixed = list_string
                 .iter()
                 .map(|hash| {
                     new_terms
@@ -163,13 +163,41 @@ where
                             } else {
                                 todo!() //Error
                             }
+                            rank
                         })
-                        .fold(0f64, |mut constant, next| constant + next)
+                        .collect::<Vec<usize>>()
                 })
-                .collect::<Vec<f64>>();
+                .collect::<Vec<Vec<usize>>>();
 
-            Expression::from(constant)
-            //Expression::from(5f64) //TODO: implemet to LSigma of muls.
+            let sizes = new_terms
+                .iter()
+                .map(|term| match term {
+                    Expression::Constant(a) => a.sizes(),
+                    Expression::Variable(_, _) => todo!(),
+                    Expression::PartialVariable(_) => todo!(),
+                    Expression::Add(_, _) => todo!(),
+                    Expression::Sub(_, _) => todo!(),
+                    Expression::Mul(_, _) => todo!(),
+                    Expression::Div(_, _) => todo!(),
+                    Expression::Neg(_) => todo!(),
+                    Expression::Transcendental(_) => todo!(),
+                    Expression::Tensor(_) => todo!(),
+                    Expression::Matrix(_) => todo!(),
+                })
+                .collect::<Vec<Vec<usize>>>();
+
+            // let iter = ranks
+            //     .iter()
+            //     .map(|rank| rank.iter().zip(new_terms.iter()).map(|(rank, term)| {}))
+            //     .collect::<Vec<Vec<f64>>>();
+
+            // let constant = ranks
+            //     .iter()
+            //     .map(|rank| rank.iter().zip(new_terms.iter()).map(|(rank, term)| {}))
+            //     .collect::<Vec<Vec<f64>>>();
+
+            //Expression::from(constant)
+            Expression::from(5f64) //TODO: implemet to LSigma of muls.
         } else {
             TensorExpression::DotProduct {
                 terms: new_terms.clone(),
