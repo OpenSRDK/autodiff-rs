@@ -205,3 +205,31 @@ impl ConstantValue {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use opensrdk_linear_algebra::sparse::SparseTensor;
+
+    use crate::{ConstantValue, Expression};
+
+    #[test]
+    fn index() {
+        let mut tensor = SparseTensor::new(vec![2, 3]);
+        tensor[&[0, 0]] = 1.0;
+        tensor[&[1, 1]] = 2.0;
+        tensor[&[1, 2]] = 3.0;
+
+        assert_eq!(tensor[&[0, 0]], 1.0);
+        assert_eq!(tensor[&[0, 1]], 0.0);
+        assert_eq!(tensor[&[0, 2]], 0.0);
+        assert_eq!(tensor[&[1, 0]], 0.0);
+        assert_eq!(tensor[&[1, 1]], 2.0);
+        assert_eq!(tensor[&[1, 2]], 3.0);
+
+        println!("{:?}", tensor);
+        println!("{:?}", tensor.elems());
+
+        let expression = ConstantValue::Tensor(tensor);
+        println!("{:?}", expression.elems());
+    }
+}

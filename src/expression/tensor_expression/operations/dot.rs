@@ -186,6 +186,45 @@ where
                 })
                 .collect::<Vec<Vec<usize>>>();
 
+            let terms_vec = new_terms
+                .iter()
+                .map(|term| match term {
+                    Expression::Constant(a) => match a {
+                        ConstantValue::Scalar(_) => {
+                            let mut hashmap_s = HashMap::new();
+                            hashmap_s.insert(vec![], a.elems()[0]);
+                            hashmap_s.clone()
+                        }
+                        ConstantValue::Tensor(v) => v.elems().clone(),
+                        ConstantValue::Matrix(_) => {
+                            let mut hashmap_m = HashMap::new();
+                            let size = a.sizes();
+                            for i in (0..size[0]) {
+                                for j in (0..size[1]) {
+                                    hashmap_m.insert(
+                                        vec![(i - 1), (j - 1)],
+                                        a.elems()[(i - 1) * size[1] + (j - 1)],
+                                    );
+                                }
+                            }
+                            hashmap_m.clone()
+                        }
+                    },
+                    Expression::Variable(_, _) => todo!(),
+                    Expression::PartialVariable(_) => todo!(),
+                    Expression::Add(_, _) => todo!(),
+                    Expression::Sub(_, _) => todo!(),
+                    Expression::Mul(_, _) => todo!(),
+                    Expression::Div(_, _) => todo!(),
+                    Expression::Neg(_) => todo!(),
+                    Expression::Transcendental(_) => todo!(),
+                    Expression::Tensor(_) => todo!(),
+                    Expression::Matrix(_) => todo!(),
+                })
+                .collect::<Vec<HashMap<Vec<usize>, f64>>>();
+
+            //ここで、keyを補完するか？そうすると楽かも
+
             // let iter = ranks
             //     .iter()
             //     .map(|rank| rank.iter().zip(new_terms.iter()).map(|(rank, term)| {}))
