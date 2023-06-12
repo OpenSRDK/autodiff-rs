@@ -186,25 +186,45 @@ where
                 })
                 .collect::<Vec<Vec<usize>>>();
 
+            let max_len_size = sizes.iter().map(|i| i.len()).max().unwrap();
+
             let terms_vec = new_terms
                 .iter()
                 .map(|term| match term {
                     Expression::Constant(a) => match a {
                         ConstantValue::Scalar(_) => {
                             let mut hashmap_s = HashMap::new();
-                            hashmap_s.insert(vec![], a.elems()[0]);
+                            hashmap_s.insert(vec![0usize; max_len_size], a.elems()[0]);
                             hashmap_s.clone()
                         }
-                        ConstantValue::Tensor(v) => v.elems().clone(),
+                        ConstantValue::Tensor(v) => {
+                            let mut hashmap_m = HashMap::new();
+                            let hash = v.elems().clone();
+                            let keys = hash.keys();
+                            let values = hash.values();
+                            //hash.values().zip(hash.keys()).map(|(value, key)| {
+                            for i in 0..hash.keys().len() {
+                                let key_next = [
+                                    keys.clone().collect::<Vec<&Vec<usize>>>()[i].clone(),
+                                    vec![0usize; max_len_size - keys.len()],
+                                ]
+                                .concat();
+                                hashmap_m.insert(
+                                    key_next,
+                                    values.clone().collect::<Vec<&f64>>()[i].clone(),
+                                );
+                            }
+                            hashmap_m
+                        }
                         ConstantValue::Matrix(_) => {
                             let mut hashmap_m = HashMap::new();
                             let size = a.sizes();
                             for i in (0..size[0]) {
                                 for j in (0..size[1]) {
-                                    hashmap_m.insert(
-                                        vec![(i - 1), (j - 1)],
-                                        a.elems()[(i - 1) * size[1] + (j - 1)],
-                                    );
+                                    let key =
+                                        [vec![(i - 1), (j - 1)], vec![0usize; max_len_size - 2]]
+                                            .concat();
+                                    hashmap_m.insert(key, a.elems()[(i - 1) * size[1] + (j - 1)]);
                                 }
                             }
                             hashmap_m.clone()
@@ -223,17 +243,7 @@ where
                 })
                 .collect::<Vec<HashMap<Vec<usize>, f64>>>();
 
-            //ここで、keyを補完するか？そうすると楽かも
-
-            // let iter = ranks
-            //     .iter()
-            //     .map(|rank| rank.iter().zip(new_terms.iter()).map(|(rank, term)| {}))
-            //     .collect::<Vec<Vec<f64>>>();
-
-            // let constant = ranks
-            //     .iter()
-            //     .map(|rank| rank.iter().zip(new_terms.iter()).map(|(rank, term)| {}))
-            //     .collect::<Vec<Vec<f64>>>();
+            let constant = terms_vec.iter();
 
             //Expression::from(constant)
             Expression::from(5f64) //TODO: implemet to LSigma of muls.

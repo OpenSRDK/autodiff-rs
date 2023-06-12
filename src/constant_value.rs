@@ -231,5 +231,6 @@ mod tests {
 
         let expression = ConstantValue::Tensor(tensor);
         println!("{:?}", expression.elems());
+        println!("{:?}", expression.sizes());
     }
 }
