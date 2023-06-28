@@ -134,6 +134,7 @@ where
             .sum::<usize>();
 
         let result = if let 0usize = test_const {
+            //新しいrank_combinationから、重複のない文字列のリストを作成する。
             let list_string: HashSet<&String> = new_rank_combinations
                 .iter()
                 .map(|i| {
@@ -145,6 +146,7 @@ where
                 .into_iter()
                 .collect();
 
+            //抜き出した文字列を利用し、new_termsからそれぞれの文字列と一致するrankを抜き出し、そのrankをまとめる。
             let ranks_fixed = list_string
                 .iter()
                 .map(|hash| {
@@ -169,6 +171,31 @@ where
                 })
                 .collect::<Vec<Vec<usize>>>();
 
+            let ranks_fixed_dummy = list_string
+                .iter()
+                .map(|hash| {
+                    new_terms
+                        .iter()
+                        .zip(rank_combinations.iter())
+                        .map(|(t, rank_combination)| {
+                            let rank_orig = rank_combination
+                                .values()
+                                .zip(rank_combination.keys())
+                                .filter(|(value, key)| value == hash)
+                                .collect::<Vec<_>>();
+                            let mut dummy = 0usize;
+                            if rank_orig.len() != 0usize {
+                                dummy = rank_orig[0].1.clone();
+                            } else {
+                                todo!() //Error
+                            }
+                            dummy
+                        })
+                        .collect::<Vec<usize>>()
+                })
+                .collect::<Vec<Vec<usize>>>();
+
+            //new_termsの各termが持つsizeをvecにまとめる。
             let sizes = new_terms
                 .iter()
                 .map(|term| match term {
@@ -186,8 +213,17 @@ where
                 })
                 .collect::<Vec<Vec<usize>>>();
 
+            //sizesから、一致するrank以外の部分のsizeをまとめる。
+            let size_without_fixed = sizes
+                .iter()
+                .zip(ranks_fixed.iter())
+                .map(|size| {})
+                .collect::<Vec<Vec<usize>>>();
+
+            //sizesのうちから、最大の物を取り除いている。
             let max_len_size = sizes.iter().map(|i| i.len()).max().unwrap();
 
+            //new_termsを、hashmapの形に直して格納。なお、sizesの各vecの長さを揃えるために、1を付け加えている（がいらないかも）。
             let terms_vec = new_terms
                 .iter()
                 .map(|term| match term {
