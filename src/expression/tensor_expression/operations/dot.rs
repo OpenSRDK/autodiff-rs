@@ -171,27 +171,26 @@ where
                 })
                 .collect::<Vec<Vec<usize>>>();
 
-            let ranks_fixed_dummy = list_string
+            let ranks_fixed_dummy = new_terms
                 .iter()
-                .map(|hash| {
-                    new_terms
+                .zip(rank_combinations.iter())
+                .map(|(t, rank_combination)| {
+                    list_string
                         .iter()
-                        .zip(rank_combinations.iter())
-                        .map(|(t, rank_combination)| {
-                            let rank_orig = rank_combination
+                        .map(|hash| {
+                            let dummy = rank_combination
                                 .values()
-                                .zip(rank_combination.keys())
-                                .filter(|(value, key)| value == hash)
+                                //.zip(rank_combination.keys())
+                                .map(|value| if value == *hash { 1usize } else { 0usize })
                                 .collect::<Vec<_>>();
-                            let mut dummy = 0usize;
-                            if rank_orig.len() != 0usize {
-                                dummy = rank_orig[0].1.clone();
-                            } else {
-                                todo!() //Error
-                            }
                             dummy
                         })
-                        .collect::<Vec<usize>>()
+                        .fold(vec![0usize; rank_combination.len()], |sum, x| {
+                            sum.iter()
+                                .zip(x.iter())
+                                .map(|(sumi, xi)| sumi + xi)
+                                .collect::<Vec<usize>>()
+                        })
                 })
                 .collect::<Vec<Vec<usize>>>();
 
@@ -216,8 +215,35 @@ where
             //sizesから、一致するrank以外の部分のsizeをまとめる。
             let size_without_fixed = sizes
                 .iter()
-                .zip(ranks_fixed.iter())
-                .map(|size| {})
+                .zip(ranks_fixed_dummy.iter())
+                .map(|(size_vec, dummy_vec)| {
+                    let size_without_fixed = size_vec
+                        .iter()
+                        .zip(dummy_vec.iter())
+                        .filter(|(size, dummy)| **dummy == 0usize)
+                        .map(|i| i.0.clone())
+                        .collect::<Vec<usize>>();
+                    size_without_fixed
+                })
+                .collect::<Vec<Vec<usize>>>();
+
+            let ranks = sizes
+                .iter()
+                .map(|vec| (0..=vec.len()).collect())
+                .collect::<Vec<Vec<usize>>>();
+
+            let rank_without_fixed = ranks
+                .iter()
+                .zip(ranks_fixed_dummy.iter())
+                .map(|(rank_vec, dummy_vec)| {
+                    let rank_without_fixed = rank_vec
+                        .iter()
+                        .zip(dummy_vec.iter())
+                        .filter(|(rank, dummy)| **dummy == 0usize)
+                        .map(|i| i.0.clone())
+                        .collect::<Vec<usize>>();
+                    rank_without_fixed
+                })
                 .collect::<Vec<Vec<usize>>>();
 
             //sizesのうちから、最大の物を取り除いている。
