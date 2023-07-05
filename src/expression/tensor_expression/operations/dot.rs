@@ -249,6 +249,25 @@ where
             //sizesのうちから、最大の物を取り除いている。
             let max_len_size = sizes.iter().map(|i| i.len()).max().unwrap();
 
+            let terms_vec = ranks
+                .iter()
+                .zip(sizes.iter())
+                .fold(Vec::<Vec<usize>>::new(), |accum, next_size| {
+                    if accum.is_empty() {
+                        return (0..next_size).map(|i| vec![i]).collect::<Vec<_>>();
+                    };
+                    accum
+                        .into_iter()
+                        .flat_map(|acc| {
+                            (0..next_size)
+                                .map(|i| [&acc[..], &[i]].concat())
+                                .collect::<Vec<_>>()
+                        })
+                        .collect()
+                })
+                .into_iter()
+                .collect();
+
             //new_termsを、hashmapの形に直して格納。なお、sizesの各vecの長さを揃えるために、1を付け加えている（がいらないかも）。
             let terms_vec = new_terms
                 .iter()
