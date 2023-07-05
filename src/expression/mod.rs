@@ -73,13 +73,31 @@ impl From<ConstantValue> for Expression {
     }
 }
 
+impl From<Expression> for ConstantValue {
+    fn from(v: Expression) -> Self {
+        match v {
+            Expression::Constant(a) => a,
+            Expression::Variable(_, _) => todo!(),
+            Expression::PartialVariable(_) => todo!(),
+            Expression::Add(_, _) => todo!(),
+            Expression::Sub(_, _) => todo!(),
+            Expression::Mul(_, _) => todo!(),
+            Expression::Div(_, _) => todo!(),
+            Expression::Neg(_) => todo!(),
+            Expression::Transcendental(_) => todo!(),
+            Expression::Tensor(_) => todo!(),
+            Expression::Matrix(_) => todo!(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
 
     use opensrdk_linear_algebra::sparse::SparseTensor;
 
-    use crate::Expression;
+    use crate::{ConstantValue, Expression};
 
     #[test]
     fn it_works() {
@@ -98,5 +116,13 @@ mod tests {
         println!("a {:#?}", ea);
         println!("b {:#?}", eb);
         println!("c {:#?}", ec);
+
+        let a_rev: ConstantValue = ea.into();
+        let b_rev: ConstantValue = eb.into();
+        let c_rev: ConstantValue = ec.into();
+
+        println!("a {:#?}", a_rev);
+        println!("b {:#?}", b_rev);
+        println!("c {:#?}", c_rev);
     }
 }

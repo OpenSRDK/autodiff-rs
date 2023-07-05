@@ -13,7 +13,10 @@ pub use tex_code::*;
 pub use variable::*;
 
 use crate::Expression;
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    ops::Mul,
+};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum TensorExpression {
@@ -69,7 +72,7 @@ mod tests {
         let ec = Expression::from(c);
         // TODO: into_tensor is for internal use. don't use here.
         // TODO: At first it is needed to extract ConstantValue from ec, and then convert it to SparseTensor.
-        // let tec = ec.into_tensor();
-        // println!("{:?}", tec);
+        //let tec = ec.into_tensor();
+        //println!("{:?}", tec);
     }
 }

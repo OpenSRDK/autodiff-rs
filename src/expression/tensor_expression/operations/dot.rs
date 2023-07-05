@@ -1,6 +1,11 @@
-use crate::{BracketsLevel, Expression, Size, TensorExpression};
-use opensrdk_linear_algebra::{generate_rank_combinations, RankIndex};
-use std::{collections::HashMap, iter::once};
+use crate::{BracketsLevel, ConstantValue, Expression, ExpressionArray, Size, TensorExpression};
+use opensrdk_linear_algebra::{generate_rank_combinations, RankIndex, Tensor};
+use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
+use std::{
+    collections::{HashMap, HashSet},
+    iter::once,
+    ops::Add,
+};
 
 type TermIndex = usize;
 
@@ -18,7 +23,7 @@ where
 {
     fn dot_product(self, rank_combinations: &[HashMap<RankIndex, String>]) -> Expression {
         // Flatten InnerProd
-        let terms = self
+        let terms = self //self は ExpressionのIterator
             .zip(rank_combinations.iter())
             .flat_map(|(t, rank_combination)| {
                 if let Expression::Tensor(t) = &t {
@@ -94,6 +99,11 @@ where
             .map(|(&rank, id)| (rank, id.to_owned()))
             .collect::<HashMap<_, _>>();
 
+        println!(
+            "{:?}",
+            (flatten_deltas.clone(), flatten_deltas_combination.clone())
+        );
+
         let mut new_terms = not_deltas
             .iter()
             .map(|(t, _)| t.clone())
@@ -108,20 +118,245 @@ where
         if flatten_deltas.len() > 0 {
             let merged_deltas = TensorExpression::KroneckerDeltas(flatten_deltas);
 
-            new_terms.insert(0, merged_deltas.into());
+            new_terms.clone().insert(0, merged_deltas.into());
             new_rank_combinations.insert(0, flatten_deltas_combination);
         }
 
-        TensorExpression::DotProduct {
-            terms: new_terms,
-            rank_combinations: new_rank_combinations,
-        }
-        .into()
+        let test_const = new_terms
+            .iter()
+            .map(|i| {
+                if let Expression::Constant(_) = i {
+                    0usize
+                } else {
+                    1usize
+                }
+            })
+            .sum::<usize>();
+
+        let result = if let 0usize = test_const {
+            //新しいrank_combinationから、重複のない文字列のリストを作成する。
+            let list_string: HashSet<&String> = new_rank_combinations
+                .iter()
+                .map(|i| {
+                    let elem_list = i.values().clone().collect::<Vec<&std::string::String>>();
+                    elem_list
+                })
+                .collect::<Vec<_>>()
+                .concat()
+                .into_iter()
+                .collect();
+
+            //抜き出した文字列を利用し、new_termsからそれぞれの文字列と一致するrankを抜き出し、そのrankをまとめる。
+            let ranks_fixed = list_string
+                .iter()
+                .map(|hash| {
+                    new_terms
+                        .iter()
+                        .zip(rank_combinations.iter())
+                        .map(|(t, rank_combination)| {
+                            let rank_orig = rank_combination
+                                .values()
+                                .zip(rank_combination.keys())
+                                .filter(|(value, key)| value == hash)
+                                .collect::<Vec<_>>();
+                            let mut rank = 0usize;
+                            if rank_orig.len() == 1usize {
+                                rank = rank_orig[0].1.clone();
+                            } else {
+                                todo!() //Error
+                            }
+                            rank
+                        })
+                        .collect::<Vec<usize>>()
+                })
+                .collect::<Vec<Vec<usize>>>();
+
+            let ranks_fixed_dummy = new_terms
+                .iter()
+                .zip(rank_combinations.iter())
+                .map(|(t, rank_combination)| {
+                    list_string
+                        .iter()
+                        .map(|hash| {
+                            let dummy = rank_combination
+                                .values()
+                                //.zip(rank_combination.keys())
+                                .map(|value| if value == *hash { 1usize } else { 0usize })
+                                .collect::<Vec<_>>();
+                            dummy
+                        })
+                        .fold(vec![0usize; rank_combination.len()], |sum, x| {
+                            sum.iter()
+                                .zip(x.iter())
+                                .map(|(sumi, xi)| sumi + xi)
+                                .collect::<Vec<usize>>()
+                        })
+                })
+                .collect::<Vec<Vec<usize>>>();
+
+            //new_termsの各termが持つsizeをvecにまとめる。
+            let sizes = new_terms
+                .iter()
+                .map(|term| match term {
+                    Expression::Constant(a) => a.sizes(),
+                    Expression::Variable(_, _) => todo!(),
+                    Expression::PartialVariable(_) => todo!(),
+                    Expression::Add(_, _) => todo!(),
+                    Expression::Sub(_, _) => todo!(),
+                    Expression::Mul(_, _) => todo!(),
+                    Expression::Div(_, _) => todo!(),
+                    Expression::Neg(_) => todo!(),
+                    Expression::Transcendental(_) => todo!(),
+                    Expression::Tensor(_) => todo!(),
+                    Expression::Matrix(_) => todo!(),
+                })
+                .collect::<Vec<Vec<usize>>>();
+
+            //sizesから、一致するrank以外の部分のsizeをまとめる。
+            let size_without_fixed = sizes
+                .iter()
+                .zip(ranks_fixed_dummy.iter())
+                .map(|(size_vec, dummy_vec)| {
+                    let size_without_fixed = size_vec
+                        .iter()
+                        .zip(dummy_vec.iter())
+                        .filter(|(size, dummy)| **dummy == 0usize)
+                        .map(|i| i.0.clone())
+                        .collect::<Vec<usize>>();
+                    size_without_fixed
+                })
+                .collect::<Vec<Vec<usize>>>();
+
+            let ranks = sizes
+                .iter()
+                .map(|vec| (0..=vec.len()).collect())
+                .collect::<Vec<Vec<usize>>>();
+
+            let rank_without_fixed = ranks
+                .iter()
+                .zip(ranks_fixed_dummy.iter())
+                .map(|(rank_vec, dummy_vec)| {
+                    let rank_without_fixed = rank_vec
+                        .iter()
+                        .zip(dummy_vec.iter())
+                        .filter(|(rank, dummy)| **dummy == 0usize)
+                        .map(|i| i.0.clone())
+                        .collect::<Vec<usize>>();
+                    rank_without_fixed
+                })
+                .collect::<Vec<Vec<usize>>>();
+
+            //sizesのうちから、最大の物を取り除いている。
+            let max_len_size = sizes.iter().map(|i| i.len()).max().unwrap();
+
+            let terms_vec = ranks
+                .iter()
+                .zip(sizes.iter())
+                .fold(Vec::<Vec<usize>>::new(), |accum, next_size| {
+                    if accum.is_empty() {
+                        return (0..next_size).map(|i| vec![i]).collect::<Vec<_>>();
+                    };
+                    accum
+                        .into_iter()
+                        .flat_map(|acc| {
+                            (0..next_size)
+                                .map(|i| [&acc[..], &[i]].concat())
+                                .collect::<Vec<_>>()
+                        })
+                        .collect()
+                })
+                .into_iter()
+                .collect();
+
+            //new_termsを、hashmapの形に直して格納。なお、sizesの各vecの長さを揃えるために、1を付け加えている（がいらないかも）。
+            let terms_vec = new_terms
+                .iter()
+                .map(|term| match term {
+                    Expression::Constant(a) => match a {
+                        ConstantValue::Scalar(_) => {
+                            let mut hashmap_s = HashMap::new();
+                            hashmap_s.insert(vec![0usize; max_len_size], a.elems()[0]);
+                            hashmap_s.clone()
+                        }
+                        ConstantValue::Tensor(v) => {
+                            let mut hashmap_m = HashMap::new();
+                            let hash = v.elems().clone();
+                            let keys = hash.keys();
+                            let values = hash.values();
+                            //hash.values().zip(hash.keys()).map(|(value, key)| {
+                            for i in 0..hash.keys().len() {
+                                let key_next = [
+                                    keys.clone().collect::<Vec<&Vec<usize>>>()[i].clone(),
+                                    vec![0usize; max_len_size - keys.len()],
+                                ]
+                                .concat();
+                                hashmap_m.insert(
+                                    key_next,
+                                    values.clone().collect::<Vec<&f64>>()[i].clone(),
+                                );
+                            }
+                            hashmap_m
+                        }
+                        ConstantValue::Matrix(_) => {
+                            let mut hashmap_m = HashMap::new();
+                            let size = a.sizes();
+                            for i in (0..size[0]) {
+                                for j in (0..size[1]) {
+                                    let key =
+                                        [vec![(i - 1), (j - 1)], vec![0usize; max_len_size - 2]]
+                                            .concat();
+                                    hashmap_m.insert(key, a.elems()[(i - 1) * size[1] + (j - 1)]);
+                                }
+                            }
+                            hashmap_m.clone()
+                        }
+                    },
+                    Expression::Variable(_, _) => todo!(),
+                    Expression::PartialVariable(_) => todo!(),
+                    Expression::Add(_, _) => todo!(),
+                    Expression::Sub(_, _) => todo!(),
+                    Expression::Mul(_, _) => todo!(),
+                    Expression::Div(_, _) => todo!(),
+                    Expression::Neg(_) => todo!(),
+                    Expression::Transcendental(_) => todo!(),
+                    Expression::Tensor(_) => todo!(),
+                    Expression::Matrix(_) => todo!(),
+                })
+                .collect::<Vec<HashMap<Vec<usize>, f64>>>();
+
+            let constant = terms_vec.iter();
+
+            //Expression::from(constant)
+            Expression::from(5f64) //TODO: implemet to LSigma of muls.
+        } else {
+            TensorExpression::DotProduct {
+                terms: new_terms.clone(),
+                rank_combinations: new_rank_combinations,
+            }
+            .into()
+        };
+
+        result
     }
 }
 
 impl Expression {
     pub fn dot(self, rhs: Expression, rank_pairs: &[[RankIndex; 2]]) -> Expression {
+        if let (Expression::PartialVariable(vl), Expression::PartialVariable(vr)) = (&self, &rhs) {
+            // if vl.sizes() == vr.sizes() {
+            //     panic!("Mistach Sizes of Variables");
+            // }
+
+            return Expression::PartialVariable(ExpressionArray::from_factory(
+                vr.sizes().to_vec(),
+                |indices| {
+                    vec![vl[indices].clone(), vr[indices].clone()]
+                        .into_iter()
+                        .dot_product(&generate_rank_combinations(rank_pairs))
+                },
+            ));
+        }
+
         vec![self, rhs]
             .into_iter()
             .dot_product(&generate_rank_combinations(rank_pairs))

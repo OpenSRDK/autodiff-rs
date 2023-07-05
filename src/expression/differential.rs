@@ -70,7 +70,6 @@ mod tests {
             diff.assign(&once(("x", ConstantValue::Scalar(3.0))).collect())
         );
     }
-
     #[test]
     fn it_works5() {
         let x = new_variable("x".to_string());

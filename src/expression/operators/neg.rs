@@ -1,10 +1,18 @@
-use crate::{BracketsLevel, Expression};
+use crate::{BracketsLevel, Expression, ExpressionArray};
 use std::{collections::HashMap, ops::Neg};
 
 impl Neg for Expression {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
+      
+        if let Expression::PartialVariable(v) = &self {
+            return Expression::PartialVariable(ExpressionArray::from_factory(
+                v.sizes().to_vec(),
+                |indices| Expression::Neg(v[indices].clone().into()),
+            ));
+        }
+
         if let Expression::Constant(mut v) = self {
             v.elems_mut().into_iter().for_each(|v| *v = -*v);
             return v.into();

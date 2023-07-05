@@ -1,6 +1,8 @@
 use opensrdk_linear_algebra::{sparse::SparseTensor, Matrix, Tensor};
 use serde::{Deserialize, Serialize};
 
+use crate::Expression;
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum ConstantValue {
     Scalar(f64),
@@ -75,6 +77,24 @@ impl ConstantValue {
         }
     }
 }
+
+// impl From<Expression> for ConstantValue {
+//     fn from(v: Expression) -> Self {
+//         match v {
+//             Expression::Constant(a) => a,
+//             Expression::Variable(_, _) => todo!(),
+//             Expression::PartialVariable(_) => todo!(),
+//             Expression::Add(_, _) => todo!(),
+//             Expression::Sub(_, _) => todo!(),
+//             Expression::Mul(_, _) => todo!(),
+//             Expression::Div(_, _) => todo!(),
+//             Expression::Neg(_) => todo!(),
+//             Expression::Transcendental(_) => todo!(),
+//             Expression::Tensor(_) => todo!(),
+//             Expression::Matrix(_) => todo!(),
+//         }
+//     }
+// }
 
 impl ConstantValue {
     pub fn add(&self, rhs: ConstantValue) -> ConstantValue {
@@ -183,5 +203,34 @@ impl ConstantValue {
             }
             _ => panic!(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use opensrdk_linear_algebra::sparse::SparseTensor;
+
+    use crate::{ConstantValue, Expression};
+
+    #[test]
+    fn index() {
+        let mut tensor = SparseTensor::new(vec![2, 3]);
+        tensor[&[0, 0]] = 1.0;
+        tensor[&[1, 1]] = 2.0;
+        tensor[&[1, 2]] = 3.0;
+
+        assert_eq!(tensor[&[0, 0]], 1.0);
+        assert_eq!(tensor[&[0, 1]], 0.0);
+        assert_eq!(tensor[&[0, 2]], 0.0);
+        assert_eq!(tensor[&[1, 0]], 0.0);
+        assert_eq!(tensor[&[1, 1]], 2.0);
+        assert_eq!(tensor[&[1, 2]], 3.0);
+
+        println!("{:?}", tensor);
+        println!("{:?}", tensor.elems());
+
+        let expression = ConstantValue::Tensor(tensor);
+        println!("{:?}", expression.elems());
+        println!("{:?}", expression.sizes());
     }
 }
